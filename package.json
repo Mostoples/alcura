@@ -1,0 +1,21 @@
+{
+  "name": "alcura",
+  "version": "1.0.0",
+  "description": "Alcura Project",
+  "scripts": {
+    "serve": "firebase serve",
+    "deploy": "node scripts/deploy.js",
+    "build": "echo 'Build step'",
+    "deploy:cli": "firebase deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^10.7.0",
+    "firebase-admin": "^13.10.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.18.0"
+  }
+}

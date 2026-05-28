@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Debug</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #0f1410; color: #fff; }
+    .log { background: #1a2620; padding: 10px; margin: 5px 0; border-radius: 5px; }
+    .ok { color: #4fbf78; }
+    .err { color: #ff3b30; }
+    button { padding: 10px 20px; background: #4fbf78; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+    button:active { opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+<h1>🔍 Firebase Debug Console</h1>
+
+<div id="status"></div>
+
+<h2>Tests:</h2>
+<button onclick="testFirebaseSDK()">1. Test Firebase SDK Load</button>
+<button onclick="testConfig()">2. Test Config</button>
+<button onclick="testAuth()">3. Test Auth Initialize</button>
+<button onclick="testGoogleProvider()">4. Test Google Provider</button>
+<button onclick="testSignIn()">5. Test Google Sign-In</button>
+
+<h2>Console Output:</h2>
+<div id="console" style="background: #000; padding: 15px; border-radius: 5px; height: 400px; overflow-y: auto; font-size: 12px;">
+  <div class="log">Waiting for tests...</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+
+<script>
+const consoleEl = document.getElementById('console');
+const statusEl = document.getElementById('status');
+
+function log(msg, type = 'info') {
+  const time = new Date().toLocaleTimeString();
+  const color = type === 'ok' ? '#4fbf78' : type === 'err' ? '#ff3b30' : '#fff';
+  const html = `<div class="log" style="color: ${color};">[${time}] ${msg}</div>`;
+  consoleEl.innerHTML += html;
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+  console.log(`[${type}] ${msg}`);
+}
+
+function testFirebaseSDK() {
+  log('Testing Firebase SDK...', 'info');
+  if (typeof firebase !== 'undefined') {
+    log('✓ Firebase SDK loaded', 'ok');
+    log(`Version: ${firebase.SDK_VERSION}`, 'ok');
+  } else {
+    log('✗ Firebase SDK NOT loaded', 'err');
+  }
+}
+
+function testConfig() {
+  log('Testing Firebase Config...', 'info');
+  const config = {
+    apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
+    authDomain: "alcura-id.firebaseapp.com",
+    projectId: "alcura-id",
+    storageBucket: "alcura-id.firebasestorage.app",
+    messagingSenderId: "978633752737",
+    appId: "1:978633752737:web:3b7418f607a52c711270e0"
+  };
+
+  log(`apiKey: ${config.apiKey.substring(0, 10)}...`, 'ok');
+  log(`authDomain: ${config.authDomain}`, 'ok');
+  log(`projectId: ${config.projectId}`, 'ok');
+  log(`appId: ${config.appId.substring(0, 20)}...`, 'ok');
+}
+
+function testAuth() {
+  log('Testing Auth Initialize...', 'info');
+
+  try {
+    const config = {
+      apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
+      authDomain: "alcura-id.firebaseapp.com",
+      projectId: "alcura-id",
+      storageBucket: "alcura-id.firebasestorage.app",
+      messagingSenderId: "978633752737",
+      appId: "1:978633752737:web:3b7418f607a52c711270e0"
+    };
+
+    if (firebase.apps.length === 0) {
+      const app = firebase.initializeApp(config);
+      log('✓ Firebase initialized', 'ok');
+    } else {
+      log('✓ Firebase already initialized', 'ok');
+    }
+
+    const auth = firebase.auth();
+    log(`✓ Auth instance created`, 'ok');
+    log(`Current user: ${auth.currentUser ? auth.currentUser.email : 'None'}`, 'ok');
+
+  } catch (e) {
+    log(`✗ Error: ${e.message}`, 'err');
+  }
+}
+
+function testGoogleProvider() {
+  log('Testing Google Provider...', 'info');
+
+  try {
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
+    log('✓ Google provider created', 'ok');
+    log('✓ Scopes added: profile, email', 'ok');
+  } catch (e) {
+    log(`✗ Error: ${e.message}`, 'err');
+  }
+}
+
+async function testSignIn() {
+  log('Testing Google Sign-In popup...', 'info');
+
+  try {
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    log('Attempting sign-in with popup...', 'info');
+    const result = await auth.signInWithPopup(provider);
+
+    log(`✓ Sign-in successful!`, 'ok');
+    log(`User: ${result.user.email}`, 'ok');
+    log(`Name: ${result.user.displayName}`, 'ok');
+    statusEl.innerHTML = '<h2 style="color: #4fbf78;">✓ All tests passed! Google OAuth working!</h2>';
+
+  } catch (e) {
+    log(`✗ Sign-in error: ${e.code}`, 'err');
+    log(`Message: ${e.message}`, 'err');
+
+    if (e.code === 'auth/operation-not-allowed') {
+      log('→ Fix: Enable Google in Firebase Console > Authentication > Sign-in method', 'err');
+    } else if (e.code === 'auth/invalid-api-key') {
+      log('→ Fix: Update Firebase credentials', 'err');
+    } else if (e.code === 'auth/unauthorized-domain') {
+      log('→ Fix: Add domain to Authorized domains in Firebase Console', 'err');
+    }
+  }
+}
+
+// Auto run test 1 on load
+window.addEventListener('load', () => {
+  log('Page loaded, running diagnostic...', 'info');
+  setTimeout(testFirebaseSDK, 100);
+  setTimeout(testConfig, 200);
+  setTimeout(testAuth, 300);
+  setTimeout(testGoogleProvider, 400);
+});
+</script>
+
+</body>
+</html>

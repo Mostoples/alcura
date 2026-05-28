@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — ALCURA</title>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -67,6 +69,53 @@
   <nav class="bottom-nav"><a class="bn active"><i class="ph-fill ph-house"></i> Home</a><a class="bn"><i class="ph ph-wind"></i> Air</a><a class="bn-fab"><i class="ph ph-plant"></i></a><a class="bn"><i class="ph ph-sliders-horizontal"></i> Control</a><a class="bn"><i class="ph ph-dots-three-circle"></i> More</a></nav>
 </div>
 
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/app.js"></script>
+
+<script>
+// Firebase config initialization
+const firebaseConfig = {
+  apiKey: "AIzaSyDfN0-xyzYourApiKeyHere",
+  authDomain: "alcura-id.firebaseapp.com",
+  projectId: "alcura-id",
+  storageBucket: "alcura-id.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+// Check authentication
+setTimeout(() => {
+  if (!alcuraAuth.isAuthenticated()) {
+    window.location.href = 'login.html';
+  }
+}, 500);
+
+// Logout handler
+function handleLogout() {
+  if (confirm('Apakah Anda yakin ingin logout?')) {
+    alcuraAuth.signOut()
+      .then(() => {
+        window.location.href = 'login.html';
+      })
+      .catch((error) => {
+        alert('Logout gagal: ' + error.message);
+      });
+  }
+}
+
+// Display user info
+document.addEventListener('userLoggedIn', (e) => {
+  const user = e.detail;
+  const hiElement = document.querySelector('.hi h2');
+  if (hiElement && user.displayName) {
+    hiElement.textContent = user.displayName;
+  }
+});
+</script>
 </body>
 </html>

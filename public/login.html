@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Masuk — ALCURA</title>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,17 +27,98 @@
     <div class="auth-card">
       <a class="back" href="index.html"><i class="ph ph-arrow-left"></i> Kembali</a>
       <h1>Masuk</h1><p class="sub">Senang melihat Anda lagi. Masuk untuk melanjutkan.</p>
-      <div class="field"><label>Email</label><div class="inp"><i class="ph ph-envelope-simple"></i><input type="email" placeholder="nama@email.com" value="hello@alcura.io"></div></div>
-      <div class="field"><label>Password</label><div class="inp"><i class="ph ph-lock-simple"></i><input type="password" id="lpw" placeholder="••••••••" value="password"><i class="ph ph-eye eye" onclick="togglePw('lpw',this)"></i></div></div>
-      <div class="row-between"><label><input type="checkbox" checked> Ingat saya</label><a href="#">Lupa password?</a></div>
-      <button class="btn btn-primary btn-block" onclick="window.location.href='app.html'"><i class="ph ph-sign-in"></i> Masuk</button>
+      <div class="field"><label>Email</label><div class="inp"><i class="ph ph-envelope-simple"></i><input type="email" id="loginEmail" placeholder="nama@email.com" value=""></div></div>
+      <div class="field"><label>Password</label><div class="inp"><i class="ph ph-lock-simple"></i><input type="password" id="loginPassword" placeholder="••••••••" value=""><i class="ph ph-eye eye" onclick="togglePw('loginPassword',this)"></i></div></div>
+      <div class="row-between"><label><input type="checkbox" id="rememberMe" checked> Ingat saya</label><a href="#">Lupa password?</a></div>
+      <button class="btn btn-primary btn-block" id="emailLoginBtn" onclick="handleEmailLogin()"><i class="ph ph-sign-in"></i> Masuk</button>
       <div class="divider">atau lanjut dengan</div>
-      <div class="social"><button class="s"><i class="ph ph-google-logo"></i> Google</button><button class="s"><i class="ph ph-apple-logo"></i> Apple</button></div>
+      <div class="social"><button class="s" type="button" id="googleLoginBtn" onclick="handleGoogleLogin()"><i class="ph ph-google-logo"></i> Google</button></div>
       <p class="swap">Belum punya akun? <a href="register.html">Daftar gratis</a></p>
     </div>
   </div>
 </div>
 
+<script src="js/firebase-config.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/app.js"></script>
+
+<script>
+// Firebase config initialization
+const firebaseConfig = {
+  apiKey: "AIzaSyDfN0-xyzYourApiKeyHere",
+  authDomain: "alcura-id.firebaseapp.com",
+  projectId: "alcura-id",
+  storageBucket: "alcura-id.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+// Wait for auth to initialize
+setTimeout(() => {
+  // Check if already logged in
+  if (alcuraAuth.isAuthenticated()) {
+    window.location.href = 'app.html';
+  }
+}, 500);
+
+// Email login handler
+function handleEmailLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('emailLoginBtn');
+
+  if (!email || !password) {
+    alert('Email dan password harus diisi');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sedang masuk...';
+
+  alcuraAuth.signInWithEmail(email, password)
+    .then((user) => {
+      localStorage.setItem('userEmail', email);
+      if (document.getElementById('rememberMe').checked) {
+        localStorage.setItem('rememberEmail', email);
+      }
+      window.location.href = 'app.html';
+    })
+    .catch((error) => {
+      alert('Login gagal: ' + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Masuk';
+    });
+}
+
+// Google login handler
+function handleGoogleLogin() {
+  const btn = document.getElementById('googleLoginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Menghubungkan Google...';
+
+  alcuraAuth.signInWithGoogle()
+    .then((user) => {
+      localStorage.setItem('userEmail', user.email);
+      window.location.href = 'app.html';
+    })
+    .catch((error) => {
+      alert('Google login gagal: ' + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Google';
+    });
+}
+
+// Load remembered email
+window.addEventListener('DOMContentLoaded', () => {
+  const remembered = localStorage.getItem('rememberEmail');
+  if (remembered) {
+    document.getElementById('loginEmail').value = remembered;
+  }
+});
+</script>
 </body>
 </html>

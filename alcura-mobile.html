@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ALCURA — Living Air</title>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --forest-700: #235f37;
+      --forest-600: #2d7c47;
+      --leaf-500: #4fbf78;
+      --leaf-300: #a8e6c0;
+      --sky-100: #f0f7ff;
+      --sky-500: #0066ff;
+      --ink: #0a1a0f;
+      --ink-mute: #556b62;
+      --bg: #fff;
+      --line: #e5ebe8;
+      --glass: rgba(255,255,255,0.8);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-md: 0 8px 16px rgba(0,0,0,0.12);
+      --shadow-lg: 0 16px 32px rgba(0,0,0,0.16);
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --r-xl: 20px;
+      --r-full: 9999px;
+      --font-display: 'Bricolage Grotesque', sans-serif;
+      --font-mono: 'Courier New', monospace;
+    }
+
+    [data-theme="dark"] {
+      --forest-700: #1a3d28;
+      --forest-600: #2a5a3d;
+      --leaf-500: #4fbf78;
+      --leaf-300: #2d7c47;
+      --sky-100: #0d1f2d;
+      --sky-500: #4fa3ff;
+      --ink: #f5f5f0;
+      --ink-mute: #a0a89f;
+      --bg: #0f1410;
+      --line: #2a3830;
+      --glass: rgba(15,20,16,0.8);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+    }
+
+    .app-root {
+      display: flex;
+      flex-direction: column;
+      width: 375px;
+      height: 812px;
+      margin: 0 auto;
+      background: var(--bg);
+      position: relative;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .screen {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 1rem 6rem 1rem;
+      -webkit-overflow-scrolling: touch;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .screen.active { display: flex; flex-direction: column; }
+    .screen::-webkit-scrollbar { width: 0; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* === HEADER === */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .app-header h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      font-family: var(--font-display);
+    }
+
+    .header-right { display: flex; gap: 0.5rem; }
+    .icon-btn {
+      background: transparent;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .icon-btn:active { background: var(--line); }
+
+    /* === HERO CARD === */
+    .hero-card {
+      background: linear-gradient(150deg, var(--forest-700) 0%, var(--leaf-500) 100%);
+      border-radius: var(--r-lg);
+      padding: 1.5rem;
+      color: #fff;
+      margin: 1rem 0;
+      box-shadow: 0 20px 40px rgba(35, 79, 55, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: glow 6s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .hero-card > * { position: relative; z-index: 1; }
+
+    .hero-tags {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: var(--r-full);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .gauge-wrap {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .gauge {
+      width: 80px;
+      height: 80px;
+      position: relative;
+    }
+
+    .gauge svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-val {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .gauge-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+    }
+
+    .meta-item i {
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .meta-item b { display: block; }
+    .meta-item small { opacity: 0.8; }
+
+    /* === CARD === */
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 1.2rem;
+      margin: 1rem 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card a { color: var(--sky-500); text-decoration: none; font-size: 0.85rem; }
+
+    /* === METRIC GRID === */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .metric {
+      background: var(--sky-100);
+      border-radius: var(--r-md);
+      padding: 0.8rem;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    [data-theme="dark"] .metric {
+      background: rgba(79, 191, 120, 0.1);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 1.3rem;
+      margin: 0.4rem 0;
+      color: var(--leaf-500);
+    }
+
+    .metric small { color: var(--ink-mute); }
+
+    .metric .ok {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      margin-top: 0.4rem;
+      font-size: 0.7rem;
+      color: var(--leaf-500);
+    }
+
+    /* === HORIZONTAL SCROLL === */
+    .metric-scroll {
+      display: flex;
+      gap: 0.8rem;
+      overflow-x: auto;
+      padding: 0.5rem 0;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      margin: 0.5rem -1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .metric-scroll::-webkit-scrollbar { height: 3px; }
+    .metric-scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: var(--r-full); }
+
+    .metric-item {
+      flex: 0 0 calc(50% - 0.4rem);
+      scroll-snap-align: start;
+    }
+
+    /* === BUTTON === */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--leaf-500);
+      color: #fff;
+    }
+    .btn-primary:active { background: var(--forest-600); transform: scale(0.98); }
+
+    .btn-secondary {
+      background: var(--line);
+      color: var(--ink);
+    }
+    .btn-secondary:active { background: var(--ink-mute); }
+
+    .btn-block { width: 100%; }
+
+    .btn-group {
+      display: flex;
+      gap: 0.6rem;
+      margin: 1rem 0;
+    }
+
+    .btn-group .btn { flex: 1; }
+
+    /* === SLIDER === */
+    .slider-group {
+      margin: 1.2rem 0;
+    }
+
+    .slider-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .slider-group input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: var(--r-full);
+      background: var(--line);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: var(--r-full);
+      background: var(--leaf-500);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .slider-group input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--r-full);
+      background: var(--leaf-500);
+      cursor: pointer;
+      border: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* === SPECTRUM GRID === */
+    .spectrum-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.6rem;
+      margin: 1rem 0;
+    }
+
+    .spectrum-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .spectrum-item label {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .spectrum-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--r-md);
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    /* === ALERT === */
+    .alert {
+      background: var(--sky-100);
+      border-left: 4px solid var(--sky-500);
+      border-radius: var(--r-md);
+      padding: 0.9rem;
+      margin: 0.8rem 0;
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .alert.critical { background: rgba(255, 59, 48, 0.1); border-left-color: #ff3b30; }
+    .alert.warning { background: rgba(255, 159, 64, 0.1); border-left-color: #ff9f40; }
+    .alert.success { background: rgba(79, 191, 120, 0.1); border-left-color: #4fbf78; }
+
+    .alert i {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .alert-content h4 {
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .alert-content small {
+      font-size: 0.75rem;
+      color: var(--ink-mute);
+    }
+
+    /* === TABS === */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--line);
+      margin: 1rem 0;
+      list-style: none;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 0.8rem 0.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--ink-mute);
+    }
+
+    .tab.active {
+      color: var(--leaf-500);
+      border-bottom-color: var(--leaf-500);
+    }
+
+    /* === BOTTOM NAV === */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 375px;
+      height: 60px;
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 20;
+      margin: 0 auto;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      cursor: pointer;
+      font-size: 0.7rem;
+      color: var(--ink-mute);
+      transition: color 0.2s;
+    }
+
+    .nav-item.active { color: var(--leaf-500); }
+    .nav-item i { font-size: 1.3rem; }
+
+    /* === CAROUSEL === */
+    .carousel {
+      display: flex;
+      overflow: hidden;
+      border-radius: var(--r-lg);
+      position: relative;
+      height: auto;
+    }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1rem;
+      min-height: 400px;
+      background: linear-gradient(150deg, var(--forest-700) 0%, var(--leaf-500) 100%);
+      color: #fff;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    .carousel-slide h2 {
+      font-size: 1.8rem;
+      margin: 1rem 0;
+      font-family: var(--font-display);
+    }
+
+    .carousel-slide p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      max-width: 280px;
+      opacity: 0.95;
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--r-full);
+      background: var(--line);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .dot.active { background: #fff; }
+
+    /* === INPUT === */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      margin: 0.6rem 0;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--leaf-500);
+    }
+
+    .toggle-pw {
+      cursor: pointer;
+      color: var(--ink-mute);
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+    }
+
+    .input-wrap {
+      position: relative;
+      margin: 0.6rem 0;
+    }
+
+    .input-wrap input { width: 100%; }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .checkbox input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      margin: 0;
+      accent-color: var(--leaf-500);
+    }
+
+    /* === CHART MOCK === */
+    .chart-mock {
+      width: 100%;
+      height: 180px;
+      background: var(--sky-100);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 1rem;
+      gap: 0.4rem;
+    }
+
+    [data-theme="dark"] .chart-mock {
+      background: rgba(79, 191, 120, 0.05);
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(to top, var(--leaf-500), var(--leaf-300));
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
+      min-height: 20px;
+      opacity: 0.7;
+    }
+
+    .bar.active { opacity: 1; }
+
+    /* === UTIL === */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin: 1.2rem 0 0.6rem 0;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bio { font-size: 0.85rem; color: var(--ink-mute); line-height: 1.5; }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+
+    .row:last-child { border-bottom: none; }
+    .row b { color: var(--ink); }
+
+    .big-number {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+
+    .big-number .value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--leaf-500);
+      font-family: var(--font-display);
+    }
+
+    .big-number .label {
+      font-size: 0.9rem;
+      color: var(--ink-mute);
+      margin-top: 0.3rem;
+    }
+
+    .big-number .equiv {
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      padding: 0.6rem;
+      background: var(--sky-100);
+      border-radius: var(--r-md);
+    }
+
+    [data-theme="dark"] .big-number .equiv {
+      background: rgba(79, 191, 120, 0.1);
+    }
+  </style>
+</head>
+<body>
+<div class="app-root">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1 id="headerTitle">ALCURA</h1>
+    <div class="header-right">
+      <button class="icon-btn" onclick="toggleTheme()">
+        <i class="ph-fill ph-moon"></i>
+      </button>
+      <button class="icon-btn">
+        <i class="ph ph-bell"></i>
+        <span style="position: absolute; width: 8px; height: 8px; background: #ff3b30; border-radius: 50%; top: 8px; right: 10px;"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SCREEN: ONBOARDING -->
+  <div class="screen active" id="screen-onboarding">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div class="carousel" id="carousel">
+        <div class="carousel-slide">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">
+            <i class="ph-fill ph-leaf"></i>
+          </div>
+          <h2>ALCURA</h2>
+          <p>Living air for living spaces</p>
+          <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.8;">Photobioreactor pintar dengan mikroalga Spirulina untuk purifikasi udara indoor</p>
+        </div>
+        <div class="carousel-slide">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">
+            <i class="ph-fill ph-wind"></i> <i class="ph-fill ph-drop"></i> <i class="ph-fill ph-plant"></i>
+          </div>
+          <h2>Tiga Manfaat</h2>
+          <div style="margin-top: 1.5rem; text-align: left; max-width: 280px;">
+            <div style="margin: 0.8rem 0;">
+              <strong>Udara Lebih Bersih</strong><br>
+              <small>CO₂ -55%, VOC -100%, PM2.5 -80%</small>
+            </div>
+            <div style="margin: 0.8rem 0;">
+              <strong>Oksigen Alami</strong><br>
+              <small>Produksi O₂ 8L per hari</small>
+            </div>
+            <div style="margin: 0.8rem 0;">
+              <strong>Spirulina Segar</strong><br>
+              <small>Panen biomassa setiap 30 hari</small>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-slide">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">
+            <i class="ph ph-qr-code"></i>
+          </div>
+          <h2>Pasang Perangkat</h2>
+          <p style="margin-top: 1rem;">Scan QR code di unit ALCURA Anda</p>
+          <div style="width: 120px; height: 120px; background: rgba(255,255,255,0.2); border-radius: var(--r-lg); margin: 1.5rem auto; display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 2px dashed rgba(255,255,255,0.4);">
+            <i class="ph ph-qr-code"></i>
+          </div>
+          <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">Atau masukkan Device ID secara manual</p>
+        </div>
+      </div>
+
+      <div class="carousel-dots">
+        <div class="dot active" onclick="goSlide(0)"></div>
+        <div class="dot" onclick="goSlide(1)"></div>
+        <div class="dot" onclick="goSlide(2)"></div>
+      </div>
+    </div>
+
+    <div style="padding: 1rem 0 6rem 0;">
+      <button class="btn btn-primary btn-block" onclick="nextSlide()">
+        <span id="slideBtn">Selanjutnya</span>
+        <i class="ph ph-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- SCREEN: LOGIN -->
+  <div class="screen" id="screen-login">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Masuk</h2>
+        <p class="bio">Akses dashboard ALCURA Anda</p>
+      </div>
+
+      <input type="email" placeholder="Email" value="user@example.com">
+
+      <div class="input-wrap">
+        <input type="password" id="pwLogin" placeholder="Password" value="password123">
+        <i class="ph ph-eye toggle-pw" onclick="togglePw('pwLogin')"></i>
+      </div>
+
+      <div class="checkbox">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">Ingat saya</label>
+      </div>
+
+      <button class="btn btn-primary btn-block" onclick="switchScreen('dashboard')">
+        <i class="ph ph-sign-in"></i> Masuk
+      </button>
+
+      <div style="text-align: center; margin: 1rem 0; font-size: 0.9rem; color: var(--ink-mute);">
+        atau
+      </div>
+
+      <button class="btn btn-secondary btn-block">
+        <i class="ph ph-google-logo"></i> Google
+      </button>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+        Belum punya akun? <a href="#" style="color: var(--sky-500);" onclick="switchScreen('register')">Daftar</a>
+      </div>
+
+      <div style="text-align: center; margin-top: 0.8rem;">
+        <a href="#" style="color: var(--ink-mute); text-decoration: none; font-size: 0.85rem;">Lupa password?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: REGISTER -->
+  <div class="screen" id="screen-register">
+    <div style="flex: 1;">
+      <div style="margin: 1.5rem 0;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Buat Akun</h2>
+        <p class="bio">Daftar untuk memulai</p>
+      </div>
+
+      <input type="text" placeholder="Nama Lengkap" value="Theresa Pena">
+      <input type="email" placeholder="Email" value="theresa@example.com">
+
+      <div class="input-wrap">
+        <input type="password" id="pwReg1" placeholder="Password" value="password123">
+        <i class="ph ph-eye toggle-pw" onclick="togglePw('pwReg1')"></i>
+      </div>
+
+      <div class="input-wrap">
+        <input type="password" id="pwReg2" placeholder="Konfirmasi Password" value="password123">
+        <i class="ph ph-eye toggle-pw" onclick="togglePw('pwReg2')"></i>
+      </div>
+
+      <div class="checkbox">
+        <input type="checkbox" checked>
+        <label>Saya setuju dengan Syarat & Ketentuan</label>
+      </div>
+
+      <button class="btn btn-primary btn-block" onclick="switchScreen('dashboard')">
+        <i class="ph ph-user-plus"></i> Buat Akun
+      </button>
+
+      <div style="text-align: center; margin: 1rem 0; font-size: 0.9rem; color: var(--ink-mute);">
+        atau
+      </div>
+
+      <button class="btn btn-secondary btn-block">
+        <i class="ph ph-google-logo"></i> Google
+      </button>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+        Sudah punya akun? <a href="#" style="color: var(--sky-500);" onclick="switchScreen('login')">Masuk</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: DASHBOARD (Home) -->
+  <div class="screen" id="screen-dashboard">
+    <!-- HERO CARD -->
+    <div class="hero-card">
+      <div class="hero-tags">
+        <span class="tag"><i class="ph-fill ph-leaf"></i> ALCURA · Living Room</span>
+        <span class="tag"><i class="ph-fill ph-wifi-high"></i> Online</span>
+      </div>
+
+      <div class="gauge-wrap">
+        <div class="gauge">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="8" stroke-dasharray="212.5" stroke-dashoffset="10.625" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-val">
+            <span style="font-size: 1.4rem;">88</span>
+            <div class="gauge-label">KULTUR</div>
+          </div>
+        </div>
+
+        <div class="gauge">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="8" stroke-dasharray="182.25" stroke-dashoffset="39.375" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-val">
+            <span style="font-size: 1.4rem;">72</span>
+            <div class="gauge-label">UDARA</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0.3rem;">SIKLUS</div>
+          <div style="font-size: 1.8rem; font-weight: 700;">25</div>
+          <div style="font-size: 0.7rem;">hari dari 30</div>
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <i class="ph-fill ph-wind"></i>
+          <div>
+            <b>Excellent</b>
+            <small>Kualitas udara sangat baik</small>
+          </div>
+        </div>
+        <div class="meta-item">
+          <i class="ph-fill ph-plant"></i>
+          <div>
+            <b>Pertumbuhan Eksponensial</b>
+            <small>Spirulina berkembang optimal</small>
+          </div>
+        </div>
+        <div class="meta-item">
+          <i class="ph-fill ph-drop"></i>
+          <div>
+            <b>8L O₂ hari ini</b>
+            <small>Produksi oksigen meningkat</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK METRICS -->
+    <h3 class="section-title">Metrik Cepat</h3>
+    <div class="metric-scroll">
+      <div class="metric-item">
+        <div class="metric">
+          <i class="ph-fill ph-cloud" style="font-size: 1.3rem; color: var(--leaf-500);"></i>
+          <b>480<small> ppm</small></b>
+          <span>CO₂</span>
+          <div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric">
+          <i class="ph-fill ph-drop-half" style="font-size: 1.3rem; color: var(--leaf-500);"></i>
+          <b>11.2</b>
+          <span>DO mg/L</span>
+          <div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric">
+          <i class="ph-fill ph-thermometer" style="font-size: 1.3rem; color: var(--leaf-500);"></i>
+          <b>27<small>°C</small></b>
+          <span>Suhu</span>
+          <div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div>
+        </div>
+      </div>
+      <div class="metric-item">
+        <div class="metric">
+          <i class="ph-fill ph-flask" style="font-size: 1.3rem; color: var(--leaf-500);"></i>
+          <b>9.4</b>
+          <span>pH</span>
+          <div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HARVEST CARD -->
+    <div class="card">
+      <h3>
+        <span><i class="ph-fill ph-plant"></i> Panen Berikutnya</span>
+      </h3>
+      <div style="margin-bottom: 1rem;">
+        <b style="font-size: 1.2rem;">Siap dalam 5 hari</b>
+        <div style="font-size: 0.8rem; color: var(--ink-mute); margin-top: 0.3rem;">Probabilitas kesiapan <b style="color: var(--ink);">85%</b></div>
+      </div>
+      <div style="width: 100%; height: 6px; background: var(--line); border-radius: var(--r-full); overflow: hidden; margin-bottom: 1rem;">
+        <div style="width: 85%; height: 100%; background: var(--leaf-500); border-radius: var(--r-full);"></div>
+      </div>
+      <div class="row" style="border: none; padding: 0.4rem 0;">
+        <span>Est. yield</span>
+        <b>280 g</b>
+      </div>
+      <div class="row" style="border: none; padding: 0.4rem 0;">
+        <span>Densitas</span>
+        <b>1.32 OD</b>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top: 0.8rem;">
+        <i class="ph ph-calendar-check"></i> Rencanakan Panen
+      </button>
+    </div>
+
+    <!-- IMPACT CARD -->
+    <div class="card">
+      <div style="display: flex; gap: 0.6rem; margin-bottom: 0.8rem;">
+        <i class="ph-fill ph-sparkle" style="font-size: 1.1rem; color: var(--leaf-500);"></i>
+        <span style="font-size: 0.8rem; color: var(--ink-mute); font-weight: 600;">DAMPAK HARI INI</span>
+      </div>
+      <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.8rem;">
+        Anda menghirup udara lebih bersih — <b style="color: var(--leaf-500);">12g CO₂</b> terserap.
+      </h3>
+      <div class="metric-grid">
+        <div style="background: transparent; border: 1px solid var(--line); padding: 0.8rem; text-align: center;">
+          <b style="font-size: 1.2rem; color: var(--leaf-500);">8L</b>
+          <small style="display: block;">O₂ diproduksi</small>
+        </div>
+        <div style="background: transparent; border: 1px solid var(--line); padding: 0.8rem; text-align: center;">
+          <b style="font-size: 1.2rem; color: var(--leaf-500);">0.4g</b>
+          <small style="display: block;">VOC dihapus</small>
+        </div>
+        <div style="background: transparent; border: 1px solid var(--line); padding: 0.8rem; text-align: center;">
+          <b style="font-size: 1.2rem; color: var(--leaf-500);">1.2kWh</b>
+          <small style="display: block;">HVAC hemat</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <h3 class="section-title">Aksi Cepat</h3>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 0 0 2rem 0;">
+      <div onclick="switchScreen('controls')" style="background: var(--sky-100); border-radius: var(--r-md); padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s;"
+        onmouseover="this.style.background='var(--leaf-300)'" onmouseout="this.style.background='var(--sky-100)'">
+        <div style="font-size: 1.8rem; margin-bottom: 0.4rem;"><i class="ph-fill ph-lightbulb-filament"></i></div>
+        <b style="display: block; font-size: 0.8rem;">LED</b>
+        <small>72%</small>
+      </div>
+      <div onclick="switchScreen('controls')" style="background: var(--sky-100); border-radius: var(--r-md); padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s;"
+        onmouseover="this.style.background='var(--leaf-300)'" onmouseout="this.style.background='var(--sky-100)'">
+        <div style="font-size: 1.8rem; margin-bottom: 0.4rem;"><i class="ph-fill ph-fan"></i></div>
+        <b style="display: block; font-size: 0.8rem;">Aerasi</b>
+        <small>60%</small>
+      </div>
+      <div onclick="switchScreen('controls')" style="background: var(--sky-100); border-radius: var(--r-md); padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s;"
+        onmouseover="this.style.background='var(--leaf-300)'" onmouseout="this.style.background='var(--sky-100)'">
+        <div style="font-size: 1.8rem; margin-bottom: 0.4rem;"><i class="ph-fill ph-moon-stars"></i></div>
+        <b style="display: block; font-size: 0.8rem;">Mode</b>
+        <small>Growth</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: AIR QUALITY -->
+  <div class="screen" id="screen-air">
+    <h3 class="section-title" style="margin-top: 0.5rem;">CO₂ Level</h3>
+
+    <div style="text-align: center; margin: 1.5rem 0;">
+      <div class="gauge" style="width: 120px; height: 120px; margin: 0 auto;">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--line)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--leaf-500)" stroke-width="8" stroke-dasharray="180" stroke-dashoffset="36" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-val">
+          <span style="font-size: 1.8rem; color: var(--ink);">480</span>
+          <div class="gauge-label" style="color: var(--ink-mute);">ppm</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+      <span style="background: var(--sky-100); padding: 0.4rem 0.8rem; border-radius: var(--r-full); font-size: 0.8rem;">Baik — Dalam rentang optimal (400-600 ppm)</span>
+    </div>
+
+    <h3 class="section-title">Metrik Udara Lainnya</h3>
+
+    <div class="metric-grid">
+      <div class="metric">
+        <i class="ph-fill ph-drop" style="font-size: 1.1rem;"></i>
+        <b>21<small>%</small></b>
+        <span>O₂</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Optimal</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-cloud-smoke" style="font-size: 1.1rem;"></i>
+        <b>8<small> μg/m³</small></b>
+        <span>PM2.5</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Baik</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-wind" style="font-size: 1.1rem;"></i>
+        <b>25<small> μg/m³</small></b>
+        <span>PM10</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Baik</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-flask" style="font-size: 1.1rem;"></i>
+        <b>0.03<small> ppm</small></b>
+        <span>HCHO</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Aman</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-atom" style="font-size: 1.1rem;"></i>
+        <b>45<small> ppb</small></b>
+        <span>VOC</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Baik</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-drop-half" style="font-size: 1.1rem;"></i>
+        <b>52<small>%</small></b>
+        <span>Humidity</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Ideal</div>
+      </div>
+    </div>
+
+    <h3 class="section-title">Tren 24 Jam</h3>
+
+    <div class="card">
+      <div class="chart-mock">
+        <div class="bar" style="height: 45%;"></div>
+        <div class="bar active" style="height: 65%;"></div>
+        <div class="bar" style="height: 55%;"></div>
+        <div class="bar" style="height: 48%;"></div>
+        <div class="bar" style="height: 52%;"></div>
+        <div class="bar" style="height: 60%;"></div>
+        <div class="bar active" style="height: 70%;"></div>
+      </div>
+      <div style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: var(--ink-mute);">
+        Rata-rata CO₂ turun 23% dibanding kemarin
+      </div>
+    </div>
+
+    <h3 class="section-title">Comparison</h3>
+    <div class="card">
+      <div class="row">
+        <span><i class="ph ph-house" style="margin-right: 0.4rem;"></i>Dalam Ruangan</span>
+        <b>480 ppm</b>
+      </div>
+      <div class="row">
+        <span><i class="ph ph-wind" style="margin-right: 0.4rem;"></i>Luar Ruangan (est.)</span>
+        <b>420 ppm</b>
+      </div>
+      <div style="background: var(--sky-100); border-radius: var(--r-md); padding: 0.8rem; margin-top: 0.8rem; font-size: 0.85rem;">
+        <i class="ph ph-info" style="margin-right: 0.4rem;"></i>
+        ALCURA Anda membantu mengurangi CO₂ indoor
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: CULTURE HEALTH -->
+  <div class="screen" id="screen-culture">
+    <h3 class="section-title" style="margin-top: 0.5rem;">Biomass Density</h3>
+
+    <div style="text-align: center; margin: 1.5rem 0;">
+      <div class="gauge" style="width: 120px; height: 120px; margin: 0 auto;">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--line)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--leaf-500)" stroke-width="8" stroke-dasharray="195" stroke-dashoffset="21" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-val">
+          <span style="font-size: 1.8rem; color: var(--ink);">1.32</span>
+          <div class="gauge-label" style="color: var(--ink-mute); font-size: 0.7rem;">OD680</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="section-title">Culture Parameters</h3>
+
+    <div class="metric-grid">
+      <div class="metric">
+        <i class="ph-fill ph-drop-half" style="font-size: 1.1rem;"></i>
+        <b>11.2</b>
+        <span>DO mg/L</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Optimal</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-thermometer" style="font-size: 1.1rem;"></i>
+        <b>27<small>°C</small></b>
+        <span>Temperature</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Ideal</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-flask" style="font-size: 1.1rem;"></i>
+        <b>9.4</b>
+        <span>pH</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Optimal</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-plant" style="font-size: 1.1rem;"></i>
+        <b>92<small>%</small></b>
+        <span>Chlorophyll</span>
+        <div style="font-size: 0.7rem; color: var(--leaf-500);">Healthy</div>
+      </div>
+    </div>
+
+    <h3 class="section-title">Culture Photo</h3>
+    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, rgba(79,191,120,0.3) 0%, rgba(47,180,100,0.3) 100%); border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; color: var(--ink-mute); margin: 1rem 0; font-size: 3rem;">
+      <i class="ph ph-camera"></i>
+    </div>
+    <p class="bio" style="text-align: center; margin: -0.8rem 0 1rem 0;">Spirulina culture terlihat hijau pekat — indikator kesehatan optimal</p>
+
+    <h3 class="section-title">Growth Curve (30 hari)</h3>
+    <div class="card">
+      <div class="chart-mock" style="height: 200px;">
+        <div class="bar" style="height: 15%;"></div>
+        <div class="bar" style="height: 18%;"></div>
+        <div class="bar" style="height: 22%;"></div>
+        <div class="bar" style="height: 28%;"></div>
+        <div class="bar" style="height: 35%;"></div>
+        <div class="bar" style="height: 42%;"></div>
+        <div class="bar" style="height: 48%;"></div>
+        <div class="bar" style="height: 55%;"></div>
+        <div class="bar" style="height: 60%;"></div>
+        <div class="bar" style="height: 65%;"></div>
+        <div class="bar" style="height: 70%;"></div>
+        <div class="bar" style="height: 75%;"></div>
+        <div class="bar" style="height: 78%;"></div>
+        <div class="bar" style="height: 80%;"></div>
+        <div class="bar active" style="height: 82%;"></div>
+      </div>
+      <div style="text-align: center; margin-top: 0.8rem; font-size: 0.8rem; color: var(--ink-mute);">
+        Hari ke-15 dari 30 — Fase pertumbuhan eksponensial
+      </div>
+    </div>
+
+    <div class="alert success" style="margin: 1rem 0;">
+      <i class="ph-fill ph-plant"></i>
+      <div class="alert-content">
+        <h4>Culture Status: Optimal</h4>
+        <small>Spirulina berkembang dengan sangat baik. Pertahankan pengaturan LED saat ini.</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: CONTROLS -->
+  <div class="screen" id="screen-controls">
+    <h3 class="section-title" style="margin-top: 0.5rem;">Manual Controls</h3>
+
+    <div class="slider-group">
+      <label>
+        <span>LED Intensity</span>
+        <span>72%</span>
+      </label>
+      <input type="range" min="0" max="100" value="72">
+    </div>
+
+    <h3 class="section-title">Spectrum Tuning</h3>
+    <div class="spectrum-grid">
+      <div class="spectrum-item">
+        <label>Red</label>
+        <div class="spectrum-swatch" style="background: #ff4444;"></div>
+        <input type="range" min="0" max="100" value="85" style="width: 100%; height: 3px;">
+      </div>
+      <div class="spectrum-item">
+        <label>Blue</label>
+        <div class="spectrum-swatch" style="background: #4488ff;"></div>
+        <input type="range" min="0" max="100" value="60" style="width: 100%; height: 3px;">
+      </div>
+      <div class="spectrum-item">
+        <label>Green</label>
+        <div class="spectrum-swatch" style="background: #44ff44;"></div>
+        <input type="range" min="0" max="100" value="45" style="width: 100%; height: 3px;">
+      </div>
+      <div class="spectrum-item">
+        <label>Far-Red</label>
+        <div class="spectrum-swatch" style="background: #cc3333;"></div>
+        <input type="range" min="0" max="100" value="30" style="width: 100%; height: 3px;">
+      </div>
+      <div class="spectrum-item">
+        <label>UV</label>
+        <div class="spectrum-swatch" style="background: #9944ff;"></div>
+        <input type="range" min="0" max="100" value="15" style="width: 100%; height: 3px;">
+      </div>
+    </div>
+
+    <div class="slider-group">
+      <label>
+        <span>Aeration Rate</span>
+        <span>60%</span>
+      </label>
+      <input type="range" min="0" max="100" value="60">
+    </div>
+
+    <h3 class="section-title">Advanced Settings</h3>
+
+    <div class="checkbox">
+      <input type="checkbox" id="co2" checked>
+      <label for="co2">Injeksi CO₂</label>
+    </div>
+
+    <div style="background: var(--sky-100); border-radius: var(--r-md); padding: 0.8rem; margin: 1rem 0; font-size: 0.8rem;">
+      <span style="color: var(--ink-mute);">Status: <b style="color: var(--leaf-500);">Aktif</b></span>
+    </div>
+
+    <h3 class="section-title">Mode Preset</h3>
+    <div class="btn-group">
+      <button class="btn btn-secondary" style="flex: 1;">
+        <i class="ph-fill ph-sun"></i> Siang
+      </button>
+      <button class="btn btn-secondary" style="flex: 1;">
+        <i class="ph-fill ph-moon-stars"></i> Malam
+      </button>
+      <button class="btn btn-secondary" style="flex: 1;">
+        <i class="ph-fill ph-rocket"></i> Growth
+      </button>
+    </div>
+
+    <div class="checkbox" style="margin: 1.5rem 0;">
+      <input type="checkbox" id="autoMode" checked>
+      <label for="autoMode"><b>Auto Mode (AI Optimized)</b> — Sistem akan menyesuaikan parameter otomatis berdasarkan kondisi kultur.</label>
+    </div>
+
+    <button class="btn btn-primary btn-block" style="margin-top: 1rem;">
+      <i class="ph ph-floppy-disk"></i> Simpan Pengaturan
+    </button>
+  </div>
+
+  <!-- SCREEN: ALERTS -->
+  <div class="screen" id="screen-alerts">
+    <ul class="tabs">
+      <li class="tab active">Semua</li>
+      <li class="tab">Belum dibaca</li>
+      <li class="tab">Critical</li>
+    </ul>
+
+    <div class="alert critical">
+      <i class="ph-fill ph-warning"></i>
+      <div class="alert-content">
+        <h4>pH turun drastis</h4>
+        <small>pH kultur menurun ke 8.8. Sesuaikan nutrisi dalam 24 jam. Aksi: Review dan sesuaikan kadar karbonat.</small>
+      </div>
+    </div>
+
+    <div class="alert warning">
+      <i class="ph-fill ph-warning"></i>
+      <div class="alert-content">
+        <h4>Panen siap dalam 3 hari</h4>
+        <small>Berdasarkan proyeksi, Spirulina akan siap panen dalam 3 hari. Siapkan peralatan panen.</small>
+      </div>
+    </div>
+
+    <div class="alert success">
+      <i class="ph-fill ph-check-circle"></i>
+      <div class="alert-content">
+        <h4>Kualitas udara meningkat 23%</h4>
+        <small>Dibandingkan minggu lalu, indoor air quality meningkat signifikan. Excellent!</small>
+      </div>
+    </div>
+
+    <div class="alert">
+      <i class="ph-fill ph-info"></i>
+      <div class="alert-content">
+        <h4>Firmware update tersedia</h4>
+        <small>Update v2.1.3 tersedia. Tambahan: sensor calibration tool. Install?</small>
+      </div>
+    </div>
+
+    <div class="alert success">
+      <i class="ph-fill ph-check-circle"></i>
+      <div class="alert-content">
+        <h4>Kalibrase sensor selesai</h4>
+        <small>Sensor pH dan DO telah dikalibrasi. Akurasi: 99.2%</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: IMPACT -->
+  <div class="screen" id="screen-impact">
+    <h3 class="section-title" style="margin-top: 0.5rem;">Impact Report</h3>
+
+    <div class="big-number">
+      <div class="value">1,240 g</div>
+      <div class="label">CO₂ dihapus bulan ini</div>
+      <div class="equiv">
+        <i class="ph-fill ph-car"></i> Setara 6.2 km berkendara mobil
+      </div>
+    </div>
+
+    <h3 class="section-title">Metrics Bulan Ini</h3>
+    <div class="card">
+      <div class="row">
+        <span><i class="ph-fill ph-drop" style="margin-right: 0.6rem;"></i>O₂ Diproduksi</span>
+        <b>240 L</b>
+      </div>
+      <div class="row">
+        <span><i class="ph-fill ph-atom" style="margin-right: 0.6rem;"></i>VOC Dihapus</span>
+        <b>12.5 g</b>
+      </div>
+      <div class="row">
+        <span><i class="ph-fill ph-lightning" style="margin-right: 0.6rem;"></i>Energy Saved (HVAC)</span>
+        <b>8.4 kWh</b>
+      </div>
+      <div class="row">
+        <span><i class="ph-fill ph-tree" style="margin-right: 0.6rem;"></i>Tree Equivalent</span>
+        <b>0.23 pohon</b>
+      </div>
+    </div>
+
+    <h3 class="section-title">Trend Bulanan</h3>
+    <div class="card">
+      <div class="chart-mock" style="height: 200px;">
+        <div class="bar" style="height: 20%;"></div>
+        <div class="bar" style="height: 35%;"></div>
+        <div class="bar" style="height: 48%;"></div>
+        <div class="bar" style="height: 62%;"></div>
+        <div class="bar" style="height: 75%;"></div>
+        <div class="bar" style="height: 85%;"></div>
+        <div class="bar active" style="height: 95%;"></div>
+        <div class="bar" style="height: 100%;"></div>
+      </div>
+      <div style="text-align: center; margin-top: 0.8rem; font-size: 0.8rem; color: var(--ink-mute);">
+        CO₂ removal meningkat konsisten setiap minggu
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" style="margin: 1.5rem 0;">
+      <i class="ph ph-share-network"></i> Bagikan Dampak Saya
+    </button>
+
+    <div style="background: var(--sky-100); border-radius: var(--r-lg); padding: 1rem; text-align: center; margin-bottom: 1rem;">
+      <b style="display: block; margin-bottom: 0.4rem;">🌱 Good for the Planet</b>
+      <small style="color: var(--ink-mute);">Anda berkontribusi pada peningkatan kualitas udara global</small>
+    </div>
+  </div>
+
+  <!-- SCREEN: SETTINGS -->
+  <div class="screen" id="screen-settings">
+    <h3 class="section-title" style="margin-top: 0.5rem;">Account</h3>
+
+    <div class="card">
+      <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <img src="https://i.pravatar.cc/100?img=47" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%;">
+        <div>
+          <h4 style="margin: 0;">Theresa Pena</h4>
+          <small style="color: var(--ink-mute);">theresa@example.com</small>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-block">
+        <i class="ph ph-pencil"></i> Edit Profile
+      </button>
+    </div>
+
+    <h3 class="section-title">Device Info</h3>
+
+    <div class="card">
+      <div class="row">
+        <span>Serial Number</span>
+        <b style="font-family: var(--font-mono); font-size: 0.8rem;">ALG-2024-0547</b>
+      </div>
+      <div class="row">
+        <span>Firmware</span>
+        <b>v2.1.2</b>
+      </div>
+      <div class="row">
+        <span>Uptime</span>
+        <b>45 hari</b>
+      </div>
+      <div class="row">
+        <span>Connectivity</span>
+        <b style="color: var(--leaf-500);">WiFi • Connected</b>
+      </div>
+    </div>
+
+    <h3 class="section-title">Preferences</h3>
+
+    <div class="checkbox">
+      <input type="checkbox" id="notif" checked>
+      <label for="notif">Alert Notifications</label>
+    </div>
+
+    <div class="checkbox">
+      <input type="checkbox" id="harvest" checked>
+      <label for="harvest">Harvest Reminders</label>
+    </div>
+
+    <div class="checkbox">
+      <input type="checkbox" id="weekly">
+      <label for="weekly">Weekly Impact Report</label>
+    </div>
+
+    <h3 class="section-title">Display</h3>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--line);">
+      <span>Dark Mode</span>
+      <button class="btn" onclick="toggleTheme()" style="background: var(--line); padding: 0.4rem 0.8rem;">
+        <span id="themeLabel">Off</span>
+      </button>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--line);">
+      <span>Language</span>
+      <select style="background: var(--bg); border: 1px solid var(--line); padding: 0.4rem 0.6rem; border-radius: var(--r-sm); color: var(--ink);">
+        <option>Bahasa Indonesia</option>
+        <option>English</option>
+      </select>
+    </div>
+
+    <h3 class="section-title">Support</h3>
+
+    <div class="card" style="padding: 0;">
+      <button class="btn btn-secondary btn-block" style="border-radius: var(--r-lg);">
+        <i class="ph ph-question"></i> Help & FAQ
+      </button>
+    </div>
+
+    <div class="card" style="padding: 0;">
+      <button class="btn btn-secondary btn-block" style="border-radius: var(--r-lg);">
+        <i class="ph ph-info"></i> About ALCURA
+      </button>
+    </div>
+
+    <h3 class="section-title">Danger Zone</h3>
+
+    <button class="btn" style="background: #ff3b30; color: #fff; width: 100%; margin-bottom: 1rem;">
+      <i class="ph ph-sign-out"></i> Logout
+    </button>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchScreen('dashboard'); setNav(0)">
+      <i class="ph-fill ph-house"></i>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('air'); setNav(1)">
+      <i class="ph ph-wind"></i>
+      <span>Air</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('culture'); setNav(2)">
+      <i class="ph ph-plant"></i>
+      <span>Culture</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('alerts'); setNav(3)">
+      <i class="ph ph-bell"></i>
+      <span>Alerts</span>
+    </div>
+    <div class="nav-item" onclick="switchScreen('settings'); setNav(4)">
+      <i class="ph ph-gear"></i>
+      <span>More</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentSlide = 0;
+let currentScreen = 'onboarding';
+
+function switchScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+  currentScreen = screenId;
+
+  if (screenId === 'onboarding') {
+    document.querySelector('.app-header').style.display = 'none';
+    document.querySelector('.bottom-nav').style.display = 'none';
+  } else if (screenId === 'login' || screenId === 'register') {
+    document.querySelector('.app-header').style.display = 'none';
+    document.querySelector('.bottom-nav').style.display = 'none';
+  } else {
+    document.querySelector('.app-header').style.display = 'flex';
+    document.querySelector('.bottom-nav').style.display = 'flex';
+  }
+}
+
+function setNav(index) {
+  document.querySelectorAll('.nav-item').forEach((item, i) => {
+    item.classList.toggle('active', i === index);
+  });
+}
+
+function nextSlide() {
+  if (currentSlide < 2) {
+    currentSlide++;
+    goSlide(currentSlide);
+  } else {
+    switchScreen('login');
+  }
+}
+
+function goSlide(idx) {
+  currentSlide = idx;
+  const carousel = document.getElementById('carousel');
+  carousel.style.transform = `translateX(-${idx * 100}%)`;
+
+  document.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === idx);
+  });
+
+  const btn = document.getElementById('slideBtn');
+  btn.textContent = idx === 2 ? 'Mulai' : 'Selanjutnya';
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const newTheme = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+
+  const label = document.getElementById('themeLabel');
+  if (label) label.textContent = newTheme === 'dark' ? 'On' : 'Off';
+}
+
+function togglePw(id) {
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+}
+
+// Apply saved theme on load
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+if (savedTheme === 'dark' && document.getElementById('themeLabel')) {
+  document.getElementById('themeLabel').textContent = 'On';
+}
+</script>
+</body>
+</html>

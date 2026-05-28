@@ -1,0 +1,380 @@
+/*
+  ALCURA Desktop CSS
+  Desktop-specific layout optimizations for viewports > 480px
+*/
+
+@media (min-width: 481px) {
+  /* CONTAINER LAYOUT */
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 0;
+  }
+
+  /* HEADER - Desktop */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .app-header h1,
+  .app-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .hi {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .hi span {
+    font-size: 0.85rem;
+    color: var(--ink-mute);
+  }
+
+  .hi h2 {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .header-right {
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-full);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+  }
+
+  .icon-btn:hover {
+    background: var(--line);
+  }
+
+  .icon-btn:active {
+    background: var(--line);
+  }
+
+  /* SCROLL AREA - Desktop */
+  .app-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .app-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .app-scroll::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: var(--r-full);
+  }
+
+  /* HERO CARD - Desktop */
+  .hero-card {
+    margin: 0 0 2rem 0;
+    padding: 2rem;
+    border-radius: var(--r-lg);
+    background: linear-gradient(150deg, var(--forest-700) 0%, var(--leaf-500) 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(35, 79, 55, 0.25);
+  }
+
+  .hero-tags {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--r-full);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .gauge-wrap {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+
+  .gauge {
+    width: 90px;
+    height: 90px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .gauge svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .gauge-val {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #fff;
+  }
+
+  .gauge-label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 0.3rem;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .meta-item i {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+
+  .meta-item b {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .meta-item small {
+    opacity: 0.85;
+    display: block;
+    font-size: 0.8rem;
+  }
+
+  /* CARD - Desktop */
+  .card {
+    margin: 0 0 1.5rem 0;
+    padding: 1.5rem;
+  }
+
+  .card h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card h4 {
+    font-size: 0.95rem;
+  }
+
+  /* METRIC GRID - Desktop */
+  .metric-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .metric {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .metric i {
+    font-size: 1.4rem;
+  }
+
+  .metric b {
+    font-size: 1.3rem;
+  }
+
+  .metric-scroll {
+    margin: 1rem 0;
+    padding: 0;
+  }
+
+  .metric-item {
+    flex: 0 0 calc(25% - 0.45rem);
+  }
+
+  /* BUTTON - Desktop */
+  .btn {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-group {
+    margin: 1rem 0;
+  }
+
+  /* INPUT - Desktop */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin: 0.6rem 0;
+  }
+
+  /* ALERT - Desktop */
+  .alert {
+    padding: 1rem;
+    margin: 0.8rem 0;
+  }
+
+  .alert i {
+    font-size: 1.1rem;
+  }
+
+  .alert-content h4 {
+    font-size: 0.9rem;
+  }
+
+  .alert-content small {
+    font-size: 0.8rem;
+  }
+
+  /* TABS - Desktop */
+  .tabs {
+    margin: 1rem 0;
+  }
+
+  .tab {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+    border-bottom-width: 4px;
+  }
+
+  /* SECTION TITLE - Desktop */
+  .section-title {
+    font-size: 0.9rem;
+    margin: 2rem 0 1rem 0;
+  }
+
+  /* CHART MOCK - Desktop */
+  .chart-mock {
+    height: 200px;
+    padding: 1rem;
+  }
+
+  /* CAROUSEL - Desktop (hide on desktop, show on mobile) */
+  .carousel {
+    display: none;
+  }
+
+  .carousel-dots {
+    display: none;
+  }
+
+  /* BOTTOM NAV - Hide on desktop */
+  .bottom-nav {
+    display: none;
+  }
+
+  /* Remove mobile padding */
+  .app-scroll {
+    padding: 2rem;
+  }
+
+  /* SLIDER - Desktop */
+  .slider-group {
+    margin: 1.5rem 0;
+  }
+
+  .slider-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .slider-group input[type="range"] {
+    height: 8px;
+  }
+
+  /* SPECTRUM GRID - Desktop */
+  .spectrum-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+  }
+
+  .spectrum-item label {
+    font-size: 0.75rem;
+  }
+
+  .spectrum-swatch {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* UTILITIES - Desktop */
+  .big-number {
+    margin: 2rem 0;
+  }
+
+  .big-number .value {
+    font-size: 2.5rem;
+  }
+
+  .big-number .label {
+    font-size: 0.95rem;
+  }
+
+  /* Remove responsive scroll snap on desktop */
+  .metric-scroll {
+    scroll-snap-type: none;
+  }
+
+  .metric-item {
+    scroll-snap-align: none;
+  }
+}

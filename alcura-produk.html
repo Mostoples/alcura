@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALCURA 3D — Indoor Configurator</title>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+<style>
+:root{
+  --font-display:'Bricolage Grotesque',sans-serif;
+  --font-mono:'Space Grotesk',sans-serif;
+  --font-body:'Geist','Space Grotesk',system-ui,sans-serif;
+  --forest-700:#234f37;--leaf-500:#3f9d63;--leaf-400:#56b97c;--spirulina:#34c476;--mint-300:#9fe0b5;
+  --gold:#d4a544;
+  --bg:#0a0f0c;--surface:rgba(20,32,25,.74);--ink:#e8f3ec;--ink-soft:#a7c2b2;--ink-mute:#6f8a7b;--line:rgba(86,185,124,.16);
+  --r-md:18px;--r-lg:26px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;height:100vh}
+i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
+#app{position:relative;width:100vw;height:100vh}
+#scene{position:absolute;inset:0;z-index:1}
+canvas{display:block}
+
+.topbar{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.6rem;pointer-events:none}
+.brand{display:flex;align-items:center;gap:.6rem;font-family:var(--font-display);font-weight:700;font-size:1.3rem;letter-spacing:-.03em;pointer-events:auto}
+.brand .mark{width:36px;height:36px;border-radius:12px;background:linear-gradient(145deg,var(--leaf-400),var(--forest-700));display:grid;place-items:center;color:#fff;font-size:1.1rem;box-shadow:0 6px 16px rgba(47,107,73,.45)}
+.brand small{display:block;font-family:var(--font-mono);font-weight:500;font-size:.62rem;color:var(--ink-mute);letter-spacing:.08em;margin-top:1px}
+.top-tag{pointer-events:auto;font-family:var(--font-mono);font-size:.72rem;font-weight:600;color:var(--ink-soft);background:var(--surface);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:100px;padding:.5rem 1rem;display:flex;align-items:center;gap:.5rem}
+.top-tag .blink{width:7px;height:7px;border-radius:50%;background:var(--spirulina);animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+.panel{position:absolute;top:50%;right:1.6rem;transform:translateY(-50%);z-index:10;width:336px;max-height:88vh;overflow-y:auto;background:var(--surface);backdrop-filter:blur(22px);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.4rem;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.panel::-webkit-scrollbar{width:5px}.panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+.panel h2{font-family:var(--font-display);font-weight:700;font-size:1.25rem;letter-spacing:-.02em;margin-bottom:.2rem}
+.panel .desc{font-size:.8rem;color:var(--ink-mute);margin-bottom:1.2rem;line-height:1.45}
+.group{margin-bottom:1.25rem}
+.group .lbl{font-family:var(--font-mono);font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.55rem;display:flex;align-items:center;gap:.4rem}
+.opt-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.45rem}
+.opt-row.two{grid-template-columns:1fr 1fr}
+.opt{background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:13px;padding:.6rem .4rem;cursor:pointer;transition:.2s;text-align:center}
+.opt:hover{background:rgba(86,185,124,.08)}
+.opt.active{border-color:var(--leaf-400);background:rgba(86,185,124,.12)}
+.opt i{font-size:1.3rem;display:block;margin-bottom:.25rem;color:var(--mint-300)}
+.opt .ot{font-weight:600;font-size:.78rem}
+.opt .os{font-family:var(--font-mono);font-size:.62rem;color:var(--ink-mute);margin-top:.1rem}
+.opt-mini{padding:.55rem .3rem}.opt-mini .ot{font-size:.74rem}
+
+.swatch-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.swatch{width:36px;height:36px;border-radius:10px;cursor:pointer;border:2.5px solid transparent;transition:.2s}
+.swatch:hover{transform:scale(1.08)}
+.swatch.active{border-color:#fff;box-shadow:0 0 0 2px var(--leaf-400)}
+
+.slider-wrap{display:flex;align-items:center;gap:.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:5px;border-radius:10px;background:linear-gradient(90deg,var(--leaf-500),var(--mint-300));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);border:3px solid var(--leaf-500)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;border:3px solid var(--leaf-500)}
+.slider-val{font-family:var(--font-mono);font-weight:600;font-size:.82rem;min-width:54px;text-align:right;color:var(--mint-300)}
+
+.toggle-row{display:flex;gap:.45rem}
+.tg{flex:1;background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:11px;padding:.55rem;cursor:pointer;transition:.2s;text-align:center;font-size:.74rem;font-weight:600}
+.tg.active{border-color:var(--leaf-400);background:rgba(86,185,124,.12);color:var(--mint-300)}
+
+.cta-row{display:flex;gap:.6rem;margin-top:.4rem}
+.btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;font-weight:600;font-size:.85rem;border-radius:100px;padding:.75rem;cursor:pointer;border:none;transition:.2s;font-family:var(--font-body);color:inherit}
+.btn-primary{background:var(--leaf-500);color:#06210f}.btn-primary:hover{background:var(--leaf-400)}
+.btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink)}.btn-ghost:hover{background:rgba(255,255,255,.08)}
+
+.hint{position:absolute;bottom:1.4rem;left:1.6rem;z-index:10;font-family:var(--font-mono);font-size:.72rem;color:var(--ink-mute);display:flex;align-items:center;gap:.5rem;background:var(--surface);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:100px;padding:.5rem 1rem}
+.legend{position:absolute;top:5.4rem;left:1.6rem;z-index:10;background:var(--surface);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:16px;padding:.9rem 1rem;min-width:170px}
+.legend .lg-title{font-family:var(--font-mono);font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--ink-mute);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.legend .lg-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.22rem 0}
+.legend .lg-k{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--ink-soft)}
+.legend .lg-k b{width:9px;height:9px;border-radius:3px;display:inline-block}
+.legend .lg-v{font-family:var(--font-display);font-weight:700;font-size:.92rem;color:var(--ink)}
+.legend .lg-foot{border-top:1px solid var(--line);margin-top:.35rem;padding-top:.45rem}
+.legend .lg-foot .lg-v{color:var(--mint-300)}
+.specs{position:absolute;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:0;background:var(--surface);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.specs .s{padding:.65rem 1rem;text-align:center;border-right:1px solid var(--line)}
+.specs .s:last-child{border-right:none}
+.specs .s b{font-family:var(--font-display);font-weight:700;font-size:1rem;display:block;color:var(--mint-300)}
+.specs .s span{font-family:var(--font-mono);font-size:.6rem;color:var(--ink-mute);letter-spacing:.04em}
+
+#loader{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:var(--bg);transition:opacity .6s;pointer-events:none}
+#loader.hide{opacity:0}
+#loader .spin{width:48px;height:48px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--leaf-400);animation:spin 1s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{font-family:var(--font-mono);font-size:.8rem;color:var(--ink-mute);text-align:center}
+
+@media(max-width:780px){
+  .panel{right:0;left:0;bottom:0;top:auto;transform:none;width:100%;max-height:54vh;border-radius:24px 24px 0 0}
+  .specs,.hint,.legend{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="scene"></div>
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:1.5rem;">
+      <a href="index.html" style="display:flex;align-items:center;gap:0.5rem;color:var(--ink);text-decoration:none;font-size:0.9rem;font-weight:600;pointer-events:auto;transition:0.2s;">
+        <i class="ph ph-arrow-left"></i> Kembali
+      </a>
+      <div class="brand"><span class="mark"><i class="ph-fill ph-leaf"></i></span><div>ALCURA<small>INDOOR 3D CONFIGURATOR</small></div></div>
+    </div>
+    <div class="top-tag"><span class="blink"></span> KAWUNG × SHOJI</div>
+  </div>
+
+  <div class="panel">
+    <h2>Konfigurator</h2>
+    <p class="desc">Atur bentuk, tinggi, motif & cahaya. Lihat simulasi di ruangan indoor — siang, sore, atau malam.</p>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-cube"></i> Bentuk Unit</div>
+      <div class="opt-row" id="shapeOpts"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-arrows-vertical"></i> Tinggi Unit · <span id="hTxt">36 cm</span></div>
+      <div class="slider-wrap"><input type="range" id="hSlider" min="20" max="70" value="36"><span class="slider-val" id="hVal">36 cm</span></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-squares-four"></i> Motif Selubung</div>
+      <div class="opt-row two" id="motifOpts"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-paint-brush"></i> Warna Kultur</div>
+      <div class="swatch-row" id="cultSwatches"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-frame-corners"></i> Aksen Bingkai</div>
+      <div class="swatch-row" id="trimSwatches"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-lightbulb-filament"></i> Intensitas LED · <span id="ledTxt">72%</span></div>
+      <div class="slider-wrap"><input type="range" id="ledSlider" min="10" max="100" value="72"><span class="slider-val" id="ledVal">72%</span></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-sun-horizon"></i> Suasana Ruangan</div>
+      <div class="toggle-row" id="ambToggle">
+        <div class="tg" data-amb="day">Siang</div>
+        <div class="tg active" data-amb="dusk">Sore</div>
+        <div class="tg" data-amb="night">Malam</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="lbl"><i class="ph ph-wind"></i> Aerasi</div>
+      <div class="toggle-row" id="aerToggle">
+        <div class="tg active" data-aer="1">Aktif</div>
+        <div class="tg" data-aer="0">Mati</div>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn btn-ghost" id="spinBtn"><i class="ph ph-arrows-clockwise"></i> Auto-spin</button>
+      <button class="btn btn-primary" id="shotBtn"><i class="ph ph-camera"></i> Simpan PNG</button>
+    </div>
+  </div>
+
+  <div class="hint"><i class="ph ph-hand-pointing"></i> Drag putar · Scroll zoom</div>
+
+  <div class="legend" id="legend">
+    <div class="lg-title"><i class="ph ph-ruler"></i> DIMENSI UNIT</div>
+    <div class="lg-row"><span class="lg-k"><b style="background:#56b97c"></b> Panjang</span><span class="lg-v" id="dimL">20 cm</span></div>
+    <div class="lg-row"><span class="lg-k"><b style="background:#4d8ff0"></b> Lebar</span><span class="lg-v" id="dimW">20 cm</span></div>
+    <div class="lg-row"><span class="lg-k"><b style="background:#e8a13c"></b> Tinggi</span><span class="lg-v" id="dimH">36 cm</span></div>
+    <div class="lg-row lg-foot"><span class="lg-k">Volume air</span><span class="lg-v" id="dimVol">5.2 L</span></div>
+  </div>
+
+  <div class="specs">
+    <div class="s"><b id="spShape">Silinder</b><span>BENTUK</span></div>
+    <div class="s"><b id="spH">36cm</b><span>TINGGI</span></div>
+    <div class="s"><b id="spVol">5.2L</b><span>VOLUME</span></div>
+    <div class="s"><b id="spLED">72%</b><span>LED PAR</span></div>
+  </div>
+
+  <div id="loader"><div><div class="spin"></div><p>Menata ruangan & menumbuhkan kultur…</p></div></div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const state={
+  shape:'cylinder', height:36, motif:'kawung', cult:0x2e9c5b, trim:0xd4a544,
+  led:0.72, amb:'dusk', aeration:true, autospin:true,
+};
+
+/* ============================================================
+   PROCEDURAL BATIK (Kawung) × SHOJI TEXTURE
+   ============================================================ */
+function makePatternCanvas(motif,size=1024){
+  const c=document.createElement('canvas');c.width=c.height=size;
+  const x=c.getContext('2d');
+  x.fillStyle='#ffffff';x.fillRect(0,0,size,size);
+  const cell=(cx,cy,r,fn)=>{x.save();x.translate(cx,cy);fn(r);x.restore();};
+  const drawShoji=(lw,div)=>{x.strokeStyle='#ffffff';x.lineWidth=size*lw;const step=size/div;for(let i=0;i<=div;i++){x.beginPath();x.moveTo(i*step,0);x.lineTo(i*step,size);x.stroke();x.beginPath();x.moveTo(0,i*step);x.lineTo(size,i*step);x.stroke();}};
+
+  if(motif==='kawung'){
+    const div=4,step=size/div,r=step*0.30;
+    for(let gy=0;gy<div;gy++)for(let gx=0;gx<div;gx++){
+      const cx=gx*step+step/2,cy=gy*step+step/2;
+      const offs=[[-r*0.9,0],[r*0.9,0],[0,-r*0.9],[0,r*0.9]];
+      x.fillStyle='#000';offs.forEach(([ox,oy])=>cell(cx+ox,cy+oy,r,rr=>{x.beginPath();x.ellipse(0,0,rr*0.7,rr,0,0,Math.PI*2);x.fill();}));
+      x.fillStyle='#fff';x.beginPath();x.arc(cx,cy,r*0.18,0,Math.PI*2);x.fill();
+    }
+    drawShoji(0.012,6);
+  } else if(motif==='kawung-fine'){
+    const div=7,step=size/div,r=step*0.30;
+    for(let gy=0;gy<div;gy++)for(let gx=0;gx<div;gx++){
+      const cx=gx*step+step/2,cy=gy*step+step/2;
+      const offs=[[-r*0.85,0],[r*0.85,0],[0,-r*0.85],[0,r*0.85]];
+      x.fillStyle='#000';offs.forEach(([ox,oy])=>cell(cx+ox,cy+oy,r,rr=>{x.beginPath();x.ellipse(0,0,rr*0.65,rr,0,0,Math.PI*2);x.fill();}));
+    }
+    drawShoji(0.008,10);
+  } else if(motif==='shoji'){
+    x.fillStyle='#000';x.fillRect(0,0,size,size);
+    const div=5,step=size/div;x.strokeStyle='#fff';x.lineWidth=size*0.03;
+    for(let i=0;i<=div;i++){x.beginPath();x.moveTo(i*step,0);x.lineTo(i*step,size);x.stroke();x.beginPath();x.moveTo(0,i*step);x.lineTo(size,i*step);x.stroke();}
+    x.lineWidth=size*0.012;
+    for(let gy=0;gy<div;gy++)for(let gx=0;gx<div;gx++){const x0=gx*step,y0=gy*step;x.beginPath();x.moveTo(x0,y0);x.lineTo(x0+step,y0+step);x.moveTo(x0+step,y0);x.lineTo(x0,y0+step);x.stroke();}
+  } else if(motif==='seigaiha'){
+    x.fillStyle='#000';x.fillRect(0,0,size,size);
+    const rows=7,rstep=size/rows,R=rstep*0.95;x.lineWidth=size*0.010;x.strokeStyle='#fff';
+    for(let row=0;row<rows+1;row++){const cy=row*rstep,off=(row%2)?R:0;for(let cx=-R;cx<size+R;cx+=R*2){for(let k=1;k<=3;k++){x.beginPath();x.arc(cx+off,cy,R*(k/3),Math.PI,0);x.stroke();}}}
+  }
+  return c;
+}
+function tex(motif,rx,ry){
+  const t=new THREE.CanvasTexture(makePatternCanvas(motif));
+  t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.anisotropy=8;t.colorSpace=THREE.SRGBColorSpace;return t;
+}
+
+/* ============================================================
+   RENDERER / SCENE / CAMERA
+   ============================================================ */
+const mount=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+mount.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,200);
+camera.position.set(3.6,2.4,7.2);
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.08;
+controls.minDistance=4;controls.maxDistance=16;controls.target.set(0,1.4,0);
+controls.autoRotate=true;controls.autoRotateSpeed=0.8;
+controls.maxPolarAngle=Math.PI*0.52;
+
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+
+/* ============================================================
+   INDOOR ROOM ENVIRONMENT
+   ============================================================ */
+const room=new THREE.Group();scene.add(room);
+const FLOOR_Y=0;
+
+// floor (wood)
+const floorMat=new THREE.MeshStandardMaterial({color:0x6b5036,roughness:0.75,metalness:0.05});
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(40,40),floorMat);
+floor.rotation.x=-Math.PI/2;floor.position.y=FLOOR_Y;floor.receiveShadow=true;room.add(floor);
+// subtle plank lines via canvas
+(function(){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');
+  g.fillStyle='#6b5036';g.fillRect(0,0,512,512);g.strokeStyle='rgba(0,0,0,.18)';g.lineWidth=3;
+  for(let i=0;i<8;i++){g.beginPath();g.moveTo(0,i*64);g.lineTo(512,i*64);g.stroke();}
+  for(let i=0;i<6;i++){g.beginPath();g.moveTo(i*90+((i%2)?45:0),0);g.lineTo(i*90+((i%2)?45:0),512);g.stroke();}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(8,8);t.colorSpace=THREE.SRGBColorSpace;floorMat.map=t;floorMat.needsUpdate=true;
+})();
+
+// back wall + left wall
+const wallMat=new THREE.MeshStandardMaterial({color:0xe8e2d6,roughness:0.95});
+const backWall=new THREE.Mesh(new THREE.PlaneGeometry(40,18),wallMat);
+backWall.position.set(0,9,-8);backWall.receiveShadow=true;room.add(backWall);
+const leftWall=new THREE.Mesh(new THREE.PlaneGeometry(40,18),wallMat.clone());
+leftWall.material.color.set(0xddd6c8);leftWall.rotation.y=Math.PI/2;leftWall.position.set(-10,9,0);leftWall.receiveShadow=true;room.add(leftWall);
+
+// window on back wall (frame + glow pane)
+const winGroup=new THREE.Group();winGroup.position.set(5,4.5,-7.9);room.add(winGroup);
+const winFrameMat=new THREE.MeshStandardMaterial({color:0x2a2a2a,roughness:0.5,metalness:0.3});
+const winPaneMat=new THREE.MeshStandardMaterial({color:0xbfe0ff,emissive:0x9fc7ee,emissiveIntensity:1.1,roughness:0.2});
+const pane=new THREE.Mesh(new THREE.PlaneGeometry(4.6,5.4),winPaneMat);winGroup.add(pane);
+// mullions
+const barMat=winFrameMat;
+[[-1.55,0,0.1,5.6],[1.55,0,0.1,5.6],[0,0,0.1,5.6]].forEach(([px,py,w,h])=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,0.12),barMat);b.position.set(px,py,0.05);winGroup.add(b);});
+[[0,-1.9,4.8,0.12],[0,0,4.8,0.12],[0,1.9,4.8,0.12]].forEach(([px,py,w,h])=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,0.12),barMat);b.position.set(px,py,0.05);winGroup.add(b);});
+const winOuter=new THREE.Mesh(new THREE.BoxGeometry(5.2,6,0.25),winFrameMat);winOuter.position.z=-0.05;winGroup.add(winOuter);
+
+// console table the lamp sits on — wide & substantial
+const tableMat=new THREE.MeshStandardMaterial({color:0x3a2c1d,roughness:0.45,metalness:0.1});
+const tableTop=new THREE.Mesh(new THREE.BoxGeometry(7.2,0.32,3.4),tableMat);
+tableTop.position.set(0,1.0,0);tableTop.castShadow=true;tableTop.receiveShadow=true;room.add(tableTop);
+// subtle apron under the top for depth
+const apron=new THREE.Mesh(new THREE.BoxGeometry(6.9,0.3,3.1),new THREE.MeshStandardMaterial({color:0x2e2217,roughness:0.5}));
+apron.position.set(0,0.78,0);apron.castShadow=true;room.add(apron);
+const legMat=new THREE.MeshStandardMaterial({color:0x2a2018,roughness:0.5,metalness:0.2});
+[[-3.3,-1.4],[3.3,-1.4],[-3.3,1.4],[3.3,1.4]].forEach(([lx,lz])=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.11,0.84,18),legMat);l.position.set(lx,0.5,lz);l.castShadow=true;room.add(l);});
+
+// decorative potted plant (companion) — simple
+const potMat=new THREE.MeshStandardMaterial({color:0x9c5b3b,roughness:0.7});
+const pot=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.28,0.6,20),potMat);pot.position.set(-2.7,1.46,-0.1);pot.castShadow=true;room.add(pot);
+const folMat=new THREE.MeshStandardMaterial({color:0x2f7d46,roughness:0.6});
+for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.SphereGeometry(0.28,12,12),folMat);leaf.position.set(-2.7+Math.cos(i)*0.22,1.99+i*0.12,-0.1+Math.sin(i)*0.22);leaf.scale.set(1,1.5,1);leaf.castShadow=true;room.add(leaf);}
+
+// framed art on wall
+const artMat=new THREE.MeshStandardMaterial({color:0x1b3a5c,roughness:0.6});
+const art=new THREE.Mesh(new THREE.BoxGeometry(2.2,3,0.1),artMat);art.position.set(-4.5,7,-7.85);room.add(art);
+const artFrame=new THREE.Mesh(new THREE.BoxGeometry(2.5,3.3,0.06),new THREE.MeshStandardMaterial({color:0xd4a544,metalness:0.8,roughness:0.3}));artFrame.position.set(-4.5,7,-7.9);room.add(artFrame);
+
+/* ============================================================
+   THE LAMP (rebuildable group)
+   ============================================================ */
+let lamp=new THREE.Group();scene.add(lamp);
+let patternTex=tex(state.motif,2,3);
+let bubGeo,bubbles,BUBBLES=120,bSpeed=[],bExtent={r:0.9,h:1.6};
+let ledLight, ledRingMat, cultMat, shellMat, glassMat, swirl;
+let spillLight, meniscusMat, glowSprite, lampFoot={x:1,z:1,round:false}, lampWH=1, lampH=1, waterlineMat;
+let curH=1; // world height of culture column
+
+function disposeGroup(g){g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{for(const k in m){if(m[k]&&m[k].isTexture)m[k].dispose();}m.dispose();});}});}
+
+function buildLamp(){
+  scene.remove(lamp);disposeGroup(lamp);
+  lamp=new THREE.Group();scene.add(lamp);
+
+  // height in world units (20-70cm -> 1.2 .. 4.2)
+  const H=1.2+((state.height-20)/50)*3.0;
+  curH=H;
+  const TABLE_TOP_Y=1.16;          // top surface of the (thicker) table
+  const baseY=TABLE_TOP_Y;
+  const cy=baseY+H/2+0.3;
+
+  patternTex.dispose();
+  const isBox=(state.shape!=='cylinder');
+  patternTex=tex(state.motif, isBox?2:2, Math.max(2,Math.round(H*1.1)));
+
+  // LED core light (inside, drives glow) + spill light that lights the room
+  ledLight=new THREE.PointLight(new THREE.Color(state.cult).lerp(new THREE.Color(0x7dffae),0.45),2.5,16,1.7);
+  ledLight.position.set(0,cy,0);ledLight.castShadow=true;ledLight.shadow.mapSize.set(1024,1024);ledLight.shadow.bias=-0.0005;lamp.add(ledLight);
+  // spill light: warm-green glow cast OUTWARD onto table/walls (no shadow, wide range)
+  spillLight=new THREE.PointLight(new THREE.Color(state.cult).lerp(new THREE.Color(0x9fffc4),0.5),1.2,9,2.0);
+  spillLight.position.set(0,cy,0);lamp.add(spillLight);
+
+  const cultCol=new THREE.Color(state.cult);
+  // --- LIQUID MEDIUM (culture water): reads as a dense filled fluid, not clear glass ---
+  cultMat=new THREE.MeshPhysicalMaterial({
+    color:cultCol, roughness:0.28, transmission:0.45, thickness:2.4,
+    emissive:cultCol.clone().multiplyScalar(0.6), emissiveIntensity:0.55+state.led*1.4,
+    clearcoat:0.35, clearcoatRoughness:0.2, ior:1.34,
+    attenuationColor:cultCol.clone().multiplyScalar(0.35), attenuationDistance:0.55,
+    transparent:true, opacity:0.97, side:THREE.DoubleSide
+  });
+  // water SURFACE (meniscus) — bright reflective film at the top of the liquid
+  meniscusMat=new THREE.MeshPhysicalMaterial({color:cultCol.clone().lerp(new THREE.Color(0xffffff),0.35),roughness:0.05,transmission:0.2,emissive:cultCol.clone().multiplyScalar(0.85),emissiveIntensity:0.7+state.led,clearcoat:1,clearcoatRoughness:0.04,ior:1.34,metalness:0.1,transparent:true,opacity:0.95,side:THREE.DoubleSide});
+  // bright WATER-LINE rim material (a thin glowing ring exactly at the surface)
+  waterlineMat=new THREE.MeshBasicMaterial({color:cultCol.clone().lerp(new THREE.Color(0xffffff),0.55),transparent:true,opacity:0.9});
+  glassMat=new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:0.05,transmission:0.95,thickness:0.5,ior:1.5,clearcoat:1,clearcoatRoughness:0.04,transparent:true,side:THREE.DoubleSide,bumpMap:patternTex,bumpScale:0.05,envMapIntensity:1.4});
+  // perforated shell: emissive pattern GLOWS with culture colour (pattern of light through holes)
+  shellMat=new THREE.MeshPhysicalMaterial({color:0x16271c,metalness:0.2,roughness:0.55,alphaMap:patternTex,transparent:true,alphaTest:0.42,side:THREE.DoubleSide,emissive:cultCol.clone(),emissiveMap:patternTex,emissiveIntensity:0.6+state.led*1.6,envMapIntensity:0.8});
+
+  let cultGeo,glassGeo,shellGeo,swirlGeo,meniscusGeo;
+  const fill=0.92;                 // water fills 92% of tube -> visible air headspace
+  const WH=H*fill;                 // water column height
+  const waterTopY=()=>cy - H/2 + WH; // y of water surface (computed later with cy)
+  let foot={x:1,z:1,round:false};  // footprint for meniscus + legend
+  if(state.shape==='cylinder'){
+    const R=1.0;
+    cultGeo=new THREE.CylinderGeometry(R,R,WH,64,1,false);
+    glassGeo=new THREE.CylinderGeometry(R*1.22,R*1.22,H+0.2,96,1,true);
+    shellGeo=new THREE.CylinderGeometry(R*1.30,R*1.30,H+0.05,96,1,true);
+    swirlGeo=new THREE.CylinderGeometry(R*0.92,R*0.92,WH,64,1,true);
+    meniscusGeo=new THREE.CircleGeometry(R*0.99,64);
+    bExtent={r:R*0.85,h:WH/2};foot={x:R,z:R,round:true};
+  } else if(state.shape==='cube'){
+    const S=1.7;
+    cultGeo=new THREE.BoxGeometry(S,WH,S);
+    glassGeo=new THREE.BoxGeometry(S*1.18,H+0.18,S*1.18);
+    shellGeo=new THREE.BoxGeometry(S*1.26,H+0.04,S*1.26);
+    swirlGeo=new THREE.BoxGeometry(S*0.9,WH,S*0.9);
+    meniscusGeo=new THREE.PlaneGeometry(S*0.98,S*0.98);
+    bExtent={r:S*0.42,h:WH/2};foot={x:S/2,z:S/2,round:false};
+  } else { // balok
+    const W=1.3,D=1.3;
+    cultGeo=new THREE.BoxGeometry(W,WH,D);
+    glassGeo=new THREE.BoxGeometry(W*1.2,H+0.18,D*1.2);
+    shellGeo=new THREE.BoxGeometry(W*1.28,H+0.04,D*1.28);
+    swirlGeo=new THREE.BoxGeometry(W*0.9,WH,D*0.9);
+    meniscusGeo=new THREE.PlaneGeometry(W*0.98,D*0.98);
+    bExtent={r:W*0.42,h:WH/2};foot={x:W/2,z:D/2,round:false};
+  }
+  lampFoot=foot; lampWH=WH; lampH=H;
+
+  const cyWater=cy - H/2 + WH/2;   // center of water column (sits at bottom, headspace above)
+  const culture=new THREE.Mesh(cultGeo,cultMat);culture.position.y=cyWater;lamp.add(culture);
+  swirl=new THREE.Mesh(swirlGeo,new THREE.MeshBasicMaterial({color:cultCol.clone().lerp(new THREE.Color(0xffffff),0.2),transparent:true,opacity:0.22,side:THREE.DoubleSide}));swirl.position.y=cyWater;lamp.add(swirl);
+  // water SURFACE (meniscus) — flat disc/plane at the top of the liquid
+  const surfY=cy-H/2+WH;
+  const meniscus=new THREE.Mesh(meniscusGeo,meniscusMat);meniscus.rotation.x=-Math.PI/2;meniscus.position.y=surfY;lamp.add(meniscus);
+  // bright WATER-LINE ring exactly at the surface — makes the fill level read clearly
+  let wlGeo;
+  if(state.shape==='cylinder'){ wlGeo=new THREE.TorusGeometry(foot.x*0.995,0.025,12,80); }
+  else { wlGeo=new THREE.TorusGeometry(foot.x*1.38,0.022,8,4); } // square-ish ring for box/balok
+  const waterline=new THREE.Mesh(wlGeo,waterlineMat);waterline.rotation.x=Math.PI/2;
+  if(state.shape!=='cylinder')waterline.rotation.z=Math.PI/4;
+  waterline.position.y=surfY;lamp.add(waterline);
+  const glass=new THREE.Mesh(glassGeo,glassMat);glass.position.y=cy;lamp.add(glass);glass.castShadow=true;
+  const shell=new THREE.Mesh(shellGeo,shellMat);shell.position.y=cy;lamp.add(shell);
+  // GLOW HALO sprite — fake bloom so the unit reads as a light source
+  glowSprite=makeGlowSprite(cultCol);glowSprite.position.set(0,cyWater,0);glowSprite.scale.set(H*2.2,H*2.2,1);lamp.add(glowSprite);
+
+  // caps + trim rings/edges
+  const capMat=new THREE.MeshPhysicalMaterial({color:0x1d2823,metalness:0.7,roughness:0.4});
+  const trimMat=new THREE.MeshPhysicalMaterial({color:state.trim,metalness:1,roughness:0.28,clearcoat:0.6});
+
+  if(state.shape==='cylinder'){
+    const R=1.0;
+    const capTop=new THREE.Mesh(new THREE.CylinderGeometry(R*1.14,R*1.30,0.4,96),capMat);capTop.position.y=cy+H/2+0.18;lamp.add(capTop);
+    const capBot=new THREE.Mesh(new THREE.CylinderGeometry(R*1.32,R*1.22,0.36,96),capMat);capBot.position.y=cy-H/2-0.16;lamp.add(capBot);
+    [cy+H/2,cy-H/2].forEach(ry=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(R*1.31,0.07,20,120),trimMat);ring.rotation.x=Math.PI/2;ring.position.y=ry;lamp.add(ring);});
+    const ledRing=new THREE.Mesh(new THREE.TorusGeometry(R*0.85,0.05,16,80),ledRingMatMake());ledRing.rotation.x=Math.PI/2;ledRing.position.y=cy+H/2+0.34;lamp.add(ledRing);
+  } else {
+    // box/balok: top & bottom plates + edge trim frames
+    const dims=(state.shape==='cube')?{w:1.7*1.30,d:1.7*1.30}:{w:1.3*1.28,d:1.3*1.28};
+    const capTop=new THREE.Mesh(new THREE.BoxGeometry(dims.w,0.34,dims.d),capMat);capTop.position.y=cy+H/2+0.16;lamp.add(capTop);
+    const capBot=new THREE.Mesh(new THREE.BoxGeometry(dims.w+0.06,0.32,dims.d+0.06),capMat);capBot.position.y=cy-H/2-0.15;lamp.add(capBot);
+    // vertical edge trims (4 corners)
+    const ex=dims.w/2, ez=dims.d/2;
+    [[ex,ez],[ex,-ez],[-ex,ez],[-ex,-ez]].forEach(([px,pz])=>{const edge=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,H+0.3,12),trimMat);edge.position.set(px,cy,pz);lamp.add(edge);});
+    const ledBar=new THREE.Mesh(new THREE.BoxGeometry(dims.w*0.7,0.08,dims.d*0.7),ledRingMatMake());ledBar.position.y=cy+H/2+0.3;lamp.add(ledBar);
+  }
+
+  // base stand on table
+  const baseMat=new THREE.MeshStandardMaterial({color:0x101a13,metalness:0.5,roughness:0.6});
+  const baseGeo=(state.shape==='cylinder')?new THREE.CylinderGeometry(1.4,1.55,0.26,96):new THREE.BoxGeometry((state.shape==='cube'?2.3:1.85),0.26,(state.shape==='cube'?2.3:1.85));
+  const base=new THREE.Mesh(baseGeo,baseMat);base.position.y=cy-H/2-0.34;base.castShadow=true;base.receiveShadow=true;lamp.add(base);
+
+  // bubbles — rise within the WATER column only, reset at the surface
+  BUBBLES=Math.round(80+H*30);
+  bubGeo=new THREE.BufferGeometry();
+  const bp=new Float32Array(BUBBLES*3);bSpeed=new Float32Array(BUBBLES);
+  const waterBot=cy-H/2, waterTop=cy-H/2+lampWH;
+  for(let i=0;i<BUBBLES;i++){const a=Math.random()*Math.PI*2,rr=Math.random()*bExtent.r;bp[i*3]=Math.cos(a)*rr;bp[i*3+1]=waterBot+Math.random()*lampWH;bp[i*3+2]=Math.sin(a)*rr;bSpeed[i]=0.006+Math.random()*0.014;}
+  bubGeo.setAttribute('position',new THREE.BufferAttribute(bp,3));
+  bubGeo.userData={waterBot,waterTop};
+  bubbles=new THREE.Points(bubGeo,new THREE.PointsMaterial({color:0xd7f5e3,size:0.055,transparent:true,opacity:0.7,sizeAttenuation:true,depthWrite:false}));
+  bubbles.position.y=0;lamp.add(bubbles);
+
+  applyLED();applyAmbientToLamp();applyAeration();
+  // spec readout
+  updateSpecs();
+}
+function ledRingMatMake(){ledRingMat=new THREE.MeshStandardMaterial({color:0x7dffae,emissive:0x7dffae,emissiveIntensity:0.5+state.led*2.5});return ledRingMat;}
+function makeGlowSprite(col){
+  const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
+  const grad=g.createRadialGradient(128,128,0,128,128,128);
+  const r=Math.round(col.r*255),gg=Math.round(col.g*255),b=Math.round(col.b*255);
+  grad.addColorStop(0,'rgba(190,255,215,0.6)');
+  grad.addColorStop(0.28,'rgba('+r+','+gg+','+b+',0.42)');
+  grad.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=grad;g.fillRect(0,0,256,256);
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+  const m=new THREE.SpriteMaterial({map:t,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:0.6});
+  return new THREE.Sprite(m);
+}
+
+/* ============================================================
+   AMBIENT (room lighting moods)
+   ============================================================ */
+const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.castShadow=true;sun.position.set(8,12,2);
+sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.near=1;sun.shadow.camera.far=40;
+sun.shadow.camera.left=-12;sun.shadow.camera.right=12;sun.shadow.camera.top=12;sun.shadow.camera.bottom=-12;scene.add(sun);
+const ambLight=new THREE.AmbientLight(0xffffff,0.5);scene.add(ambLight);
+const fillLight=new THREE.HemisphereLight(0xbfd8ff,0x4a3a28,0.6);scene.add(fillLight);
+
+function applyAmbient(){
+  if(state.amb==='day'){
+    scene.background=new THREE.Color(0xcfe3f0);
+    sun.color.set(0xfff4e0);sun.intensity=1.8;sun.position.set(8,13,4);
+    ambLight.intensity=0.7;fillLight.intensity=0.7;
+    winPaneMat.emissive.set(0xeaf6ff);winPaneMat.emissiveIntensity=1.6;
+    renderer.toneMappingExposure=1.1;
+  } else if(state.amb==='dusk'){
+    scene.background=new THREE.Color(0x3b3550);
+    sun.color.set(0xff9d6b);sun.intensity=1.1;sun.position.set(10,6,3);
+    ambLight.intensity=0.35;fillLight.intensity=0.4;
+    winPaneMat.emissive.set(0xff9e63);winPaneMat.emissiveIntensity=1.3;
+    renderer.toneMappingExposure=1.05;
+  } else { // night
+    scene.background=new THREE.Color(0x0c1018);
+    sun.color.set(0x6f86c4);sun.intensity=0.35;sun.position.set(6,10,2);
+    ambLight.intensity=0.12;fillLight.intensity=0.15;
+    winPaneMat.emissive.set(0x2a3a66);winPaneMat.emissiveIntensity=0.7;
+    renderer.toneMappingExposure=1.0;
+  }
+  applyAmbientToLamp();
+}
+function applyAmbientToLamp(){
+  // in darker rooms, the lamp glow dominates more
+  const boost=(state.amb==='night')?1.7:(state.amb==='dusk')?1.25:0.85;
+  if(ledLight)ledLight.intensity=(0.4+state.led*3.2)*boost;
+  if(spillLight)spillLight.intensity=(0.3+state.led*2.4)*boost;          // light cast on furniture
+  if(glowSprite)glowSprite.material.opacity=(0.25+state.led*0.55)*((state.amb==='night')?1.25:(state.amb==='dusk')?1.0:0.7);
+}
+
+/* ============================================================
+   APPLIERS
+   ============================================================ */
+function applyLED(){
+  if(!ledLight)return;
+  applyAmbientToLamp();
+  if(ledRingMat)ledRingMat.emissiveIntensity=0.5+state.led*2.5;
+  if(cultMat)cultMat.emissiveIntensity=0.5+state.led*1.4;
+  if(meniscusMat)meniscusMat.emissiveIntensity=0.6+state.led;
+  if(shellMat)shellMat.emissiveIntensity=0.6+state.led*1.6;             // pattern of light glows
+  document.getElementById('spLED').textContent=Math.round(state.led*100)+'%';
+}
+function applyAeration(){if(bubbles)bubbles.visible=state.aeration;}
+function shapeLabel(s){return {cylinder:'Silinder',cube:'Kubus',balok:'Balok'}[s];}
+function updateSpecs(){
+  document.getElementById('spShape').textContent=shapeLabel(state.shape);
+  document.getElementById('spH').textContent=state.height+'cm';
+  // --- real-world footprint in cm per shape (height = slider) ---
+  // world-unit -> cm scale: cylinder R=1.0u ≈ 11cm radius (22cm diam)
+  let L,W;
+  if(state.shape==='cylinder'){ L=22; W=22; }       // diameter 22cm (round)
+  else if(state.shape==='cube'){ L=20; W=20; }       // 20×20cm footprint
+  else { L=16; W=16; }                                // balok slim 16×16cm
+  const Hc=state.height;
+  // culture water volume (92% fill): cylinder πr²h ; box L·W·h, in cm³ -> L
+  let vCm3;
+  if(state.shape==='cylinder'){ const r=L/2; vCm3=Math.PI*r*r*Hc; }
+  else { vCm3=L*W*Hc; }
+  const vol=(vCm3/1000)*0.92; // 92% fill, liters
+  const setT=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  setT('dimL',L+' cm');setT('dimW',W+' cm');setT('dimH',Hc+' cm');setT('dimVol',vol.toFixed(1)+' L');
+  setT('spVol',vol.toFixed(1)+'L');
+  document.getElementById('spLED').textContent=Math.round(state.led*100)+'%';
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
+const shapes=[{id:'cylinder',name:'Silinder',icon:'ph-cylinder'},{id:'cube',name:'Kubus',icon:'ph-cube'},{id:'balok',name:'Balok',icon:'ph-rectangle'}];
+const shapeBox=document.getElementById('shapeOpts');
+shapes.forEach(s=>{const el=document.createElement('div');el.className='opt'+(s.id===state.shape?' active':'');el.innerHTML='<i class="ph '+s.icon+'"></i><div class="ot">'+s.name+'</div>';el.onclick=()=>{document.querySelectorAll('#shapeOpts .opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');state.shape=s.id;buildLamp();};shapeBox.appendChild(el);});
+
+const motifs=[{id:'kawung',name:'Kawung'},{id:'kawung-fine',name:'Kawung Halus'},{id:'shoji',name:'Shoji Asanoha'},{id:'seigaiha',name:'Seigaiha'}];
+const motifBox=document.getElementById('motifOpts');
+motifs.forEach(m=>{const el=document.createElement('div');el.className='opt opt-mini'+(m.id===state.motif?' active':'');el.innerHTML='<div class="ot">'+m.name+'</div>';el.onclick=()=>{document.querySelectorAll('#motifOpts .opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');state.motif=m.id;buildLamp();};motifBox.appendChild(el);});
+
+const cultColors=[{c:0x2e9c5b},{c:0x1f7a44},{c:0x49c47a},{c:0x2f8f8a},{c:0x8a5a2b},{c:0x1b3a5c}];
+const cultBox=document.getElementById('cultSwatches');
+cultColors.forEach(s=>{const el=document.createElement('div');el.className='swatch'+(s.c===state.cult?' active':'');el.style.background='#'+s.c.toString(16).padStart(6,'0');el.onclick=()=>{document.querySelectorAll('#cultSwatches .swatch').forEach(o=>o.classList.remove('active'));el.classList.add('active');state.cult=s.c;buildLamp();};cultBox.appendChild(el);});
+
+const trimColors=[{c:0xd4a544},{c:0xb87333},{c:0xc0c0c8},{c:0x16271c},{c:0x1b3a5c}];
+const trimBox=document.getElementById('trimSwatches');
+trimColors.forEach(s=>{const el=document.createElement('div');el.className='swatch'+(s.c===state.trim?' active':'');el.style.background='#'+s.c.toString(16).padStart(6,'0');el.onclick=()=>{document.querySelectorAll('#trimSwatches .swatch').forEach(o=>o.classList.remove('active'));el.classList.add('active');state.trim=s.c;buildLamp();};trimBox.appendChild(el);});
+
+const hSlider=document.getElementById('hSlider');
+hSlider.oninput=()=>{state.height=+hSlider.value;document.getElementById('hVal').textContent=state.height+' cm';document.getElementById('hTxt').textContent=state.height+' cm';buildLamp();};
+
+const ledSlider=document.getElementById('ledSlider');
+ledSlider.oninput=()=>{state.led=ledSlider.value/100;applyLED();document.getElementById('ledVal').textContent=ledSlider.value+'%';document.getElementById('ledTxt').textContent=ledSlider.value+'%';};
+
+document.getElementById('ambToggle').onclick=e=>{const t=e.target.closest('.tg');if(!t)return;document.querySelectorAll('#ambToggle .tg').forEach(o=>o.classList.remove('active'));t.classList.add('active');state.amb=t.dataset.amb;applyAmbient();};
+document.getElementById('aerToggle').onclick=e=>{const t=e.target.closest('.tg');if(!t)return;document.querySelectorAll('#aerToggle .tg').forEach(o=>o.classList.remove('active'));t.classList.add('active');state.aeration=t.dataset.aer==='1';applyAeration();};
+
+const spinBtn=document.getElementById('spinBtn');
+spinBtn.onclick=()=>{state.autospin=!state.autospin;controls.autoRotate=state.autospin;spinBtn.style.opacity=state.autospin?1:0.55;};
+document.getElementById('shotBtn').onclick=()=>{renderer.render(scene,camera);const a=document.createElement('a');a.download='alcura-'+state.shape+'-'+state.motif+'.png';a.href=renderer.domElement.toDataURL('image/png');a.click();};
+
+/* ============================================================
+   BOOT + LOOP
+   ============================================================ */
+buildLamp();applyAmbient();
+
+const clock=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock.getElapsedTime();
+  if(state.aeration && bubbles){
+    const p=bubGeo.attributes.position.array;const {waterBot,waterTop}=bubGeo.userData;
+    for(let i=0;i<BUBBLES;i++){p[i*3+1]+=bSpeed[i];p[i*3]+=Math.sin(t*2+i)*0.0010;if(p[i*3+1]>waterTop){const a=Math.random()*Math.PI*2,rr=Math.random()*bExtent.r;p[i*3]=Math.cos(a)*rr;p[i*3+1]=waterBot;p[i*3+2]=Math.sin(a)*rr;}}
+    bubGeo.attributes.position.needsUpdate=true;
+  }
+  if(swirl)swirl.rotation.y=t*0.25;
+  if(ledLight){const base=ledLight.intensity;ledLight.intensity=base*(0.96+Math.sin(t*1.8)*0.04);}
+  controls.update();renderer.render(scene,camera);
+}
+animate();
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),1000);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+</script>
+</body>
+</html>

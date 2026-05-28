@@ -11,6 +11,7 @@
   <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/desktop.css">
 </head>
 <body>
 <div class="app-container">
@@ -28,9 +29,9 @@
 
   <div class="app-scroll">
     <ul class="tabs">
-      <li class="tab active">Semua</li>
-      <li class="tab">Belum dibaca</li>
-      <li class="tab">Critical</li>
+      <li class="tab active" onclick="filterAlerts('all', this)">Semua</li>
+      <li class="tab" onclick="filterAlerts('unread', this)">Belum dibaca</li>
+      <li class="tab" onclick="filterAlerts('critical', this)">Critical</li>
     </ul>
 
     <div class="alert critical">
@@ -126,6 +127,42 @@ function toggleTheme() {
 
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
+
+// Alert filter handler
+function filterAlerts(filter, tab) {
+  // Update active tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+
+  // Filter alerts (simple demo)
+  document.querySelectorAll('.alert').forEach(alert => {
+    if (filter === 'all') {
+      alert.style.display = 'flex';
+    } else if (filter === 'critical') {
+      alert.style.display = alert.classList.contains('critical') ? 'flex' : 'none';
+    } else if (filter === 'unread') {
+      alert.style.display = 'flex'; // Demo: show all as unread
+    }
+  });
+
+  console.log('Filtered alerts by:', filter);
+}
+</script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+// Firebase initialized in firebase-config.js
+if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
+  firebase.initializeApp(firebaseConfig);
+}
+
+// Check authentication
+setTimeout(() => {
+  if (!alcuraAuth.isAuthenticated()) {
+    window.location.href = '/login.html';
+  }
+}, 500);
 </script>
 </body>
 </html>

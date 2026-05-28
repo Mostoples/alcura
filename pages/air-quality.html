@@ -11,6 +11,7 @@
   <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/desktop.css">
 </head>
 <body>
 <div class="app-container">
@@ -155,6 +156,22 @@ function toggleTheme() {
 
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/auth.js"></script>
+
+<script>
+// Firebase initialized in firebase-config.js
+if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
+  firebase.initializeApp(firebaseConfig);
+}
+
+// Check authentication
+setTimeout(() => {
+  if (!alcuraAuth.isAuthenticated()) {
+    window.location.href = '/login.html';
+  }
+}, 500);
 </script>
 </body>
 </html>

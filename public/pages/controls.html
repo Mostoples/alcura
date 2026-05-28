@@ -87,13 +87,13 @@
 
     <h3 class="section-title">Mode Preset</h3>
     <div class="btn-group">
-      <button class="btn btn-secondary" style="flex: 1;">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('siang')">
         <i class="ph-fill ph-sun"></i> Siang
       </button>
-      <button class="btn btn-secondary" style="flex: 1;">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('malam')">
         <i class="ph-fill ph-moon-stars"></i> Malam
       </button>
-      <button class="btn btn-secondary" style="flex: 1;">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('growth')">
         <i class="ph-fill ph-rocket"></i> Growth
       </button>
     </div>
@@ -103,7 +103,7 @@
       <label for="autoMode"><b>Auto Mode (AI Optimized)</b> — Sistem menyesuaikan parameter otomatis.</label>
     </div>
 
-    <button class="btn btn-primary btn-block" style="margin-bottom: 1rem;">
+    <button class="btn btn-primary btn-block" style="margin-bottom: 1rem;" onclick="saveSettings()">
       <i class="ph ph-floppy-disk"></i> Simpan Pengaturan
     </button>
   </div>
@@ -144,6 +144,20 @@ function toggleTheme() {
 
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
+
+// Mode control handlers
+function setMode(mode) {
+  localStorage.setItem('controlMode', mode);
+  alert(`Mode diubah ke: ${mode === 'siang' ? 'Siang' : mode === 'malam' ? 'Malam' : 'Growth'}`);
+  console.log('Mode set to:', mode);
+}
+
+function saveSettings() {
+  const autoMode = document.getElementById('autoMode').checked;
+  localStorage.setItem('autoMode', autoMode);
+  alert('Pengaturan tersimpan!');
+  console.log('Settings saved. Auto mode:', autoMode);
+}
 </script>
 </body>
 </html>

@@ -44,17 +44,8 @@
 <script src="js/app.js"></script>
 
 <script>
-// Initialize Firebase (config loaded from firebase-config.js)
-const firebaseConfig = {
-  apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
-  authDomain: "alcura-id.firebaseapp.com",
-  projectId: "alcura-id",
-  storageBucket: "alcura-id.firebasestorage.app",
-  messagingSenderId: "978633752737",
-  appId: "1:978633752737:web:3b7418f607a52c711270e0"
-};
-
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+// Firebase initialized in firebase-config.js
+if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
   firebase.initializeApp(firebaseConfig);
 }
 

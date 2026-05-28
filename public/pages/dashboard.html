@@ -152,7 +152,7 @@
         <span>Densitas</span>
         <b>1.32 OD</b>
       </div>
-      <button class="btn btn-primary btn-block" style="margin-top: 0.6rem;">
+      <button class="btn btn-primary btn-block" style="margin-top: 0.6rem;" onclick="openHarvestPlanner()">
         <i class="ph ph-calendar-check"></i> Rencanakan Panen
       </button>
     </div>
@@ -231,17 +231,8 @@
 <script src="../js/auth.js"></script>
 
 <script>
-// Initialize Firebase (config loaded from firebase-config.js)
-const firebaseConfig = {
-  apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
-  authDomain: "alcura-id.firebaseapp.com",
-  projectId: "alcura-id",
-  storageBucket: "alcura-id.firebasestorage.app",
-  messagingSenderId: "978633752737",
-  appId: "1:978633752737:web:3b7418f607a52c711270e0"
-};
-
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+// Firebase initialized in firebase-config.js
+if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
   firebase.initializeApp(firebaseConfig);
 }
 
@@ -269,6 +260,12 @@ function toggleTheme() {
 // Apply saved theme
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
+
+// Harvest planner handler
+function openHarvestPlanner() {
+  alert('Fitur Penjadwalan Panen akan segera tersedia');
+  console.log('Harvest planner opened');
+}
 </script>
 </body>
 </html>

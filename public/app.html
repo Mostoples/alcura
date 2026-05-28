@@ -66,7 +66,7 @@
       <div class="sec-title"><h3>Aksi Cepat</h3></div>
       <div class="qa-grid"><div class="qa"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small>72%</small></div><div class="qa"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small>60%</small></div><div class="qa"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></div></div>
   </div>
-  <nav class="bottom-nav"><a class="bn active"><i class="ph-fill ph-house"></i> Home</a><a class="bn"><i class="ph ph-wind"></i> Air</a><a class="bn-fab"><i class="ph ph-plant"></i></a><a class="bn"><i class="ph ph-sliders-horizontal"></i> Control</a><a class="bn"><i class="ph ph-dots-three-circle"></i> More</a></nav>
+  <nav class="bottom-nav"><a href="app.html" class="bn active"><i class="ph-fill ph-house"></i> Home</a><a href="pages/air-quality.html" class="bn"><i class="ph ph-wind"></i> Air</a><a href="pages/culture-health.html" class="bn-fab"><i class="ph ph-plant"></i></a><a href="pages/controls.html" class="bn"><i class="ph ph-sliders-horizontal"></i> Control</a><a href="pages/settings.html" class="bn"><i class="ph ph-dots-three-circle"></i> More</a></nav>
 </div>
 
 <script src="js/firebase-config.js"></script>
@@ -74,17 +74,8 @@
 <script src="js/app.js"></script>
 
 <script>
-// Initialize Firebase (config loaded from firebase-config.js)
-const firebaseConfig = {
-  apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
-  authDomain: "alcura-id.firebaseapp.com",
-  projectId: "alcura-id",
-  storageBucket: "alcura-id.firebasestorage.app",
-  messagingSenderId: "978633752737",
-  appId: "1:978633752737:web:3b7418f607a52c711270e0"
-};
-
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+// Firebase initialized in firebase-config.js
+if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
   firebase.initializeApp(firebaseConfig);
 }
 

@@ -127,8 +127,15 @@ class AlcuraAuth {
   }
 }
 
-// Initialize global auth instance
-const alcuraAuth = new AlcuraAuth();
+// Create global instance with delay to ensure Firebase SDK loaded
+let alcuraAuth;
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    alcuraAuth = new AlcuraAuth();
+  });
+} else {
+  alcuraAuth = new AlcuraAuth();
+}
 
 // Utility function to redirect if not authenticated
 function requireAuth() {

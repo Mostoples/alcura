@@ -44,7 +44,7 @@
 <script src="js/app.js"></script>
 
 <script>
-// Firebase config initialization
+// Initialize Firebase (config loaded from firebase-config.js)
 const firebaseConfig = {
   apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
   authDomain: "alcura-id.firebaseapp.com",
@@ -54,7 +54,7 @@ const firebaseConfig = {
   appId: "1:978633752737:web:3b7418f607a52c711270e0"
 };
 
-if (!firebase.apps.length) {
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 

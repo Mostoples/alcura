@@ -1,11 +1,11 @@
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDfN0-xyzYourApiKeyHere",
+  apiKey: "AIzaSyB3A2CkSIlAQFP0QShi1GFhT8ds3WA1bAA",
   authDomain: "alcura-id.firebaseapp.com",
   projectId: "alcura-id",
-  storageBucket: "alcura-id.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
+  storageBucket: "alcura-id.firebasestorage.app",
+  messagingSenderId: "978633752737",
+  appId: "1:978633752737:web:3b7418f607a52c711270e0"
 };
 
 // Initialize Firebase (loaded dynamically via CDN in HTML)

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Settings — ALCURA</title>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+</head>
+<body>
+<div class="app-container">
+  <div class="app-header">
+    <a href="dashboard.html" style="text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.5rem;">
+      <i class="ph ph-arrow-left" style="font-size: 1.1rem;"></i>
+      <h1>Settings</h1>
+    </a>
+    <div class="header-right">
+      <button class="icon-btn" onclick="toggleTheme()">
+        <i class="ph-fill ph-moon"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="app-scroll">
+    <h3 class="section-title">Account</h3>
+
+    <div class="card">
+      <div style="display: flex; gap: 0.8rem; margin-bottom: 0.8rem;">
+        <img src="https://i.pravatar.cc/100?img=47" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%;">
+        <div>
+          <h4 style="margin: 0; font-size: 0.9rem;">Theresa Pena</h4>
+          <small style="color: var(--ink-mute); font-size: 0.75rem;">theresa@example.com</small>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-block">
+        <i class="ph ph-pencil"></i> Edit Profile
+      </button>
+    </div>
+
+    <h3 class="section-title">Device Info</h3>
+
+    <div class="card">
+      <div class="row">
+        <span>Serial Number</span>
+        <b style="font-family: var(--font-mono); font-size: 0.75rem;">ALG-2024-0547</b>
+      </div>
+      <div class="row">
+        <span>Firmware</span>
+        <b>v2.1.2</b>
+      </div>
+      <div class="row">
+        <span>Uptime</span>
+        <b>45 hari</b>
+      </div>
+      <div class="row">
+        <span>Connectivity</span>
+        <b style="color: var(--leaf-500);">WiFi Connected</b>
+      </div>
+    </div>
+
+    <h3 class="section-title">Notifications</h3>
+
+    <div class="checkbox">
+      <input type="checkbox" id="notif" checked>
+      <label for="notif">Alert Notifications</label>
+    </div>
+
+    <div class="checkbox">
+      <input type="checkbox" id="harvest" checked>
+      <label for="harvest">Harvest Reminders</label>
+    </div>
+
+    <div class="checkbox">
+      <input type="checkbox" id="weekly">
+      <label for="weekly">Weekly Impact Report</label>
+    </div>
+
+    <h3 class="section-title">Display</h3>
+
+    <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 0.9rem;">Dark Mode</span>
+      <button class="btn" onclick="toggleTheme()" style="background: var(--line); padding: 0.4rem 0.8rem; font-size: 0.75rem;">
+        <span id="themeLabel">Off</span>
+      </button>
+    </div>
+
+    <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 0.9rem;">Language</span>
+      <select style="background: var(--bg); border: 1px solid var(--line); padding: 0.4rem 0.6rem; border-radius: var(--r-sm); color: var(--ink); font-size: 0.85rem;">
+        <option>Bahasa Indonesia</option>
+        <option>English</option>
+      </select>
+    </div>
+
+    <h3 class="section-title">Support</h3>
+
+    <button class="btn btn-secondary btn-block">
+      <i class="ph ph-question"></i> Help & FAQ
+    </button>
+
+    <button class="btn btn-secondary btn-block" style="margin-top: 0.5rem;">
+      <i class="ph ph-info"></i> About ALCURA
+    </button>
+
+    <h3 class="section-title">Danger Zone</h3>
+
+    <button class="btn" style="background: #ff3b30; color: #fff; width: 100%;">
+      <i class="ph ph-sign-out"></i> Logout
+    </button>
+
+    <div style="margin-bottom: 1rem;"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="ph ph-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="air-quality.html" class="nav-item">
+      <i class="ph ph-wind"></i>
+      <span>Air</span>
+    </a>
+    <a href="culture-health.html" class="nav-item">
+      <i class="ph ph-plant"></i>
+      <span>Culture</span>
+    </a>
+    <a href="alerts.html" class="nav-item">
+      <i class="ph ph-bell"></i>
+      <span>Alerts</span>
+    </a>
+    <a href="settings.html" class="nav-item active">
+      <i class="ph-fill ph-gear"></i>
+      <span>More</span>
+    </a>
+  </nav>
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const newTheme = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+
+  const label = document.getElementById('themeLabel');
+  if (label) label.textContent = newTheme === 'dark' ? 'On' : 'Off';
+}
+
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+if (document.getElementById('themeLabel')) {
+  document.getElementById('themeLabel').textContent = savedTheme === 'dark' ? 'On' : 'Off';
+}
+</script>
+</body>
+</html>

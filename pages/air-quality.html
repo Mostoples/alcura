@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Air Quality — ALCURA</title>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+</head>
+<body>
+<div class="app-container">
+  <div class="app-header">
+    <a href="dashboard.html" style="text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.5rem;">
+      <i class="ph ph-arrow-left" style="font-size: 1.1rem;"></i>
+      <h1>Air Quality</h1>
+    </a>
+    <div class="header-right">
+      <button class="icon-btn" onclick="toggleTheme()">
+        <i class="ph-fill ph-moon"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="app-scroll">
+    <h3 class="section-title">CO₂ Level</h3>
+
+    <div style="text-align: center; margin: 1.2rem 0;">
+      <div class="gauge" style="width: 100px; height: 100px; margin: 0 auto;">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--line)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--leaf-500)" stroke-width="8" stroke-dasharray="180" stroke-dashoffset="36" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-val" style="color: var(--ink); font-size: 1.4rem;">
+          <span>480</span>
+          <div class="gauge-label" style="color: var(--ink-mute); font-size: 0.65rem;">ppm</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <span class="pill"><i class="ph-fill ph-check-circle"></i> Baik — Dalam rentang optimal</span>
+    </div>
+
+    <h3 class="section-title">Metrik Udara Lainnya</h3>
+    <div class="metric-grid">
+      <div class="metric">
+        <i class="ph-fill ph-drop"></i>
+        <b>21<small>%</small></b>
+        <span>O₂</span>
+        <div style="font-size: 0.65rem; color: var(--leaf-500);">Optimal</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-cloud-smoke"></i>
+        <b>8<small>μg/m³</small></b>
+        <span>PM2.5</span>
+        <div style="font-size: 0.65rem; color: var(--leaf-500);">Baik</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-wind"></i>
+        <b>25<small>μg/m³</small></b>
+        <span>PM10</span>
+        <div style="font-size: 0.65rem; color: var(--leaf-500);">Baik</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-flask"></i>
+        <b>0.03<small>ppm</small></b>
+        <span>HCHO</span>
+        <div style="font-size: 0.65rem; color: var(--leaf-500);">Aman</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-atom"></i>
+        <b>45<small>ppb</small></b>
+        <span>VOC</span>
+        <div style="font-size: 0.65rem; color: var(--leaf-500);">Baik</div>
+      </div>
+      <div class="metric">
+        <i class="ph-fill ph-drop-half"></i>
+        <b>52<small>%</small></b>
+        <span>Humidity</span>
+        <div style="font-size: 0.65rem; color: var(--leaf-500);">Ideal</div>
+      </div>
+    </div>
+
+    <h3 class="section-title">Tren 24 Jam</h3>
+    <div class="card">
+      <div class="chart-mock">
+        <div class="bar" style="height: 45%;"></div>
+        <div class="bar active" style="height: 65%;"></div>
+        <div class="bar" style="height: 55%;"></div>
+        <div class="bar" style="height: 48%;"></div>
+        <div class="bar" style="height: 52%;"></div>
+        <div class="bar" style="height: 60%;"></div>
+        <div class="bar active" style="height: 70%;"></div>
+      </div>
+      <div style="text-align: center; margin-top: 0.8rem; font-size: 0.75rem; color: var(--ink-mute);">
+        Rata-rata CO₂ turun 23% dibanding kemarin
+      </div>
+    </div>
+
+    <h3 class="section-title">Comparison</h3>
+    <div class="card">
+      <div class="row">
+        <span><i class="ph ph-house" style="margin-right: 0.4rem;"></i>Dalam Ruangan</span>
+        <b>480 ppm</b>
+      </div>
+      <div class="row">
+        <span><i class="ph ph-wind" style="margin-right: 0.4rem;"></i>Luar Ruangan (est.)</span>
+        <b>420 ppm</b>
+      </div>
+      <div style="background: var(--sky-100); border-radius: var(--r-md); padding: 0.8rem; margin-top: 0.8rem; font-size: 0.8rem;">
+        <i class="ph ph-info" style="margin-right: 0.4rem;"></i>
+        <span>ALCURA membantu mengurangi CO₂ indoor hingga optimal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <i class="ph ph-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="air-quality.html" class="nav-item active">
+      <i class="ph-fill ph-wind"></i>
+      <span>Air</span>
+    </a>
+    <a href="culture-health.html" class="nav-item">
+      <i class="ph ph-plant"></i>
+      <span>Culture</span>
+    </a>
+    <a href="alerts.html" class="nav-item">
+      <i class="ph ph-bell"></i>
+      <span>Alerts</span>
+    </a>
+    <a href="settings.html" class="nav-item">
+      <i class="ph ph-gear"></i>
+      <span>More</span>
+    </a>
+  </nav>
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const newTheme = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+}
+
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
+</body>
+</html>

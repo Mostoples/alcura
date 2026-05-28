@@ -97,16 +97,46 @@ function handleEmailLogin() {
 // Google login handler
 function handleGoogleLogin() {
   const btn = document.getElementById('googleLoginBtn');
+
+  // Debug check
+  if (!alcuraAuth.initialized) {
+    alert('Error: Firebase belum siap. Tunggu 1 detik dan coba lagi.');
+    console.error('Firebase not initialized:', alcuraAuth);
+    return;
+  }
+
+  if (!alcuraAuth.auth) {
+    alert('Error: Firebase Auth tidak tersedia. Check Firebase config di login.html');
+    console.error('Auth not available:', alcuraAuth.auth);
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = 'Menghubungkan Google...';
+  console.log('Starting Google sign-in...');
 
   alcuraAuth.signInWithGoogle()
     .then((user) => {
+      console.log('✓ Google sign-in successful:', user.email);
       localStorage.setItem('userEmail', user.email);
       window.location.href = 'app.html';
     })
     .catch((error) => {
-      alert('Google login gagal: ' + error.message);
+      console.error('✗ Google sign-in error:', error.code, error.message);
+
+      // Specific error messages
+      let errorMsg = 'Google login gagal';
+      if (error.code === 'auth/invalid-api-key') {
+        errorMsg = 'Error: Firebase API key tidak valid. Update credentials di login.html';
+      } else if (error.code === 'auth/operation-not-allowed') {
+        errorMsg = 'Error: Google Sign-in belum enabled di Firebase Console';
+      } else if (error.code === 'auth/unauthorized-domain') {
+        errorMsg = 'Error: Domain belum authorized di Firebase. Add ke Authorized domains';
+      } else if (error.message) {
+        errorMsg = 'Error: ' + error.message;
+      }
+
+      alert(errorMsg);
       btn.disabled = false;
       btn.textContent = 'Google';
     });

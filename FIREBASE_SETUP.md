@@ -159,8 +159,90 @@ Landing (index.html)
    ```
 4. Test sign-in flow di production: https://alcura-id.web.app
 
+## Debugging Checklist
+
+Jika Google login tidak berfungsi, ikuti checklist ini:
+
+### 1. Check Firebase Config
+```bash
+# Buka browser DevTools → Console
+# Paste:
+console.log('Firebase config:', firebaseConfig)
+console.log('Firebase initialized:', firebase.apps.length > 0)
+```
+
+**Expected output:**
+```
+Firebase config: {apiKey: "...", authDomain: "alcura-id.firebaseapp.com", ...}
+Firebase initialized: true
+```
+
+**If error:**
+- Credentials belum diupdate di login.html
+- Firebase SDK tidak load
+
+### 2. Check Auth Instance
+```bash
+# Di Console:
+console.log('Auth instance:', alcuraAuth.auth)
+console.log('Auth initialized:', alcuraAuth.initialized)
+```
+
+**Expected output:**
+```
+Auth instance: Auth {config: {...}, currentUser: null, ...}
+Auth initialized: true
+```
+
+**If error:**
+- Firebase SDK not loaded
+- Config invalid
+
+### 3. Check Google OAuth Setup
+```bash
+# Di Firebase Console:
+# 1. Authentication → Sign-in method
+# 2. Cek Google provider status → harus "Enabled"
+# 3. Jika "Disabled" → klik enable
+```
+
+### 4. Add Authorized Domain
+```bash
+# Di Firebase Console:
+# 1. Authentication → Settings
+# 2. Scroll ke "Authorized domains"
+# 3. Tambahkan:
+#    - alcura-id.web.app (production)
+#    - localhost:5000 (testing lokal)
+```
+
+### 5. Check Browser Console Errors
+```bash
+# Buka DevTools → Console
+# Klik tombol "Google" di login page
+# Lihat error messages
+```
+
+**Common errors:**
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `auth/invalid-api-key` | API key tidak valid | Update credentials dari Firebase |
+| `auth/operation-not-allowed` | Google provider disabled | Enable di Firebase Console |
+| `auth/unauthorized-domain` | Domain belum authorized | Add ke Authorized domains |
+| `Firebase not loaded` | SDK tidak load | Check CDN link di `<head>` |
+| `Auth not initialized` | Firebase config invalid | Update config dengan credentials |
+
+### 6. Test Step by Step
+1. Buka https://alcura-id.web.app/login.html
+2. Di Console ketik: `alcuraAuth.signInWithGoogle()`
+3. Lihat error message (jika ada)
+4. Perbaiki sesuai error
+
 ## Support
 
 Untuk bantuan lebih lanjut:
-- Docs: https://firebase.google.com/docs/auth
-- Community: https://stackoverflow.com/questions/tagged/firebase-authentication
+- Firebase Docs: https://firebase.google.com/docs/auth
+- Google OAuth: https://firebase.google.com/docs/auth/web/google-signin
+- Troubleshooting: https://firebase.google.com/support
+- Stack Overflow: https://stackoverflow.com/questions/tagged/firebase-authentication

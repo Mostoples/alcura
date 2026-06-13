@@ -2,6 +2,7 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Settings — ALCURA</title>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -17,13 +18,10 @@
 <body>
 <div class="app-container">
   <div class="app-header">
-    <a href="dashboard.html" style="text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.5rem;">
-      <i class="ph ph-arrow-left" style="font-size: 1.1rem;"></i>
-      <h1>Settings</h1>
-    </a>
+    <h1>Settings</h1>
     <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()">
-        <i class="ph-fill ph-moon"></i>
+      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
+        <i class="ph-fill ph-moon" data-theme-icon></i>
       </button>
     </div>
   </div>
@@ -32,11 +30,11 @@
     <h3 class="section-title">Account</h3>
 
     <div class="card">
-      <div style="display: flex; gap: 0.8rem; margin-bottom: 0.8rem;">
-        <img src="https://i.pravatar.cc/100?img=47" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%;">
+      <div style="display: flex; gap: 0.8rem; margin-bottom: 0.8rem; align-items: center;">
+        <img src="https://i.pravatar.cc/100?img=47" alt="Profile" data-user-avatar style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
         <div>
-          <h4 style="margin: 0; font-size: 0.9rem;">Theresa Pena</h4>
-          <small style="color: var(--ink-mute); font-size: 0.75rem;">theresa@example.com</small>
+          <h4 style="margin: 0; font-size: 0.95rem;" data-user-name>Pengguna ALCURA</h4>
+          <small style="color: var(--ink-mute); font-size: 0.78rem;" data-user-email>—</small>
         </div>
       </div>
       <button class="btn btn-secondary btn-block" onclick="openProfileEditor()">
@@ -99,6 +97,15 @@
       </select>
     </div>
 
+    <h3 class="section-title">Lainnya</h3>
+
+    <a href="impact.html" class="btn btn-secondary btn-block" style="margin-bottom: 0.5rem; text-decoration: none;">
+      <i class="ph ph-chart-line-up"></i> Laporan Dampak
+    </a>
+    <a href="controls.html" class="btn btn-secondary btn-block" style="text-decoration: none;">
+      <i class="ph ph-sliders-horizontal"></i> Kontrol Perangkat
+    </a>
+
     <h3 class="section-title">Support</h3>
 
     <button class="btn btn-secondary btn-block" onclick="openHelp()">
@@ -120,90 +127,36 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item">
-      <i class="ph ph-house"></i>
-      <span>Home</span>
-    </a>
-    <a href="air-quality.html" class="nav-item">
-      <i class="ph ph-wind"></i>
-      <span>Air</span>
-    </a>
-    <a href="culture-health.html" class="nav-item">
-      <i class="ph ph-plant"></i>
-      <span>Culture</span>
-    </a>
-    <a href="alerts.html" class="nav-item">
-      <i class="ph ph-bell"></i>
-      <span>Alerts</span>
-    </a>
-    <a href="settings.html" class="nav-item active">
-      <i class="ph-fill ph-gear"></i>
-      <span>More</span>
-    </a>
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>
 </div>
 
 <script src="../js/firebase-config.js"></script>
 <script src="../js/auth.js"></script>
-
+<script src="../js/app-shell.js"></script>
 <script>
-// Firebase initialized in firebase-config.js
-if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
-  firebase.initializeApp(firebaseConfig);
-}
-
-// Check authentication
+// Auth guard (uses the Firebase-aware layer when available)
 setTimeout(() => {
-  if (!alcuraAuth.isAuthenticated()) {
-    window.location.href = '/login.html';
+  if (typeof alcuraAuth !== 'undefined' && !alcuraAuth.isAuthenticated()) {
+    window.location.href = '../login.html';
   }
 }, 500);
 
 function handleLogout() {
-  if (confirm('Apakah Anda yakin ingin logout?')) {
-    alcuraAuth.signOut()
-      .then(() => {
-        window.location.href = '/login.html';
-      })
-      .catch((error) => {
-        alert('Logout gagal: ' + error.message);
-      });
-  }
+  if (!confirm('Apakah Anda yakin ingin logout?')) return;
+  function done() { localStorage.removeItem('alcuraUser'); window.location.href = '../login.html'; }
+  if (typeof alcuraAuth !== 'undefined' && alcuraAuth.signOut) {
+    alcuraAuth.signOut().then(done).catch(done);
+  } else { done(); }
 }
 
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const newTheme = current === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-
-  const label = document.getElementById('themeLabel');
-  if (label) label.textContent = newTheme === 'dark' ? 'On' : 'Off';
-}
-
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-theme', savedTheme);
-
-if (document.getElementById('themeLabel')) {
-  document.getElementById('themeLabel').textContent = savedTheme === 'dark' ? 'On' : 'Off';
-}
-
-// Settings button handlers
-function openProfileEditor() {
-  alert('Editor profil akan segera tersedia');
-  console.log('Profile editor opened');
-}
-
-function openHelp() {
-  alert('Bantuan & FAQ akan segera tersedia');
-  console.log('Help opened');
-}
-
-function openAbout() {
-  alert('ALCURA v1.0.0\nSistem manajemen fotobioreaktor cerdas dengan AI.\nBuat permintaan fitur di support@alcura.io');
-  console.log('About dialog opened');
-}
+function openProfileEditor() { toast('Editor profil akan segera tersedia'); }
+function openHelp() { toast('Bantuan & FAQ akan segera tersedia'); }
+function openAbout() { toast('ALCURA v1.0.0 — fotobioreaktor cerdas dengan AI'); }
 </script>
 </body>
 </html>

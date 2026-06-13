@@ -2,6 +2,7 @@
 <html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALCURA — Living Air for Living Spaces</title>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -16,13 +17,13 @@
 
 <nav class="nav" id="nav">
   <div class="brand"><span class="mark"><i class="ph-fill ph-leaf"></i></span> ALCURA</div>
-  <div class="nav-links"><a href="#features">Fitur</a><a href="#how">Cara Kerja</a><a href="#impact">Dampak</a><a href="app.html">Demo App</a></div>
+  <div class="nav-links" id="navLinks"><a href="#features" onclick="closeNav()">Fitur</a><a href="#how" onclick="closeNav()">Cara Kerja</a><a href="#impact" onclick="closeNav()">Dampak</a><a href="app.html">Demo App</a><div class="nav-links-cta"><button class="btn btn-ghost btn-block" onclick="window.location.href='login.html'">Masuk</button><button class="btn btn-primary btn-block" onclick="window.location.href='register.html'">Mulai Gratis</button></div></div>
   <div class="nav-cta">
     <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
     <button class="btn btn-ghost" onclick="window.location.href='login.html'">Masuk</button>
     <button class="btn btn-primary" onclick="window.location.href='register.html'">Mulai Gratis</button>
   </div>
-  <button class="burger" onclick="document.querySelector('.nav-links').style.display='flex'"><i class="ph ph-list"></i></button>
+  <button class="burger" id="burger" onclick="toggleNav()" aria-label="Menu"><i class="ph ph-list"></i></button>
 </nav>
 
 <header class="hero">

@@ -2,6 +2,7 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ALCURA — Onboarding</title>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -12,7 +13,7 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
 </head>
-<body>
+<body data-no-auth>
 <div class="app-container">
   <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 1.5rem 1rem;">
     <div class="carousel" id="carousel">
@@ -73,7 +74,7 @@
       <span id="slideBtn">Selanjutnya</span>
       <i class="ph ph-arrow-right"></i>
     </button>
-    <button class="btn btn-secondary btn-block" style="margin-top: 0.5rem;" onclick="window.location.href='login.html'">
+    <button class="btn btn-secondary btn-block" style="margin-top: 0.5rem;" onclick="window.location.href='../login.html'">
       Masuk ke Akun Existing
     </button>
   </div>
@@ -87,7 +88,7 @@ function nextSlide() {
     currentSlide++;
     goSlide(currentSlide);
   } else {
-    window.location.href = 'login.html';
+    window.location.href = '../login.html';
   }
 }
 
@@ -103,10 +104,7 @@ function goSlide(idx) {
   const btn = document.getElementById('slideBtn');
   btn.textContent = idx === 2 ? 'Mulai' : 'Selanjutnya';
 }
-
-// Apply saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-theme', savedTheme);
 </script>
+<script src="../js/app-shell.js"></script>
 </body>
 </html>

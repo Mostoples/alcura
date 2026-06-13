@@ -2,6 +2,7 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Alerts — ALCURA</title>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -15,13 +16,10 @@
 <body>
 <div class="app-container">
   <div class="app-header">
-    <a href="dashboard.html" style="text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.5rem;">
-      <i class="ph ph-arrow-left" style="font-size: 1.1rem;"></i>
-      <h1>Alerts</h1>
-    </a>
+    <h1>Alerts</h1>
     <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()">
-        <i class="ph-fill ph-moon"></i>
+      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
+        <i class="ph-fill ph-moon" data-theme-icon></i>
       </button>
     </div>
   </div>
@@ -92,40 +90,17 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item">
-      <i class="ph ph-house"></i>
-      <span>Home</span>
-    </a>
-    <a href="air-quality.html" class="nav-item">
-      <i class="ph ph-wind"></i>
-      <span>Air</span>
-    </a>
-    <a href="culture-health.html" class="nav-item">
-      <i class="ph ph-plant"></i>
-      <span>Culture</span>
-    </a>
-    <a href="alerts.html" class="nav-item active">
-      <i class="ph-fill ph-bell"></i>
-      <span>Alerts</span>
-    </a>
-    <a href="settings.html" class="nav-item">
-      <i class="ph ph-gear"></i>
-      <span>More</span>
-    </a>
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>
 </div>
 
+<script src="../js/app-shell.js"></script>
 <script>
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const newTheme = current === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-}
-
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-theme', savedTheme);
+requireAuthPage();
 
 // Alert filter handler
 function filterAlerts(filter, tab) {

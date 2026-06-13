@@ -2,11 +2,13 @@
 <html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Masuk — ALCURA</title>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,12 +29,13 @@
     <div class="auth-card">
       <a class="back" href="index.html"><i class="ph ph-arrow-left"></i> Kembali</a>
       <h1>Masuk</h1><p class="sub">Senang melihat Anda lagi. Masuk untuk melanjutkan.</p>
+      <div class="auth-msg" id="authMsg" hidden></div>
       <div class="field"><label>Email</label><div class="inp"><i class="ph ph-envelope-simple"></i><input type="email" id="loginEmail" placeholder="nama@email.com" value=""></div></div>
       <div class="field"><label>Password</label><div class="inp"><i class="ph ph-lock-simple"></i><input type="password" id="loginPassword" placeholder="••••••••" value=""><i class="ph ph-eye eye" onclick="togglePw('loginPassword',this)"></i></div></div>
       <div class="row-between"><label><input type="checkbox" id="rememberMe" checked> Ingat saya</label><a href="#">Lupa password?</a></div>
       <button class="btn btn-primary btn-block" id="emailLoginBtn" onclick="handleEmailLogin()"><i class="ph ph-sign-in"></i> Masuk</button>
       <div class="divider">atau lanjut dengan</div>
-      <div class="social"><button class="s" type="button" id="googleLoginBtn" onclick="handleGoogleLogin()"><i class="ph ph-google-logo"></i> Google</button></div>
+      <div class="social"><button class="s" type="button" id="googleLoginBtn" onclick="handleGoogleLogin()"><svg class="g-logo" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg> Google</button></div>
       <p class="swap">Belum punya akun? <a href="register.html">Daftar gratis</a></p>
     </div>
   </div>
@@ -42,108 +45,65 @@
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 
+<script src="js/auth-ui.js"></script>
 <script>
-// Firebase initialized in firebase-config.js
-if (typeof firebase !== 'undefined' && !firebase.apps.length && typeof firebaseConfig !== 'undefined') {
-  firebase.initializeApp(firebaseConfig);
-}
-
-// Wait for auth to initialize
+// Redirect to the app if the user is already signed in
 setTimeout(() => {
-  // Check if already logged in
-  if (alcuraAuth.isAuthenticated()) {
+  if (typeof alcuraAuth !== 'undefined' && alcuraAuth.isAuthenticated()) {
     window.location.href = 'app.html';
   }
 }, 500);
 
 // Email login handler
 function handleEmailLogin() {
-  // Ensure alcuraAuth exists
-  if (typeof alcuraAuth === 'undefined') {
-    alert('Error: Sistem auth belum siap. Coba refresh halaman.');
-    console.error('alcuraAuth not defined');
-    return;
-  }
+  if (!authReady('emailLoginBtn')) return;
 
-  const email = document.getElementById('loginEmail').value;
+  const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const btn = document.getElementById('emailLoginBtn');
 
   if (!email || !password) {
-    alert('Email dan password harus diisi');
+    showAuthMsg('Email dan password harus diisi.', 'error');
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = 'Sedang masuk...';
+  setBtnLoading(btn, 'Sedang masuk...');
+  clearAuthMsg();
 
   alcuraAuth.signInWithEmail(email, password)
-    .then((user) => {
+    .then(() => {
       localStorage.setItem('userEmail', email);
       if (document.getElementById('rememberMe').checked) {
         localStorage.setItem('rememberEmail', email);
+      } else {
+        localStorage.removeItem('rememberEmail');
       }
+      showAuthMsg('Berhasil masuk, mengalihkan…', 'success');
       window.location.href = 'app.html';
     })
     .catch((error) => {
-      alert('Login gagal: ' + error.message);
-      btn.disabled = false;
-      btn.textContent = 'Masuk';
+      showAuthMsg(friendlyAuthError(error), 'error');
+      resetBtn(btn);
     });
 }
 
 // Google login handler
 function handleGoogleLogin() {
+  if (!authReady('googleLoginBtn')) return;
+
   const btn = document.getElementById('googleLoginBtn');
-
-  // Ensure alcuraAuth exists
-  if (typeof alcuraAuth === 'undefined') {
-    alert('Error: Sistem auth belum siap. Coba refresh halaman.');
-    console.error('alcuraAuth not defined');
-    return;
-  }
-
-  // Debug check
-  if (!alcuraAuth.initialized) {
-    alert('Error: Firebase belum siap. Tunggu 1 detik dan coba lagi.');
-    console.error('Firebase not initialized:', alcuraAuth);
-    return;
-  }
-
-  if (!alcuraAuth.auth) {
-    alert('Error: Firebase Auth tidak tersedia. Check Firebase config di login.html');
-    console.error('Auth not available:', alcuraAuth.auth);
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Menghubungkan Google...';
-  console.log('Starting Google sign-in...');
+  setBtnLoading(btn, 'Menghubungkan Google…');
+  clearAuthMsg();
 
   alcuraAuth.signInWithGoogle()
     .then((user) => {
-      console.log('✓ Google sign-in successful:', user.email);
       localStorage.setItem('userEmail', user.email);
+      showAuthMsg('Berhasil masuk, mengalihkan…', 'success');
       window.location.href = 'app.html';
     })
     .catch((error) => {
-      console.error('✗ Google sign-in error:', error.code, error.message);
-
-      // Specific error messages
-      let errorMsg = 'Google login gagal';
-      if (error.code === 'auth/invalid-api-key') {
-        errorMsg = 'Error: Firebase API key tidak valid. Update credentials di login.html';
-      } else if (error.code === 'auth/operation-not-allowed') {
-        errorMsg = 'Error: Google Sign-in belum enabled di Firebase Console';
-      } else if (error.code === 'auth/unauthorized-domain') {
-        errorMsg = 'Error: Domain belum authorized di Firebase. Add ke Authorized domains';
-      } else if (error.message) {
-        errorMsg = 'Error: ' + error.message;
-      }
-
-      alert(errorMsg);
-      btn.disabled = false;
-      btn.textContent = 'Google';
+      showAuthMsg(friendlyAuthError(error), 'error');
+      resetBtn(btn);
     });
 }
 

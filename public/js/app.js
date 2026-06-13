@@ -1,6 +1,9 @@
-function toggleTheme(){const r=document.documentElement;r.setAttribute('data-theme',r.getAttribute('data-theme')==='dark'?'light':'dark');}
+(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){const r=document.documentElement;const next=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',next);localStorage.setItem('theme',next);}
 function go(name){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));const view=document.getElementById('view-'+name);if(view)view.classList.add('active');window.scrollTo(0,0);}
 function togglePw(id,el){const inp=document.getElementById(id);const show=inp.type==='password';inp.type=show?'text':'password';el.className='ph '+(show?'ph-eye-slash':'ph-eye')+' eye';}
+function toggleNav(){const n=document.getElementById('navLinks'),b=document.getElementById('burger');if(!n)return;const open=n.classList.toggle('open');if(b){const i=b.querySelector('i');if(i)i.className='ph '+(open?'ph-x':'ph-list');}}
+function closeNav(){const n=document.getElementById('navLinks'),b=document.getElementById('burger');if(n)n.classList.remove('open');if(b){const i=b.querySelector('i');if(i)i.className='ph ph-list';}}
 
 window.addEventListener('scroll',()=>{const n=document.getElementById('nav');if(n)n.classList.toggle('scrolled',window.scrollY>20);});
 

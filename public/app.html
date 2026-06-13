@@ -2,11 +2,14 @@
 <html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — ALCURA</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +25,7 @@
     <div class="hi"><span>Selamat pagi 👋</span><h2>Theresa Pena</h2></div>
     <div class="acts">
       <div class="theme-toggle" onclick="toggleTheme()" style="padding:.3rem"><div class="knob" style="width:30px;height:30px;left:.3rem"></div><span class="tt sun" style="width:30px;height:30px;font-size:1rem"><i class="ph-fill ph-sun"></i></span><span class="tt moon" style="width:30px;height:30px;font-size:1rem"><i class="ph-fill ph-moon"></i></span></div>
-      <button class="icon-btn"><i class="ph ph-bell"></i><span class="dot"></span></button>
+      <button class="icon-btn" onclick="window.location.href='pages/alerts.html'" aria-label="Notifikasi"><i class="ph ph-bell"></i><span class="dot"></span></button>
       <img class="avatar" src="https://i.pravatar.cc/100?img=47" alt="">
     </div>
   </div>
@@ -33,13 +36,13 @@
           <div class="meta"><div class="m"><i class="ph-fill ph-wind"></i><div><b>Excellent</b><small>Air Quality 94</small></div></div><div class="m"><i class="ph-fill ph-plant"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m"><i class="ph-fill ph-drop"></i><div><b>8 L O₂</b><small>diproduksi hari ini</small></div></div></div>
         </div>
       </div>
-      <div class="sec-title"><h3>Photobioreactor Live</h3><a>Detail <i class="ph ph-arrow-right"></i></a></div>
+      <div class="sec-title"><h3>Photobioreactor Live</h3><a href="pages/culture-health.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="pbr-card">
         <div class="pbr-head"><h3>Spirulina Culture</h3><span class="live"><span class="blink"></span> LIVE</span></div>
         <div class="pbr-stage" id="pbrStage"></div>
         <div class="pbr-foot"><div class="f"><b>1.32</b><span>OD680</span></div><div class="f"><b>11.2</b><span>DO mg/L</span></div><div class="f"><b>72%</b><span>LED PAR</span></div><div class="f"><b>60%</b><span>AERASI</span></div></div>
       </div>
-      <div class="sec-title"><h3>Metrik Cepat</h3><a>Semua <i class="ph ph-arrow-right"></i></a></div>
+      <div class="sec-title"><h3>Metrik Cepat</h3><a href="pages/air-quality.html">Semua <i class="ph ph-arrow-right"></i></a></div>
       <div class="metric-scroll">
         <div class="metric co2"><div class="ic"><i class="ph-fill ph-cloud"></i></div><b>480<small> ppm</small></b><span>CO₂</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
         <div class="metric do"><div class="ic"><i class="ph-fill ph-drop-half"></i></div><b>11.2</b><span>DO mg/L</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
@@ -51,22 +54,22 @@
         <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-plant"></i></div><div><h4>Spirulina siap dalam 5 hari</h4><span>Probabilitas kesiapan 85%</span></div></div>
         <div class="progress"><i></i></div>
         <div class="stat-row"><span>Estimasi yield <b>280 g</b></span><span>Densitas <b>1.32 OD</b></span></div>
-        <button class="btn btn-primary btn-block"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
+        <button class="btn btn-primary btn-block" onclick="window.location.href='pages/culture-health.html'"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
       </div>
       <div class="card impact">
         <div class="label"><i class="ph-fill ph-sparkle"></i> Dampak Hari Ini</div>
         <h3>Hari ini Anda menghirup udara lebih bersih — <b>12 g CO₂</b> terserap.</h3>
         <div class="ig"><div class="x"><b>8 L</b><span>O₂ diproduksi</span></div><div class="x"><b>0.4 g</b><span>VOC dihapus</span></div><div class="x"><b>1.2 kWh</b><span>HVAC dihemat</span></div></div>
       </div>
-      <div class="sec-title"><h3>Tren Udara 24 Jam</h3><a>Detail <i class="ph ph-arrow-right"></i></a></div>
+      <div class="sec-title"><h3>Tren Udara 24 Jam</h3><a href="pages/impact.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-size:.82rem;color:var(--ink-mute);font-family:var(--font-mono)">Rata-rata CO₂</span><div style="font-family:var(--font-display);font-weight:700;font-size:1.5rem">498 <small style="font-size:.8rem;color:var(--ink-mute)">ppm</small></div></div><span class="pill"><i class="ph-fill ph-trend-down"></i> 23% lebih bersih</span></div>
         <div class="spark" id="spark"></div>
       </div>
       <div class="sec-title"><h3>Aksi Cepat</h3></div>
-      <div class="qa-grid"><div class="qa"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small>72%</small></div><div class="qa"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small>60%</small></div><div class="qa"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></div></div>
+      <div class="qa-grid"><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small>72%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small>60%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></a></div>
   </div>
-  <nav class="bottom-nav"><a href="app.html" class="bn active"><i class="ph-fill ph-house"></i> Home</a><a href="pages/air-quality.html" class="bn"><i class="ph ph-wind"></i> Air</a><a href="pages/culture-health.html" class="bn-fab"><i class="ph ph-plant"></i></a><a href="pages/controls.html" class="bn"><i class="ph ph-sliders-horizontal"></i> Control</a><a href="pages/settings.html" class="bn"><i class="ph ph-dots-three-circle"></i> More</a></nav>
+  <nav class="bottom-nav"><a href="app.html" class="bn active"><i class="ph-fill ph-house"></i> Home</a><a href="pages/air-quality.html" class="bn"><i class="ph ph-wind"></i> Air</a><a href="pages/culture-health.html" class="bn"><i class="ph ph-plant"></i> Culture</a><a href="pages/alerts.html" class="bn"><i class="ph ph-bell"></i> Alerts</a><a href="pages/settings.html" class="bn"><i class="ph ph-gear"></i> More</a></nav>
 </div>
 
 <script src="js/firebase-config.js"></script>
@@ -99,14 +102,22 @@ function handleLogout() {
   }
 }
 
-// Display user info
-document.addEventListener('userLoggedIn', (e) => {
-  const user = e.detail;
+// Display user info (name + avatar)
+function renderUser(user) {
+  if (!user) return;
   const hiElement = document.querySelector('.hi h2');
-  if (hiElement && user.displayName) {
-    hiElement.textContent = user.displayName;
+  if (hiElement) {
+    hiElement.textContent = user.displayName || (user.email ? user.email.split('@')[0] : 'Pengguna');
   }
-});
+  const avatar = document.querySelector('.avatar');
+  if (avatar && user.photoURL) {
+    avatar.src = user.photoURL;
+  }
+}
+
+// Show cached user immediately, then update when auth confirms
+renderUser((typeof alcuraAuth !== 'undefined' && alcuraAuth.getCachedUser && alcuraAuth.getCachedUser()) || null);
+document.addEventListener('userLoggedIn', (e) => renderUser(e.detail));
 </script>
 </body>
 </html>

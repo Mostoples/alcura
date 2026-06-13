@@ -2,6 +2,7 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Controls — ALCURA</title>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -15,13 +16,10 @@
 <body>
 <div class="app-container">
   <div class="app-header">
-    <a href="dashboard.html" style="text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.5rem;">
-      <i class="ph ph-arrow-left" style="font-size: 1.1rem;"></i>
-      <h1>Controls</h1>
-    </a>
+    <h1>Controls</h1>
     <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()">
-        <i class="ph-fill ph-moon"></i>
+      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
+        <i class="ph-fill ph-moon" data-theme-icon></i>
       </button>
     </div>
   </div>
@@ -34,7 +32,7 @@
         <span>LED Intensity</span>
         <span id="ledVal">72%</span>
       </label>
-      <input type="range" min="0" max="100" value="72" onchange="document.getElementById('ledVal').textContent = this.value + '%'">
+      <input type="range" min="0" max="100" value="72" oninput="document.getElementById('ledVal').textContent = this.value + '%'">
     </div>
 
     <h3 class="section-title">Spectrum Tuning</h3>
@@ -71,7 +69,7 @@
         <span>Aeration Rate</span>
         <span id="aerVal">60%</span>
       </label>
-      <input type="range" min="0" max="100" value="60" onchange="document.getElementById('aerVal').textContent = this.value + '%'">
+      <input type="range" min="0" max="100" value="60" oninput="document.getElementById('aerVal').textContent = this.value + '%'">
     </div>
 
     <h3 class="section-title">Advanced Settings</h3>
@@ -87,13 +85,13 @@
 
     <h3 class="section-title">Mode Preset</h3>
     <div class="btn-group">
-      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('siang')">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('siang', this)">
         <i class="ph-fill ph-sun"></i> Siang
       </button>
-      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('malam')">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('malam', this)">
         <i class="ph-fill ph-moon-stars"></i> Malam
       </button>
-      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('growth')">
+      <button class="btn btn-secondary" style="flex: 1;" onclick="setMode('growth', this)">
         <i class="ph-fill ph-rocket"></i> Growth
       </button>
     </div>
@@ -110,53 +108,37 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item">
-      <i class="ph ph-house"></i>
-      <span>Home</span>
-    </a>
-    <a href="air-quality.html" class="nav-item">
-      <i class="ph ph-wind"></i>
-      <span>Air</span>
-    </a>
-    <a href="culture-health.html" class="nav-item">
-      <i class="ph ph-plant"></i>
-      <span>Culture</span>
-    </a>
-    <a href="alerts.html" class="nav-item">
-      <i class="ph ph-bell"></i>
-      <span>Alerts</span>
-    </a>
-    <a href="settings.html" class="nav-item">
-      <i class="ph ph-gear"></i>
-      <span>More</span>
-    </a>
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>
 </div>
 
+<script src="../js/app-shell.js"></script>
 <script>
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const newTheme = current === 'light' ? 'dark' : 'light';
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-}
-
-const savedTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-theme', savedTheme);
+requireAuthPage();
 
 // Mode control handlers
-function setMode(mode) {
+function setMode(mode, el) {
   localStorage.setItem('controlMode', mode);
-  alert(`Mode diubah ke: ${mode === 'siang' ? 'Siang' : mode === 'malam' ? 'Malam' : 'Growth'}`);
-  console.log('Mode set to:', mode);
+  document.querySelectorAll('.btn-group .btn').forEach(b => {
+    b.classList.add('btn-secondary');
+    b.classList.remove('btn-primary');
+  });
+  if (el) {
+    el.classList.add('btn-primary');
+    el.classList.remove('btn-secondary');
+  }
+  const label = mode === 'siang' ? 'Siang' : mode === 'malam' ? 'Malam' : 'Growth';
+  toast('Mode diubah ke: ' + label);
 }
 
 function saveSettings() {
   const autoMode = document.getElementById('autoMode').checked;
   localStorage.setItem('autoMode', autoMode);
-  alert('Pengaturan tersimpan!');
-  console.log('Settings saved. Auto mode:', autoMode);
+  toast('Pengaturan tersimpan ✓');
 }
 </script>
 </body>

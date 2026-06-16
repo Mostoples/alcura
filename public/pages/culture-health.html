@@ -5,113 +5,83 @@
   <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Culture Health — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
 </head>
 <body>
 <div class="app-container">
-  <div class="app-header">
-    <h1>Culture Health</h1>
-    <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
-        <i class="ph-fill ph-moon" data-theme-icon></i>
-      </button>
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Culture Health</h2><p>Status kultur Spirulina</p></div>
+    <div class="top-bar-actions">
+      <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
     </div>
-  </div>
+  </header>
 
   <div class="app-scroll">
-    <h3 class="section-title">Biomass Density</h3>
-
-    <div style="text-align: center; margin: 1.2rem 0;">
-      <div class="gauge" style="width: 100px; height: 100px; margin: 0 auto;">
-        <svg viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--line)" stroke-width="8"/>
-          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--leaf-500)" stroke-width="8" stroke-dasharray="195" stroke-dashoffset="21" stroke-linecap="round"/>
+    <div class="card hero-card aura-green" data-pattern="plant">
+      <div class="hero-left">
+        <p class="hero-label">Biomass Density</p>
+        <div class="hero-value"><span class="hero-num">1.32</span><span class="hero-unit">OD680</span></div>
+        <p class="hero-desc">Hari ke-25 / 30 · fase eksponensial</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:83%"></div></div>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:53"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num">83%</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">GROW</text>
         </svg>
-        <div class="gauge-val" style="color: var(--ink); font-size: 1.4rem;">
-          <span>1.32</span>
-          <div class="gauge-label" style="color: var(--ink-mute); font-size: 0.65rem;">OD680</div>
-        </div>
       </div>
     </div>
 
     <h3 class="section-title">Culture Parameters</h3>
-    <div class="metric-grid">
-      <div class="metric">
-        <i class="ph-fill ph-drop-half"></i>
-        <b>11.2</b>
-        <span>DO mg/L</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Optimal</div>
+    <section class="grid-2">
+      <div class="card metric-card aura-blue" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop-half"></i></div><span class="metric-trend up">Optimal</span></div>
+        <p class="metric-label">DO mg/L</p><div class="metric-value"><span>11.2</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-thermometer"></i>
-        <b>27<small>°C</small></b>
-        <span>Temperature</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Ideal</div>
+      <div class="card metric-card aura-amber" data-pattern="sun">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer"></i></div><span class="metric-trend up">Ideal</span></div>
+        <p class="metric-label">Temperature</p><div class="metric-value"><span>27</span><span class="metric-unit">°C</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-flask"></i>
-        <b>9.4</b>
-        <span>pH</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Optimal</div>
+      <div class="card metric-card aura-violet" data-pattern="flask">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Optimal</span></div>
+        <p class="metric-label">pH</p><div class="metric-value"><span>9.4</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-plant"></i>
-        <b>92<small>%</small></b>
-        <span>Chlorophyll</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Healthy</div>
+      <div class="card metric-card aura-green" data-pattern="plant">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-plant"></i></div><span class="metric-trend up">Healthy</span></div>
+        <p class="metric-label">Chlorophyll</p><div class="metric-value"><span>92</span><span class="metric-unit">%</span></div>
       </div>
-    </div>
+    </section>
 
     <h3 class="section-title">Culture Photo</h3>
-    <div style="width: 100%; height: 160px; background: linear-gradient(135deg, rgba(79,191,120,0.3) 0%, rgba(47,180,100,0.3) 100%); border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; color: var(--ink-mute); margin: 0.8rem 0; font-size: 2.5rem;">
-      <i class="ph ph-camera"></i>
+    <div class="card aura-green no-pattern" style="text-align:center">
+      <div style="width:100%;height:150px;background:linear-gradient(135deg, rgba(var(--aura-leaf),.3), rgba(var(--aura-green),.3));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:2.4rem;box-shadow:var(--shadow-inset)"><i class="ph ph-camera"></i></div>
+      <p class="bio" style="margin-top:.8rem;font-size:.78rem">Spirulina terlihat hijau pekat — indikator kesehatan optimal</p>
     </div>
-    <p class="bio" style="text-align: center; margin: -0.4rem 0 0.8rem 0; font-size: 0.75rem;">Spirulina terlihat hijau pekat — indikator kesehatan optimal</p>
 
     <h3 class="section-title">Growth Curve (30 hari)</h3>
-    <div class="card">
-      <div class="chart-mock" style="height: 160px;">
-        <div class="bar" style="height: 15%;"></div>
-        <div class="bar" style="height: 18%;"></div>
-        <div class="bar" style="height: 22%;"></div>
-        <div class="bar" style="height: 28%;"></div>
-        <div class="bar" style="height: 35%;"></div>
-        <div class="bar" style="height: 42%;"></div>
-        <div class="bar" style="height: 48%;"></div>
-        <div class="bar" style="height: 55%;"></div>
-        <div class="bar" style="height: 60%;"></div>
-        <div class="bar" style="height: 65%;"></div>
-        <div class="bar" style="height: 70%;"></div>
-        <div class="bar" style="height: 75%;"></div>
-        <div class="bar" style="height: 78%;"></div>
-        <div class="bar" style="height: 80%;"></div>
-        <div class="bar active" style="height: 82%;"></div>
+    <div class="card aura-green no-pattern">
+      <div class="chart-mock" style="height:160px">
+        <div class="bar" style="height:15%"></div><div class="bar" style="height:18%"></div><div class="bar" style="height:22%"></div><div class="bar" style="height:28%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:42%"></div><div class="bar" style="height:48%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:78%"></div><div class="bar" style="height:80%"></div><div class="bar active" style="height:82%"></div>
       </div>
-      <div style="text-align: center; margin-top: 0.8rem; font-size: 0.75rem; color: var(--ink-mute);">
-        Hari ke-25 dari 30 — Fase pertumbuhan eksponensial
-      </div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Hari ke-25 dari 30 — Fase pertumbuhan eksponensial</div>
     </div>
 
-    <div class="alert success" style="margin: 0.8rem 0;">
-      <i class="ph-fill ph-plant"></i>
-      <div class="alert-content">
-        <h4>Culture Status: Optimal</h4>
-        <small>Spirulina berkembang dengan sangat baik. Pertahankan pengaturan LED saat ini.</small>
-      </div>
-    </div>
+    <div class="alert success"><i class="ph-fill ph-plant"></i><div class="alert-content"><h4>Culture Status: Optimal</h4><small>Spirulina berkembang dengan sangat baik. Pertahankan pengaturan LED saat ini.</small></div></div>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <div class="spacer-bottom"></div>
   <nav class="bottom-nav">
     <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
     <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
-    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
     <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
     <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>

@@ -5,23 +5,26 @@
   <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALCURA — Living Air for Living Spaces</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <div class="bg-grain"></div>
 
-<nav class="nav" id="nav">
+<nav class="nav land-nav" id="nav" style="max-width:min(1440px,94vw);margin:16px auto 36px;left:0;right:0">
   <div class="brand"><span class="mark"><i class="ph-fill ph-leaf"></i></span> ALCURA</div>
-  <div class="nav-links" id="navLinks"><a href="#features" onclick="closeNav()">Fitur</a><a href="#how" onclick="closeNav()">Cara Kerja</a><a href="#impact" onclick="closeNav()">Dampak</a><a href="app.html">Demo App</a><div class="nav-links-cta"><button class="btn btn-ghost btn-block" onclick="window.location.href='login.html'">Masuk</button><button class="btn btn-primary btn-block" onclick="window.location.href='register.html'">Mulai Gratis</button></div></div>
+  <div class="nav-links" id="navLinks">
+    <a href="#features" onclick="closeNav()">Fitur</a><a href="#how" onclick="closeNav()">Cara Kerja</a><a href="#impact" onclick="closeNav()">Dampak</a><a href="app.html">Demo App</a>
+    <div class="nav-links-cta"><button class="btn btn-secondary btn-block" onclick="window.location.href='login.html'">Masuk</button><button class="btn btn-primary btn-block" onclick="window.location.href='register.html'">Mulai Gratis</button></div>
+  </div>
   <div class="nav-cta">
-    <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
-    <button class="btn btn-ghost" onclick="window.location.href='login.html'">Masuk</button>
-    <button class="btn btn-primary" onclick="window.location.href='register.html'">Mulai Gratis</button>
+    <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
+    <button class="btn btn-secondary" onclick="window.location.href='login.html'" style="padding:10px 18px;font-size:13px">Masuk</button>
+    <button class="btn btn-primary" onclick="window.location.href='register.html'" style="padding:10px 18px;font-size:13px">Mulai Gratis</button>
   </div>
   <button class="burger" id="burger" onclick="toggleNav()" aria-label="Menu"><i class="ph ph-list"></i></button>
 </nav>
@@ -33,9 +36,9 @@
     <p class="lead">ALCURA adalah lampu photobioreactor pintar berisi mikroalga Spirulina — memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.</p>
     <div class="hero-actions">
       <button class="btn btn-primary" onclick="window.location.href='register.html'"><i class="ph ph-rocket-launch"></i> Mulai Sekarang</button>
-      <button class="btn btn-ghost" onclick="window.location.href='app.html'"><i class="ph ph-play-circle"></i> Lihat Demo</button>
+      <button class="btn btn-secondary" onclick="window.location.href='app.html'"><i class="ph ph-play-circle"></i> Lihat Demo</button>
     </div>
-    <div class="hero-stats"><div class="s"><b>90%</b><span>CO₂ terserap</span></div><div class="s"><b>100%</b><span>VOC & HCHO bersih</span></div><div class="s"><b>30 hari</b><span>siklus panen</span></div></div>
+    <div class="hero-stats"><div class="s"><b>90%</b><span>CO₂ terserap</span></div><div class="s"><b>100%</b><span>VOC &amp; HCHO bersih</span></div><div class="s"><b>30 hari</b><span>siklus panen</span></div></div>
   </div>
   <div class="hero-visual">
     <div class="glow-orb"></div>
@@ -70,10 +73,10 @@
 <section class="section" id="how"><div class="how"><div class="inner">
   <div class="section-head"><h2>Hidup dalam <em>empat</em> langkah</h2><p>Dari pemasangan sampai panen — ALCURA membuat semuanya sederhana.</p></div>
   <div class="steps">
-    <div class="step"><div class="num">01</div><h4>Pasang & Pair</h4><p>Scan QR atau hubungkan via Bluetooth. Aktif dalam menit.</p></div>
+    <div class="step"><div class="num">01</div><h4>Pasang &amp; Pair</h4><p>Scan QR atau hubungkan via Bluetooth. Aktif dalam menit.</p></div>
     <div class="step"><div class="num">02</div><h4>Algae Bekerja</h4><p>Spirulina menyerap CO₂, melepas O₂, tumbuh di bawah LED.</p></div>
-    <div class="step"><div class="num">03</div><h4>AI Memantau</h4><p>Sensor & model ML menjaga kultur tetap optimal otomatis.</p></div>
-    <div class="step"><div class="num">04</div><h4>Panen & Nikmati</h4><p>Aplikasi memberi tahu kapan Spirulina siap dipanen.</p></div>
+    <div class="step"><div class="num">03</div><h4>AI Memantau</h4><p>Sensor &amp; model ML menjaga kultur tetap optimal otomatis.</p></div>
+    <div class="step"><div class="num">04</div><h4>Panen &amp; Nikmati</h4><p>Aplikasi memberi tahu kapan Spirulina siap dipanen.</p></div>
   </div>
 </div></div></section>
 
@@ -82,10 +85,13 @@
   <div class="band"><div class="b"><b>2.4 kg</b><span>CO₂ terserap / bulan</span></div><div class="b"><b>240 L</b><span>O₂ diproduksi / bulan</span></div><div class="b"><b>18 km</b><span>setara emisi mobil</span></div><div class="b"><b>34 kWh</b><span>HVAC dihemat</span></div></div>
 </section>
 
-<section class="section"><div class="cta-final"><h2>Bawa pulang udara yang hidup.</h2><p>Bergabung dengan ratusan ruang yang sudah bernapas lebih bersih bersama ALCURA.</p><button class="btn btn-lime" onclick="window.location.href='register.html'"><i class="ph ph-leaf"></i> Mulai Gratis Sekarang</button></div></section>
+<section class="section"><div class="cta-final"><h2>Bawa pulang udara yang hidup.</h2><p>Bergabung dengan ratusan ruang yang sudah bernapas lebih bersih bersama ALCURA.</p><button class="btn btn-primary" onclick="window.location.href='register.html'"><i class="ph ph-leaf"></i> Mulai Gratis Sekarang</button></div></section>
 
 <footer><div class="brand" style="justify-content:center;margin-bottom:1rem"><span class="mark"><i class="ph-fill ph-leaf"></i></span> ALCURA</div><p>© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.</p></footer>
 
 <script src="js/app.js"></script>
+<script>
+(function(){function sync(){var d=document.documentElement.getAttribute('data-theme');document.querySelectorAll('[data-theme-icon]').forEach(function(i){i.className=(d==='dark'?'ph ph-sun':'ph ph-moon');});}var o=window.toggleTheme;window.toggleTheme=function(){if(o)o();sync();};sync();})();
+</script>
 </body>
 </html>

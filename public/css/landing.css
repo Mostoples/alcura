@@ -88,22 +88,37 @@
 /* ---------- Animated liquid background ---------- */
 .liquid-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 
-/* Single algae-colony accent (ALCURA Spirulina motif) that bleeds off one
-   corner and relocates to a new corner each time a section becomes active.
-   JS sets --tx/--ty to move it; the inner layer handles a slow idle float. */
-.cell-accent-layer{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.cell-accent{
-  position:absolute;top:50%;left:50%;width:clamp(300px,42vw,560px);aspect-ratio:1;
-  transform:translate(-50%,-50%) translate(var(--tx,-42vw),var(--ty,-40vh));
-  transition:transform 1.3s cubic-bezier(.4,0,.2,1);will-change:transform;
-}
-.cell-accent-inner{
-  width:100%;height:100%;background:url(../img/colony.svg) center/contain no-repeat;
-  opacity:.4;animation:accentfloat 26s ease-in-out infinite;
-}
-:root[data-theme="dark"] .cell-accent-inner{opacity:.6}
-@keyframes accentfloat{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.06) rotate(6deg)}}
-@media(prefers-reduced-motion:reduce){.cell-accent-inner{animation:none}.cell-accent{transition:none}}
+/* ---------- Flowing microalgae-culture water ----------
+   Two wide, soft layers of suspended algae clouds that stream horizontally
+   like a living culture. Each layer is 200vw wide with its blobs mirrored at
+   +50%, so translateX(-50%) loops seamlessly. Transform-only = GPU-composited,
+   clipped by .liquid-bg's overflow:hidden. */
+:root{--cf-1:rgba(86,185,124,.50);--cf-2:rgba(40,180,150,.40);--cf-3:rgba(150,220,180,.36)}
+:root[data-theme="dark"]{--cf-1:rgba(52,196,118,.30);--cf-2:rgba(28,150,150,.26);--cf-3:rgba(40,120,92,.42)}
+.flow{position:absolute;top:-12vh;left:0;width:200vw;height:124vh;will-change:transform;filter:blur(16px)}
+.flow-a{opacity:.6;background:
+  radial-gradient(240px 200px at 6% 26%,var(--cf-1),transparent 70%),
+  radial-gradient(200px 180px at 17% 64%,var(--cf-2),transparent 70%),
+  radial-gradient(260px 220px at 30% 40%,var(--cf-1),transparent 70%),
+  radial-gradient(180px 170px at 43% 78%,var(--cf-2),transparent 70%),
+  radial-gradient(240px 200px at 56% 26%,var(--cf-1),transparent 70%),
+  radial-gradient(200px 180px at 67% 64%,var(--cf-2),transparent 70%),
+  radial-gradient(260px 220px at 80% 40%,var(--cf-1),transparent 70%),
+  radial-gradient(180px 170px at 93% 78%,var(--cf-2),transparent 70%);
+  animation:flowLeft 52s linear infinite}
+.flow-b{opacity:.42;background:
+  radial-gradient(320px 250px at 10% 52%,var(--cf-3),transparent 70%),
+  radial-gradient(230px 210px at 24% 16%,var(--cf-2),transparent 70%),
+  radial-gradient(270px 230px at 38% 84%,var(--cf-3),transparent 70%),
+  radial-gradient(210px 200px at 46% 38%,var(--cf-2),transparent 70%),
+  radial-gradient(320px 250px at 60% 52%,var(--cf-3),transparent 70%),
+  radial-gradient(230px 210px at 74% 16%,var(--cf-2),transparent 70%),
+  radial-gradient(270px 230px at 88% 84%,var(--cf-3),transparent 70%),
+  radial-gradient(210px 200px at 96% 38%,var(--cf-2),transparent 70%);
+  animation:flowRight 78s linear infinite}
+@keyframes flowLeft{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes flowRight{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
+@media(prefers-reduced-motion:reduce){.flow{animation:none}}
 .liquid-bg .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.9;mix-blend-mode:normal;will-change:transform}
 .liquid-bg .b1{width:46vw;height:46vw;background:radial-gradient(circle at 30% 30%,var(--blob-a),transparent 70%);top:-12vw;left:-8vw;animation:drift1 22s ease-in-out infinite}
 .liquid-bg .b2{width:40vw;height:40vw;background:radial-gradient(circle at 60% 40%,var(--blob-b),transparent 70%);top:10vh;right:-12vw;animation:drift2 26s ease-in-out infinite}

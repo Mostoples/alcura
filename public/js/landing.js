@@ -77,6 +77,7 @@ const I18N={
     'innov.a.li1':'Menyerap CO₂ dan melepas oksigen segar','innov.a.li2':'Menyegarkan udara layaknya air purifier','innov.a.li3':'Mengurangi VOC dan polutan dalam ruangan',
     'innov.b.title':'Budi Daya Mikroalga','innov.b.desc':'ALCURA membudidayakan dan mendukung produksi biomassa Spirulina yang kaya manfaat kesehatan:',
     'innov.b.li1':'Memproduksi biomassa Spirulina bergizi tinggi','innov.b.li2':'Kaya manfaat kesehatan','innov.b.li3':'Panen berkelanjutan tiap siklus',
+    'innov.fn1':'Fungsi 01','innov.fn2':'Fungsi 02','innov.a.pill':'Air Purifier','innov.b.pill':'Photobioreactor',
 
     'cmp.tag':'Perbandingan','cmp.title':'Mengapa <em>ALCURA</em>?','cmp.sub':'Dibandingkan air purifier dan lampu konvensional di pasaran.',
     'cmp.feature':'Fitur','cmp.purifier':'Air Purifier Biasa','cmp.lamp':'Lampu Pintar',
@@ -87,6 +88,7 @@ const I18N={
     'price.p2.name':'Bloom','price.p2.badge':'Populer','price.p2.desc':'Untuk pengalaman penuh ALCURA.','price.p2.f1':'Semua fitur Spora','price.p2.f2':'Optimasi AI penuh','price.p2.f3':'Prediksi hasil panen','price.p2.f4':'Riwayat data tak terbatas',
     'price.p3.name':'Canopy','price.p3.desc':'Untuk ruang dan tim yang lebih besar.','price.p3.f1':'Semua fitur Bloom','price.p3.f2':'Multi-unit dashboard','price.p3.f3':'Dukungan prioritas',
     'price.choose':'Pilih Paket','price.month':'/bulan',
+    'price.bestseller':'Paling Populer','price.p1.tag':'Pemula','price.p2.tag':'Terlaris','price.p3.tag':'Skala',
 
     'team.tag':'Tim Kami','team.title':'Orang di balik <em>ALCURA</em>','team.sub':'Tujuh orang yang menghidupkan udara untuk ruang yang hidup. Detail menyusul.',
     'team.m1':'Anggota 1','team.m2':'Anggota 2','team.m3':'Anggota 3','team.m4':'Anggota 4','team.m5':'Anggota 5','team.m6':'Anggota 6','team.m7':'Anggota 7',
@@ -106,6 +108,11 @@ const I18N={
     'auth.fs3.t':'Pantau','auth.fs3.s':'Lihat data kultur Anda secara real-time.',
 
     'social.title':'Tetap terhubung dengan <em>ALCURA</em>','social.desc':'Ikuti perjalanan kami di media sosial.',
+    'foot.tagline':'Lampu photobioreactor pintar untuk udara yang lebih bersih dan budi daya Spirulina — memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.',
+    'foot.product':'Produk','foot.science':'Sains & Riset','foot.legal':'Legal',
+    'foot.l.features':'Fitur','foot.l.how':'Cara Kerja','foot.l.pricing':'Langganan','foot.l.demo':'Demo App','foot.l.faq':'FAQ',
+    'foot.l.evidence':'Bukti Riset','foot.l.innovation':'Inovasi','foot.l.comparison':'Perbandingan','foot.l.about':'Tentang Kami',
+    'foot.l.privacy':'Kebijakan Privasi','foot.l.terms':'Syarat Layanan','foot.l.help':'Bantuan',
     'footer.copy':'© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.',
     'common.soon':'Data menyusul',
   },
@@ -172,6 +179,7 @@ const I18N={
     'innov.a.li1':'Absorbs CO₂ and releases fresh oxygen','innov.a.li2':'Refreshes the air like an air purifier','innov.a.li3':'Cuts indoor VOCs and pollutants',
     'innov.b.title':'Microalgae Cultivation','innov.b.desc':'ALCURA cultivates and supports Spirulina biomass that is rich in health benefits:',
     'innov.b.li1':'Produces nutrient-rich Spirulina biomass','innov.b.li2':'Rich in health benefits','innov.b.li3':'Sustainable harvest every cycle',
+    'innov.fn1':'Function 01','innov.fn2':'Function 02','innov.a.pill':'Air Purifier','innov.b.pill':'Photobioreactor',
 
     'cmp.tag':'Comparison','cmp.title':'Why <em>ALCURA</em>?','cmp.sub':'Compared to conventional air purifiers and lamps on the market.',
     'cmp.feature':'Feature','cmp.purifier':'Typical Air Purifier','cmp.lamp':'Smart Lamp',
@@ -182,6 +190,7 @@ const I18N={
     'price.p2.name':'Bloom','price.p2.badge':'Popular','price.p2.desc':'For the full ALCURA experience.','price.p2.f1':'Everything in Spore','price.p2.f2':'Full AI optimization','price.p2.f3':'Harvest yield predictions','price.p2.f4':'Unlimited data history',
     'price.p3.name':'Canopy','price.p3.desc':'For larger spaces and teams.','price.p3.f1':'Everything in Bloom','price.p3.f2':'Multi-unit dashboard','price.p3.f3':'Priority support',
     'price.choose':'Choose Plan','price.month':'/month',
+    'price.bestseller':'Best Seller','price.p1.tag':'Starter','price.p2.tag':'Most Popular','price.p3.tag':'Scale',
 
     'team.tag':'Our Team','team.title':'The people behind <em>ALCURA</em>','team.sub':'Seven people bringing living air to living spaces. Details coming soon.',
     'team.m1':'Member 1','team.m2':'Member 2','team.m3':'Member 3','team.m4':'Member 4','team.m5':'Member 5','team.m6':'Member 6','team.m7':'Member 7',
@@ -201,6 +210,11 @@ const I18N={
     'auth.fs3.t':'Monitor','auth.fs3.s':'Watch your culture data in real time.',
 
     'social.title':'Stay connected with <em>ALCURA</em>','social.desc':'Follow our journey on social media.',
+    'foot.tagline':'A smart photobioreactor lamp for cleaner air and Spirulina cultivation — purifying the air, producing oxygen, and monitored in real time by AI.',
+    'foot.product':'Product','foot.science':'Science & Research','foot.legal':'Legal',
+    'foot.l.features':'Features','foot.l.how':'How It Works','foot.l.pricing':'Pricing','foot.l.demo':'Demo App','foot.l.faq':'FAQ',
+    'foot.l.evidence':'Research Evidence','foot.l.innovation':'Innovation','foot.l.comparison':'Comparison','foot.l.about':'About Us',
+    'foot.l.privacy':'Privacy Policy','foot.l.terms':'Terms of Service','foot.l.help':'Help',
     'footer.copy':'© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.',
     'common.soon':'Coming soon',
   }
@@ -281,6 +295,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     entries.forEach(e=>{e.target.classList.toggle('offscreen',!e.isIntersecting);});
   },{rootMargin:'160px 0px'});
   document.querySelectorAll('.slide').forEach(s=>vis.observe(s));
+
+  // Click aura: brief accent-coloured glow when a card is clicked/tapped
+  document.querySelectorAll('.slide .glass').forEach(el=>{
+    el.addEventListener('click',()=>{
+      el.classList.add('lit');clearTimeout(el._lt);
+      el._lt=setTimeout(()=>el.classList.remove('lit'),650);
+    },{passive:true});
+  });
 
   /* ---- Cursor-following glass glare (rAF-throttled, one write/frame) ---- */
   if(finePointer){

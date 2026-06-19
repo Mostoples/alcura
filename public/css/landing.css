@@ -37,7 +37,11 @@
   --ink-mute:#8aa094;
 
   /* Type + shadows used by the landing layout */
-  --font-display:'Space Grotesk','Inter',sans-serif;
+  --font-helios:'Helios','Helios Now','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-display:var(--font-helios);
+  /* Natural / vibrant accents (yellow, sky, violet, teal, gold) */
+  --sun:#f5b833;--sun-soft:#ffe39a;--sky:#4d8ff0;--coral:#f08a5d;
+  --accent:#2e9e5e;--accent-rgb:46,158,94;
   --shadow-sm:0 2px 8px rgba(22,39,28,.14);
   --shadow-lg:0 30px 60px -15px rgba(22,39,28,.35);
 }
@@ -471,4 +475,138 @@
 @media(prefers-reduced-motion:reduce){
   .feat-card,.team-card,.val-card,.step-card,.review-card,.price-card,.innov-card{transition:none}
   .btn::after,.btn-block::after{display:none}
+}
+
+/* ============================================================
+   Helios typography + per-section vibrant accents
+   (kills the top-to-bottom monotony with natural colours)
+   ============================================================ */
+body{font-family:var(--font-helios)}
+.slide h1,.slide h2,.slide h3,.slide h4,.brand,.start-card h4,.price-card h3,.team-card h4{font-family:var(--font-helios);letter-spacing:-.02em}
+
+/* Each slide carries its own accent; tag, heading-accent + a soft side glow follow it */
+.slide{--accent:#2e9e5e;--accent-rgb:46,158,94}
+/* acc-sky/acc-violet re-harmonised to sit within the botanical palette:
+   former blue -> aqua-teal, former purple -> warm clay/terracotta. */
+.slide.acc-sky{--accent:#0c9fb5;--accent-rgb:12,159,181}
+.slide.acc-amber{--accent:#dd9b1e;--accent-rgb:245,184,51}
+.slide.acc-violet{--accent:#c66a45;--accent-rgb:198,106,69}
+.slide.acc-teal{--accent:#12a98c;--accent-rgb:25,184,154}
+.slide.acc-gold{--accent:#d99a22;--accent-rgb:232,178,58}
+.slide.acc-coral{--accent:#e2734a;--accent-rgb:240,138,93}
+:root[data-theme="dark"] .slide.acc-amber{--accent:#f5c14a}
+:root[data-theme="dark"] .slide.acc-gold{--accent:#f3c75a}
+:root[data-theme="dark"] .slide.acc-sky{--accent:#3ccfe0}
+:root[data-theme="dark"] .slide.acc-violet{--accent:#e89070}
+:root[data-theme="dark"] .slide.acc-teal{--accent:#3ad6b8}
+
+.slide .slide-tag{color:var(--accent);background:rgba(var(--accent-rgb),.12);border-color:rgba(var(--accent-rgb),.3)}
+.slide h2 em,.slide h1 em{color:var(--accent)}
+.slide .num,.faq-q i,.flow-arrow,.innov-card li i,.price-card li i,.val-card li i{color:var(--accent)}
+
+/* Soft accent glow per section — alternates side for rhythm */
+.slide::before{
+  content:"";position:absolute;top:8%;z-index:0;pointer-events:none;
+  width:min(560px,62vw);height:min(560px,62vw);border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.22),transparent 70%);
+  filter:blur(26px);
+}
+.slide:nth-of-type(odd)::before{right:-10%}
+.slide:nth-of-type(even)::before{left:-10%}
+.slide>*{position:relative;z-index:1}
+@media(prefers-reduced-motion:reduce){.slide::before{display:none}}
+
+/* Accent-driven icon chips so colour varies section to section */
+.slide.acc-amber .feat-card .ic,.slide.acc-amber .val-card .ic,.slide.acc-gold .step-card .num,
+.slide.acc-sky .feat-card .ic,.slide.acc-violet .feat-card .ic{filter:saturate(1.05)}
+
+/* ---- Validation: peer-review lead + supporting-data stat band ---- */
+.val-lead{display:flex;gap:1.8rem;align-items:center;flex-wrap:wrap;padding:2rem 2.2rem;margin-bottom:1.2rem}
+.val-lead .kpi{flex-shrink:0;text-align:center}
+.val-lead .kpi b{font-family:var(--font-helios);font-weight:800;font-size:clamp(3rem,7vw,4.4rem);line-height:.9;color:var(--accent);display:block;letter-spacing:-.03em}
+.val-lead .kpi span{font-family:var(--font-mono);font-size:.74rem;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.05em}
+.val-lead .vt{flex:1;min-width:240px}
+.val-lead .vt h3{font-family:var(--font-helios);font-weight:700;font-size:1.4rem;margin-bottom:.5rem}
+.val-lead .vt p{color:var(--ink-soft);font-size:.98rem}
+.val-lead .vt .src{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}
+.val-lead .vt .src span{font-family:var(--font-mono);font-size:.72rem;font-weight:600;color:var(--accent);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.25);padding:.3rem .65rem;border-radius:100px}
+.val-band{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.val-metric{padding:1.4rem 1.3rem}
+.val-metric .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.15rem;color:#fff;margin-bottom:.8rem;background:linear-gradient(145deg,rgba(var(--accent-rgb),1),var(--forest-700))}
+.val-metric b{font-family:var(--font-helios);font-weight:800;font-size:1.9rem;color:var(--accent);display:block;letter-spacing:-.02em}
+.val-metric span{font-size:.82rem;color:var(--ink-soft);display:block;margin-top:.2rem}
+@media(max-width:880px){.val-band{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.val-band{grid-template-columns:1fr}}
+
+/* ---- Extra icon-chip colours (7th feature + more team) ---- */
+.feat-card.g .ic{background:linear-gradient(145deg,var(--sun),#e09413)}
+.team-card.e .team-photo{background:linear-gradient(145deg,var(--sun),#e09413)}
+.team-card.f .team-photo{background:linear-gradient(145deg,#12a98c,var(--forest-600))}
+.team-card.g .team-photo{background:linear-gradient(145deg,var(--coral),#d65a37)}
+
+/* A touch of yellow in the hero gradient word for warmth */
+.s-hero h1 .grad{background:linear-gradient(120deg,var(--sun),var(--leaf-500) 55%,var(--forest-700));-webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-theme="dark"] .s-hero h1 .grad{background:linear-gradient(120deg,var(--sun-soft),var(--spirulina) 55%,var(--mint-300));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ============================================================
+   Card background illustrations (replace the top-left icon chip)
+   Monochrome SVG art masked + tinted to each section accent,
+   bleeding off the bottom-right corner like the reference.
+   ============================================================ */
+.card-art{
+  position:absolute;z-index:0;pointer-events:none;
+  background-color:var(--accent);
+  -webkit-mask:var(--art) no-repeat right bottom;mask:var(--art) no-repeat right bottom;
+  -webkit-mask-size:contain;mask-size:contain;
+  opacity:.14;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+}
+.feat-card .card-art{right:-3%;bottom:-5%;width:56%;height:68%}
+.innov-card .card-art{right:1%;bottom:0;width:40%;height:64%;opacity:.12}
+.val-metric .card-art{right:-5%;bottom:-8%;width:58%;height:58%;opacity:.1}
+.feat-card:hover .card-art,.innov-card:hover .card-art{opacity:.22;transform:translate(-3px,-6px) scale(1.05)}
+:root[data-theme="dark"] .card-art{opacity:.2}
+:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art{opacity:.3}
+@media(prefers-reduced-motion:reduce){.card-art{transition:none}}
+
+/* ============================================================
+   Glow + shine on highlighted titles, subtitles & numbers
+   (mirrors the Register-button sheen sweep)
+   ============================================================ */
+@keyframes textShine{0%{background-position:200% center}100%{background-position:-100% center}}
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 7px rgba(245,184,51,.25))}50%{filter:drop-shadow(0 0 18px rgba(245,184,51,.5))}}
+
+/* Numbers + highlight words: accent gradient with a moving white glint */
+.hero-stats .s b,
+.val-lead .kpi b,
+.val-metric b,
+.price-card .price,
+.step-card .num,
+.slide h2 em,
+.slide h1 em{
+  background-image:linear-gradient(100deg,rgba(var(--accent-rgb),1) 38%,#ffffff 50%,rgba(var(--accent-rgb),1) 62%);
+  background-size:250% auto;
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 9px rgba(var(--accent-rgb),.42));
+  animation:textShine 5.5s ease-in-out infinite;
+}
+:root[data-theme="dark"] .step-card .num{
+  background-image:linear-gradient(100deg,rgba(var(--accent-rgb),1) 38%,#ffffff 50%,rgba(var(--accent-rgb),1) 62%);
+  background-size:250% auto;-webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;animation:textShine 5.5s ease-in-out infinite;
+}
+/* keep the "/month" suffix readable (not clipped/animated) */
+.price-card .price small{-webkit-text-fill-color:var(--ink-mute);color:var(--ink-mute);filter:none}
+
+/* Hero gradient word: warm pulsing glow */
+.s-hero h1 .grad{animation:glowPulse 3.6s ease-in-out infinite}
+
+/* Section titles + eyebrow tags: soft accent glow */
+.slide h2{text-shadow:0 0 24px rgba(var(--accent-rgb),.16)}
+.slide-tag{box-shadow:0 0 16px rgba(var(--accent-rgb),.18)}
+
+@media(prefers-reduced-motion:reduce){
+  .hero-stats .s b,.val-lead .kpi b,.val-metric b,.price-card .price,.step-card .num,
+  .slide h2 em,.slide h1 em,:root[data-theme="dark"] .step-card .num{animation:none;background-position:0 center}
+  .s-hero h1 .grad{animation:none}
 }

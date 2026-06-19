@@ -5,131 +5,78 @@
   <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Settings — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
 </head>
 <body>
 <div class="app-container">
-  <div class="app-header">
-    <h1>Settings</h1>
-    <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
-        <i class="ph-fill ph-moon" data-theme-icon></i>
-      </button>
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Settings</h2><p>Akun, perangkat & preferensi</p></div>
+    <div class="top-bar-actions">
+      <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
     </div>
-  </div>
+  </header>
 
   <div class="app-scroll">
     <h3 class="section-title">Account</h3>
-
-    <div class="card">
-      <div style="display: flex; gap: 0.8rem; margin-bottom: 0.8rem; align-items: center;">
-        <img src="https://i.pravatar.cc/100?img=47" alt="Profile" data-user-avatar style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
-        <div>
-          <h4 style="margin: 0; font-size: 0.95rem;" data-user-name>Pengguna ALCURA</h4>
-          <small style="color: var(--ink-mute); font-size: 0.78rem;" data-user-email>—</small>
-        </div>
+    <div class="card aura-green no-pattern">
+      <div style="display:flex;gap:.8rem;margin-bottom:.9rem;align-items:center">
+        <img src="https://i.pravatar.cc/100?img=47" alt="Profile" data-user-avatar style="width:46px;height:46px;border-radius:14px;object-fit:cover;box-shadow:var(--shadow-raised-sm)">
+        <div><h4 data-user-name style="margin:0;font-size:.95rem;color:var(--text)">Pengguna ALCURA</h4><small data-user-email style="color:var(--text-muted);font-size:.78rem">—</small></div>
       </div>
-      <button class="btn btn-secondary btn-block" onclick="openProfileEditor()">
-        <i class="ph ph-pencil"></i> Edit Profile
-      </button>
+      <button class="btn btn-secondary btn-block" onclick="openProfileEditor()"><i class="ph ph-pencil"></i> Edit Profile</button>
     </div>
 
     <h3 class="section-title">Device Info</h3>
-
-    <div class="card">
-      <div class="row">
-        <span>Serial Number</span>
-        <b style="font-family: var(--font-mono); font-size: 0.75rem;">ALG-2024-0547</b>
-      </div>
-      <div class="row">
-        <span>Firmware</span>
-        <b>v2.1.2</b>
-      </div>
-      <div class="row">
-        <span>Uptime</span>
-        <b>45 hari</b>
-      </div>
-      <div class="row">
-        <span>Connectivity</span>
-        <b style="color: var(--leaf-500);">WiFi Connected</b>
-      </div>
+    <div class="card aura-blue no-pattern list-card">
+      <div class="row"><span>Serial Number</span><b style="font-family:var(--font-mono);font-size:.75rem">ALG-2024-0547</b></div>
+      <div class="row"><span>Firmware</span><b>v2.1.2</b></div>
+      <div class="row"><span>Uptime</span><b>45 hari</b></div>
+      <div class="row"><span>Connectivity</span><b style="color:var(--accent)">WiFi Connected</b></div>
     </div>
 
     <h3 class="section-title">Notifications</h3>
-
-    <div class="checkbox">
-      <input type="checkbox" id="notif" checked>
-      <label for="notif">Alert Notifications</label>
-    </div>
-
-    <div class="checkbox">
-      <input type="checkbox" id="harvest" checked>
-      <label for="harvest">Harvest Reminders</label>
-    </div>
-
-    <div class="checkbox">
-      <input type="checkbox" id="weekly">
-      <label for="weekly">Weekly Impact Report</label>
+    <div class="card no-pattern aura-green settings-card">
+      <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-bell"></i></div><div><div class="setting-title">Alert Notifications</div></div></div><label class="toggle"><input type="checkbox" id="notif" checked><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+      <div class="divider"></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-plant"></i></div><div><div class="setting-title">Harvest Reminders</div></div></div><label class="toggle"><input type="checkbox" id="harvest" checked><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+      <div class="divider"></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-chart-line-up"></i></div><div><div class="setting-title">Weekly Impact Report</div></div></div><label class="toggle"><input type="checkbox" id="weekly"><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
     </div>
 
     <h3 class="section-title">Display</h3>
-
-    <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
-      <span style="font-size: 0.9rem;">Dark Mode</span>
-      <button class="btn" onclick="toggleTheme()" style="background: var(--line); padding: 0.4rem 0.8rem; font-size: 0.75rem;">
-        <span id="themeLabel">Off</span>
-      </button>
-    </div>
-
-    <div style="padding: 0.8rem 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
-      <span style="font-size: 0.9rem;">Language</span>
-      <select style="background: var(--bg); border: 1px solid var(--line); padding: 0.4rem 0.6rem; border-radius: var(--r-sm); color: var(--ink); font-size: 0.85rem;">
-        <option>Bahasa Indonesia</option>
-        <option>English</option>
-      </select>
+    <div class="card no-pattern aura-green settings-card">
+      <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-moon" data-theme-icon></i></div><div><div class="setting-title">Dark Mode</div><div class="setting-sub" id="themeLabel">Off</div></div></div><button class="btn btn-secondary" onclick="toggleTheme()" style="padding:.5rem 1rem;font-size:.78rem">Ganti</button></div>
+      <div class="divider"></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-translate"></i></div><div><div class="setting-title">Language</div></div></div>
+        <select style="background:var(--bg);box-shadow:var(--shadow-inset);padding:.5rem .7rem;border-radius:var(--radius-pill);color:var(--text);font-size:.82rem;border:0"><option>Bahasa Indonesia</option><option>English</option></select>
+      </div>
     </div>
 
     <h3 class="section-title">Lainnya</h3>
-
-    <a href="impact.html" class="btn btn-secondary btn-block" style="margin-bottom: 0.5rem; text-decoration: none;">
-      <i class="ph ph-chart-line-up"></i> Laporan Dampak
-    </a>
-    <a href="controls.html" class="btn btn-secondary btn-block" style="text-decoration: none;">
-      <i class="ph ph-sliders-horizontal"></i> Kontrol Perangkat
-    </a>
+    <a href="impact.html" class="btn btn-secondary btn-block" style="margin-bottom:.6rem;text-decoration:none"><i class="ph ph-chart-line-up"></i> Laporan Dampak</a>
+    <a href="controls.html" class="btn btn-secondary btn-block" style="text-decoration:none"><i class="ph ph-sliders-horizontal"></i> Kontrol Perangkat</a>
 
     <h3 class="section-title">Support</h3>
-
-    <button class="btn btn-secondary btn-block" onclick="openHelp()">
-      <i class="ph ph-question"></i> Help & FAQ
-    </button>
-
-    <button class="btn btn-secondary btn-block" style="margin-top: 0.5rem;" onclick="openAbout()">
-      <i class="ph ph-info"></i> About ALCURA
-    </button>
+    <button class="btn btn-secondary btn-block" onclick="openHelp()"><i class="ph ph-question"></i> Help & FAQ</button>
+    <button class="btn btn-secondary btn-block" style="margin-top:.6rem" onclick="openAbout()"><i class="ph ph-info"></i> About ALCURA</button>
 
     <h3 class="section-title">Danger Zone</h3>
-
-    <button class="btn" onclick="handleLogout()" style="background: #ff3b30; color: #fff; width: 100%;">
-      <i class="ph ph-sign-out"></i> Logout
-    </button>
-
-    <div style="margin-bottom: 1rem;"></div>
+    <button class="btn btn-block" onclick="handleLogout()" style="color:#fff;background:linear-gradient(135deg,#ef5350,#df5757);box-shadow:0 8px 22px rgba(223,87,87,.35)"><i class="ph ph-sign-out"></i> Logout</button>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <div class="spacer-bottom"></div>
   <nav class="bottom-nav">
     <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
     <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
-    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
     <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
     <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>
@@ -139,21 +86,14 @@
 <script src="../js/auth.js"></script>
 <script src="../js/app-shell.js"></script>
 <script>
-// Auth guard (uses the Firebase-aware layer when available)
 setTimeout(() => {
-  if (typeof alcuraAuth !== 'undefined' && !alcuraAuth.isAuthenticated()) {
-    window.location.href = '../login.html';
-  }
+  if (typeof alcuraAuth !== 'undefined' && !alcuraAuth.isAuthenticated()) { window.location.href = '../login.html'; }
 }, 500);
-
 function handleLogout() {
   if (!confirm('Apakah Anda yakin ingin logout?')) return;
   function done() { localStorage.removeItem('alcuraUser'); window.location.href = '../login.html'; }
-  if (typeof alcuraAuth !== 'undefined' && alcuraAuth.signOut) {
-    alcuraAuth.signOut().then(done).catch(done);
-  } else { done(); }
+  if (typeof alcuraAuth !== 'undefined' && alcuraAuth.signOut) { alcuraAuth.signOut().then(done).catch(done); } else { done(); }
 }
-
 function openProfileEditor() { toast('Editor profil akan segera tersedia'); }
 function openHelp() { toast('Bantuan & FAQ akan segera tersedia'); }
 function openAbout() { toast('ALCURA v1.0.0 — fotobioreaktor cerdas dengan AI'); }

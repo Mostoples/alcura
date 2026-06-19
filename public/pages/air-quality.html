@@ -5,123 +5,98 @@
   <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Air Quality — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
 </head>
 <body>
 <div class="app-container">
-  <div class="app-header">
-    <h1>Air Quality</h1>
-    <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
-        <i class="ph-fill ph-moon" data-theme-icon></i>
-      </button>
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Air Quality</h2><p>Kualitas udara indoor real-time</p></div>
+    <div class="top-bar-actions">
+      <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
     </div>
-  </div>
+  </header>
 
   <div class="app-scroll">
-    <h3 class="section-title">CO₂ Level</h3>
-
-    <div style="text-align: center; margin: 1.2rem 0;">
-      <div class="gauge" style="width: 100px; height: 100px; margin: 0 auto;">
-        <svg viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--line)" stroke-width="8"/>
-          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--leaf-500)" stroke-width="8" stroke-dasharray="180" stroke-dashoffset="36" stroke-linecap="round"/>
-        </svg>
-        <div class="gauge-val" style="color: var(--ink); font-size: 1.4rem;">
-          <span>480</span>
-          <div class="gauge-label" style="color: var(--ink-mute); font-size: 0.65rem;">ppm</div>
-        </div>
+    <div class="card hero-card aura-blue" data-pattern="cloud">
+      <div class="hero-left">
+        <p class="hero-label">CO₂ Level</p>
+        <div class="hero-value"><span class="hero-num">480</span><span class="hero-unit">ppm</span></div>
+        <p class="hero-desc">Baik — dalam rentang optimal</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
       </div>
-    </div>
-
-    <div style="text-align: center; margin-bottom: 1rem;">
-      <span class="pill"><i class="ph-fill ph-check-circle"></i> Baik — Dalam rentang optimal</span>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:188"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num">480</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">PPM</text>
+        </svg>
+      </div>
     </div>
 
     <h3 class="section-title">Metrik Udara Lainnya</h3>
-    <div class="metric-grid">
-      <div class="metric">
-        <i class="ph-fill ph-drop"></i>
-        <b>21<small>%</small></b>
-        <span>O₂</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Optimal</div>
+    <section class="grid-2">
+      <div class="card metric-card aura-green" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop"></i></div><span class="metric-trend up">Optimal</span></div>
+        <p class="metric-label">O₂</p><div class="metric-value"><span>21</span><span class="metric-unit">%</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-cloud-smoke"></i>
-        <b>8<small>μg/m³</small></b>
-        <span>PM2.5</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Baik</div>
+      <div class="card metric-card aura-violet" data-pattern="cloud">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-cloud"></i></div><span class="metric-trend up">Baik</span></div>
+        <p class="metric-label">PM2.5</p><div class="metric-value"><span>8</span><span class="metric-unit">μg/m³</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-wind"></i>
-        <b>25<small>μg/m³</small></b>
-        <span>PM10</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Baik</div>
+      <div class="card metric-card aura-blue" data-pattern="wind">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-wind"></i></div><span class="metric-trend up">Baik</span></div>
+        <p class="metric-label">PM10</p><div class="metric-value"><span>25</span><span class="metric-unit">μg/m³</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-flask"></i>
-        <b>0.03<small>ppm</small></b>
-        <span>HCHO</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Aman</div>
+      <div class="card metric-card aura-amber" data-pattern="flask">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Aman</span></div>
+        <p class="metric-label">HCHO</p><div class="metric-value"><span>0.03</span><span class="metric-unit">ppm</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-atom"></i>
-        <b>45<small>ppb</small></b>
-        <span>VOC</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Baik</div>
+      <div class="card metric-card aura-green" data-pattern="leaf">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-atom"></i></div><span class="metric-trend up">Baik</span></div>
+        <p class="metric-label">VOC</p><div class="metric-value"><span>45</span><span class="metric-unit">ppb</span></div>
       </div>
-      <div class="metric">
-        <i class="ph-fill ph-drop-half"></i>
-        <b>52<small>%</small></b>
-        <span>Humidity</span>
-        <div style="font-size: 0.65rem; color: var(--leaf-500);">Ideal</div>
+      <div class="card metric-card aura-blue" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop-half"></i></div><span class="metric-trend up">Ideal</span></div>
+        <p class="metric-label">Humidity</p><div class="metric-value"><span>52</span><span class="metric-unit">%</span></div>
       </div>
-    </div>
+    </section>
 
     <h3 class="section-title">Tren 24 Jam</h3>
-    <div class="card">
+    <div class="card aura-green no-pattern">
       <div class="chart-mock">
-        <div class="bar" style="height: 45%;"></div>
-        <div class="bar active" style="height: 65%;"></div>
-        <div class="bar" style="height: 55%;"></div>
-        <div class="bar" style="height: 48%;"></div>
-        <div class="bar" style="height: 52%;"></div>
-        <div class="bar" style="height: 60%;"></div>
-        <div class="bar active" style="height: 70%;"></div>
+        <div class="bar" style="height:45%"></div>
+        <div class="bar active" style="height:65%"></div>
+        <div class="bar" style="height:55%"></div>
+        <div class="bar" style="height:48%"></div>
+        <div class="bar" style="height:52%"></div>
+        <div class="bar" style="height:60%"></div>
+        <div class="bar active" style="height:70%"></div>
       </div>
-      <div style="text-align: center; margin-top: 0.8rem; font-size: 0.75rem; color: var(--ink-mute);">
-        Rata-rata CO₂ turun 23% dibanding kemarin
-      </div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Rata-rata CO₂ turun 23% dibanding kemarin</div>
     </div>
 
     <h3 class="section-title">Comparison</h3>
-    <div class="card">
-      <div class="row">
-        <span><i class="ph ph-house" style="margin-right: 0.4rem;"></i>Dalam Ruangan</span>
-        <b>480 ppm</b>
-      </div>
-      <div class="row">
-        <span><i class="ph ph-wind" style="margin-right: 0.4rem;"></i>Luar Ruangan (est.)</span>
-        <b>420 ppm</b>
-      </div>
-      <div style="background: var(--sky-100); border-radius: var(--r-md); padding: 0.8rem; margin-top: 0.8rem; font-size: 0.8rem;">
-        <i class="ph ph-info" style="margin-right: 0.4rem;"></i>
-        <span>ALCURA membantu mengurangi CO₂ indoor hingga optimal</span>
+    <div class="card aura-blue no-pattern">
+      <div class="row"><span><i class="ph ph-house" style="margin-right:.4rem"></i>Dalam Ruangan</span><b>480 ppm</b></div>
+      <div class="row"><span><i class="ph ph-wind" style="margin-right:.4rem"></i>Luar Ruangan (est.)</span><b>420 ppm</b></div>
+      <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.8rem;font-size:.8rem;color:var(--text-muted)">
+        <i class="ph ph-info" style="margin-right:.4rem;color:var(--accent)"></i><span>ALCURA membantu mengurangi CO₂ indoor hingga optimal</span>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <div class="spacer-bottom"></div>
   <nav class="bottom-nav">
     <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
     <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
-    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
     <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
     <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>

@@ -5,24 +5,22 @@
   <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Alerts — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
 </head>
 <body>
 <div class="app-container">
-  <div class="app-header">
-    <h1>Alerts</h1>
-    <div class="header-right">
-      <button class="icon-btn" onclick="toggleTheme()" aria-label="Ganti tema">
-        <i class="ph-fill ph-moon" data-theme-icon></i>
-      </button>
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Alerts</h2><p>Notifikasi & peringatan sistem</p></div>
+    <div class="top-bar-actions">
+      <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
     </div>
-  </div>
+  </header>
 
   <div class="app-scroll">
     <ul class="tabs">
@@ -31,68 +29,20 @@
       <li class="tab" onclick="filterAlerts('critical', this)">Critical</li>
     </ul>
 
-    <div class="alert critical">
-      <i class="ph-fill ph-warning"></i>
-      <div class="alert-content">
-        <h4>pH kultur turun drastis</h4>
-        <small>pH menurun ke 8.8. Sesuaikan nutrisi dalam 24 jam untuk mencegah stress pada kultur.</small>
-      </div>
-    </div>
-
-    <div class="alert warning">
-      <i class="ph-fill ph-warning"></i>
-      <div class="alert-content">
-        <h4>Panen siap dalam 3 hari</h4>
-        <small>Berdasarkan proyeksi, Spirulina akan siap panen dalam 3 hari. Siapkan peralatan panen.</small>
-      </div>
-    </div>
-
-    <div class="alert success">
-      <i class="ph-fill ph-check-circle"></i>
-      <div class="alert-content">
-        <h4>Kualitas udara meningkat 23%</h4>
-        <small>Dibandingkan minggu lalu, indoor air quality meningkat signifikan. Excellent progress!</small>
-      </div>
-    </div>
-
-    <div class="alert">
-      <i class="ph-fill ph-info"></i>
-      <div class="alert-content">
-        <h4>Firmware update tersedia</h4>
-        <small>Update v2.1.3 tersedia. Fitur baru: sensor calibration tool. Update sekarang?</small>
-      </div>
-    </div>
-
-    <div class="alert success">
-      <i class="ph-fill ph-check-circle"></i>
-      <div class="alert-content">
-        <h4>Sensor calibration selesai</h4>
-        <small>Sensor pH dan DO telah dikalibrasi. Akurasi: 99.2%</small>
-      </div>
-    </div>
-
-    <div class="alert warning">
-      <i class="ph-fill ph-warning"></i>
-      <div class="alert-content">
-        <h4>LED intensity tinggi</h4>
-        <small>LED berjalan di 95% intensity selama 8 jam terakhir. Pertimbangkan untuk cooling period.</small>
-      </div>
-    </div>
-
-    <div class="alert success">
-      <i class="ph-fill ph-check-circle"></i>
-      <div class="alert-content">
-        <h4>Network connection stable</h4>
-        <small>WiFi signal: excellent. Data sync: up-to-date. No connectivity issues.</small>
-      </div>
-    </div>
+    <div class="alert critical"><i class="ph-fill ph-warning"></i><div class="alert-content"><h4>pH kultur turun drastis</h4><small>pH menurun ke 8.8. Sesuaikan nutrisi dalam 24 jam untuk mencegah stress pada kultur.</small></div></div>
+    <div class="alert warning"><i class="ph-fill ph-warning"></i><div class="alert-content"><h4>Panen siap dalam 3 hari</h4><small>Berdasarkan proyeksi, Spirulina akan siap panen dalam 3 hari. Siapkan peralatan panen.</small></div></div>
+    <div class="alert success"><i class="ph-fill ph-check-circle"></i><div class="alert-content"><h4>Kualitas udara meningkat 23%</h4><small>Dibandingkan minggu lalu, indoor air quality meningkat signifikan. Excellent progress!</small></div></div>
+    <div class="alert"><i class="ph-fill ph-info"></i><div class="alert-content"><h4>Firmware update tersedia</h4><small>Update v2.1.3 tersedia. Fitur baru: sensor calibration tool. Update sekarang?</small></div></div>
+    <div class="alert success"><i class="ph-fill ph-check-circle"></i><div class="alert-content"><h4>Sensor calibration selesai</h4><small>Sensor pH dan DO telah dikalibrasi. Akurasi: 99.2%</small></div></div>
+    <div class="alert warning"><i class="ph-fill ph-warning"></i><div class="alert-content"><h4>LED intensity tinggi</h4><small>LED berjalan di 95% intensity selama 8 jam terakhir. Pertimbangkan untuk cooling period.</small></div></div>
+    <div class="alert success"><i class="ph-fill ph-check-circle"></i><div class="alert-content"><h4>Network connection stable</h4><small>WiFi signal: excellent. Data sync: up-to-date. No connectivity issues.</small></div></div>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <div class="spacer-bottom"></div>
   <nav class="bottom-nav">
     <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
     <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
-    <a href="culture-health.html" class="nav-item"><i class="ph ph-plant" data-icon="ph-plant"></i><span>Culture</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
     <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
     <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>
@@ -101,25 +51,16 @@
 <script src="../js/app-shell.js"></script>
 <script>
 requireAuthPage();
-
-// Alert filter handler
 function filterAlerts(filter, tab) {
-  // Update active tab
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
-
-  // Filter alerts (simple demo)
   document.querySelectorAll('.alert').forEach(alert => {
-    if (filter === 'all') {
-      alert.style.display = 'flex';
-    } else if (filter === 'critical') {
+    if (filter === 'critical') {
       alert.style.display = alert.classList.contains('critical') ? 'flex' : 'none';
-    } else if (filter === 'unread') {
-      alert.style.display = 'flex'; // Demo: show all as unread
+    } else {
+      alert.style.display = 'flex';
     }
   });
-
-  console.log('Filtered alerts by:', filter);
 }
 </script>
 </body>

@@ -272,14 +272,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   },{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  // Dot-nav active state (+ relocate the algae accent per section)
+  // Dot-nav active state + storyline background (recolour/drift per section)
   const dots=[...document.querySelectorAll('.dot-nav a')];
   const sections=dots.map(d=>document.querySelector(d.getAttribute('href'))).filter(Boolean);
+  const storyBg=document.querySelector('.story-bg');
   if(sections.length){
     const so=new IntersectionObserver((entries)=>{
       entries.forEach(e=>{
         if(e.isIntersecting){
           dots.forEach(d=>d.classList.toggle('active',d.getAttribute('href')==='#'+e.target.id));
+          if(storyBg){
+            const idx=sections.indexOf(e.target);
+            const rgb=(getComputedStyle(e.target).getPropertyValue('--accent-rgb')||'46,158,94').trim();
+            storyBg.style.setProperty('--story-col','rgba('+rgb+',.18)');
+            storyBg.style.setProperty('--story-x',(idx%2?68:32)+'%');
+            storyBg.style.setProperty('--story-y',(14+idx*6)+'%');
+          }
         }
       });
     },{threshold:.4});

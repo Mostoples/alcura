@@ -867,3 +867,40 @@ body{font-family:var(--font-helios)}
   border-top:1px solid rgba(255,255,255,.08);color:rgba(207,227,214,.5);font-family:var(--font-mono);font-size:.85rem}
 @media(max-width:860px){.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1 / -1}}
 @media(max-width:520px){.footer-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   Microalgae logo mark (replaces the square + leaf chip)
+   ============================================================ */
+.brand .mark-algae{
+  background:url(../img/logo-algae.svg) center/contain no-repeat !important;
+  box-shadow:none !important;border-radius:0 !important;
+}
+.brand .mark-algae i{display:none}
+
+/* ============================================================
+   3D floating phone — tilts in perspective + bobs up and down
+   ============================================================ */
+.phone-wrap{perspective:1500px}
+.phone{transform-style:preserve-3d;will-change:transform;animation:phone3d 7.5s ease-in-out infinite}
+@keyframes phone3d{
+  0%,100%{transform:translateY(0) rotateX(5deg) rotateY(-10deg)}
+  50%{transform:translateY(-22px) rotateX(2deg) rotateY(-6deg)}
+}
+.phone:hover{animation-play-state:paused}   /* hold still while interacting */
+@media(prefers-reduced-motion:reduce){.phone{animation:none}}
+
+/* ============================================================
+   Storyline background — a roaming accent wash that recolours +
+   drifts to a new spot as each section scrolls into view.
+   Layers ON TOP of the existing blobs/flow (never replaces them).
+   ============================================================ */
+@property --story-col{syntax:'<color>';inherits:false;initial-value:rgba(46,158,94,0)}
+@property --story-x{syntax:'<percentage>';inherits:false;initial-value:32%}
+@property --story-y{syntax:'<percentage>';inherits:false;initial-value:16%}
+.story-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  --story-col:rgba(46,158,94,0);--story-x:32%;--story-y:16%;
+  background:radial-gradient(74vw 64vh at var(--story-x) var(--story-y),var(--story-col),transparent 70%);
+  transition:--story-col 1.3s ease,--story-x 1.4s ease,--story-y 1.4s ease;
+}
+@media(prefers-reduced-motion:reduce){.story-bg{transition:none}}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ALCURA AI — Asisten Cerdas</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    .chat-page{display:flex;flex-direction:column;min-height:100dvh}
+    .chat-top{display:flex;align-items:center;gap:.7rem;padding-bottom:.4rem}
+    .chat-top .back{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--bg);box-shadow:var(--shadow-raised-sm);color:var(--text);text-decoration:none;flex-shrink:0;font-size:1.2rem}
+    .chat-avatar{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.3rem;box-shadow:0 0 18px rgba(var(--aura-green),.5);flex-shrink:0}
+    .chat-id h2{font-size:1rem;margin:0;color:var(--text)}
+    .chat-id small{font-size:.72rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:.3rem}
+    .chat-id small .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.6s infinite}
+
+    .chat-messages{flex:1;display:flex;flex-direction:column;gap:.7rem;padding:1rem 0 150px}
+    .msg{max-width:84%;padding:.7rem .9rem;border-radius:18px;font-size:.88rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;animation:msgIn .3s ease}
+    @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);border-bottom-right-radius:6px;box-shadow:0 6px 16px -6px rgba(var(--aura-green),.5)}
+    .msg.ai{align-self:flex-start;background:var(--bg);color:var(--text);box-shadow:var(--shadow-raised-sm);border-bottom-left-radius:6px}
+    .msg.ai b{color:var(--accent)}
+    .msg.err{align-self:flex-start;background:rgba(var(--aura-coral),.12);color:rgb(var(--aura-coral));box-shadow:var(--shadow-raised-sm)}
+    .msg-row{display:flex;flex-direction:column;gap:.25rem}
+    .typing{align-self:flex-start;display:inline-flex;gap:4px;padding:.85rem 1rem;background:var(--bg);border-radius:18px;box-shadow:var(--shadow-raised-sm)}
+    .typing span{width:7px;height:7px;border-radius:50%;background:var(--text-muted);animation:typing 1.2s infinite}
+    .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+    @keyframes typing{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+
+    .chat-welcome{text-align:center;padding:2rem 1rem 1rem;color:var(--text-muted)}
+    .chat-welcome .big{width:64px;height:64px;border-radius:20px;margin:0 auto 1rem;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:2rem;box-shadow:0 0 28px rgba(var(--aura-green),.5)}
+    .chat-welcome h3{color:var(--text);font-size:1.1rem;margin-bottom:.4rem}
+    .chat-welcome p{font-size:.83rem;max-width:300px;margin:0 auto}
+    .chips{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:1.2rem}
+    .chip{background:var(--bg);box-shadow:var(--shadow-raised-sm);border:0;color:var(--text);font-size:.78rem;font-weight:600;padding:.55rem .9rem;border-radius:var(--radius-pill);cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:.4rem}
+    .chip:hover{box-shadow:var(--shadow-raised),0 0 0 1px rgba(var(--aura-green),.25);color:var(--accent)}
+    .chip i{color:var(--accent)}
+
+    .chat-composer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:760px;padding:.7rem 16px calc(.9rem + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg,transparent,var(--bg) 28%);z-index:40}
+    .composer-inner{display:flex;align-items:flex-end;gap:.5rem;background:var(--bg);border-radius:24px;padding:.4rem .4rem .4rem 1rem;box-shadow:var(--shadow-raised),0 0 0 1px rgba(var(--aura-green),.12)}
+    .composer-inner textarea{flex:1;border:0;background:transparent;resize:none;font-family:var(--font);font-size:.9rem;color:var(--text);max-height:120px;line-height:1.4;padding:.5rem 0;outline:none}
+    .composer-inner textarea::placeholder{color:var(--text-dim)}
+    .send-btn{width:42px;height:42px;border-radius:50%;border:0;flex-shrink:0;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.2rem;display:grid;place-items:center;cursor:pointer;transition:.2s;box-shadow:0 4px 12px -2px rgba(var(--aura-green),.5)}
+    .send-btn:disabled{opacity:.45;cursor:not-allowed}
+    .send-btn:not(:disabled):active{transform:scale(.9)}
+  </style>
+</head>
+<body>
+<div class="app-container chat-page">
+  <header class="top-bar chat-top">
+    <a href="../app.html" class="back" aria-label="Kembali"><i class="ph ph-arrow-left"></i></a>
+    <div class="chat-avatar"><i class="ph-fill ph-sparkle"></i></div>
+    <div class="chat-id">
+      <h2>ALCURA AI</h2>
+      <small><span class="dot"></span> Online · Gemini · paham data sensor Anda</small>
+    </div>
+    <div class="top-bar-actions" style="margin-left:auto">
+      <button class="btn-icon" onclick="clearChat()" aria-label="Chat baru"><i class="ph ph-trash"></i></button>
+    </div>
+  </header>
+
+  <div class="chat-messages" id="messages">
+    <div class="chat-welcome" id="welcome">
+      <div class="big"><i class="ph-fill ph-sparkle"></i></div>
+      <h3>Halo! Saya ALCURA AI 🌱</h3>
+      <p>Tanya apa saja tentang kualitas udara, kesehatan kultur Spirulina, jadwal panen, atau perawatan perangkat Anda.</p>
+      <div class="chips" id="chips">
+        <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-wind"></i> Bagaimana kualitas udara saya?</button>
+        <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-plant"></i> Status kultur Spirulina?</button>
+        <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-calendar-check"></i> Kapan waktu panen?</button>
+        <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-flask"></i> Apa itu Spirulina?</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-composer">
+    <div class="composer-inner">
+      <textarea id="input" rows="1" placeholder="Tulis pesan…" oninput="autosize(this);toggleSend()"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="send()" disabled aria-label="Kirim"><i class="ph-fill ph-paper-plane-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../js/app-shell.js"></script>
+<script src="../js/sensors-engine.js"></script>
+<script>
+requireAuthPage();
+
+/* ===== AI endpoint =====
+   The Gemini key lives ONLY on the server (Cloud Function + Secret
+   Manager). The browser calls our own /api/chat proxy with the
+   signed-in user's Firebase ID token. No key is shipped to the client. */
+var CHAT_ENDPOINT = '/api/chat';
+
+var history = [];           // [{role:'user'|'model', parts:[{text}]}]
+var sending = false;
+var messagesEl = document.getElementById('messages');
+var inputEl = document.getElementById('input');
+var sendBtn = document.getElementById('sendBtn');
+
+/* ===== Live sensor context (so the AI knows the real readings) ===== */
+function liveContext() {
+  if (typeof ALCURA === 'undefined') return '';
+  var d = ALCURA.snapshot();
+  return [
+    'DATA SENSOR REAL-TIME SAAT INI (gunakan untuk menjawab pertanyaan tentang kondisi terkini):',
+    '- Skor kualitas udara: ' + d.air.score + '/100 (' + d.air.label + ')',
+    '- CO₂: ' + d.air.co2 + ' ppm | TVOC: ' + d.air.tvoc + ' ppb | kelembapan: ' + d.air.rh + '%',
+    '- Keamanan gas/asap: tertinggi ' + d.safety.value + ' ppm di ' + d.safety.loc + ' (status: ' + d.safety.level + ')',
+    '- Kultur: suhu ' + d.culture.temp + '°C, pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', klorofil ' + d.culture.chl + '%, status ' + d.culture.status,
+    '- Level air: ' + Math.round(d.s.level) + '%',
+    '- Prediksi panen: ' + d.harvest.days + ' hari lagi (kesiapan ' + d.harvest.readiness + '%, estimasi ' + d.harvest.yieldG + ' g)',
+    '- Aktuator: LED ' + d.applied.ledIntensity + '%, aerasi ' + d.applied.aeration + '%, Auto Mode ' + (d.control.autoMode ? 'aktif' : 'nonaktif'),
+    '- Dampak hari ini: CO₂ terserap ' + d.impact.co2Today + ' g, O₂ diproduksi ' + d.impact.o2Today + ' L'
+  ].join('\n');
+}
+
+function systemPrompt() {
+  return 'Kamu adalah ALCURA AI, asisten cerdas di dalam aplikasi ALCURA — sebuah fotobioreaktor Spirulina pintar yang memurnikan udara dalam ruangan dengan menyerap CO₂ dan memproduksi O₂.\n' +
+    'Perangkat memiliki sensor: 3× MQ-2 (asap/gas), MG811 (CO₂), ENS160+AHT21 (TVOC/eCO₂/suhu/kelembapan), DHT-11, MLX90614 (suhu kultur non-kontak), pH meter, TDS, HC-SR04 (level air), TCS3200 (warna/klorofil kultur), sensor UV, serta lampu grow LED WS2812B & strip.\n' +
+    'Tugasmu: bantu pengguna memahami kualitas udara, kesehatan kultur, jadwal panen, dan perawatan. Jawab dalam Bahasa Indonesia yang ramah, ringkas, dan praktis (gunakan poin bila perlu). Jika ditanya kondisi terkini, gunakan DATA SENSOR di bawah. Jangan mengarang angka di luar data yang diberikan.\n\n' +
+    liveContext();
+}
+
+/* ===== UI helpers ===== */
+function autosize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function toggleSend() { sendBtn.disabled = sending || !inputEl.value.trim(); }
+function scrollDown() { requestAnimationFrame(function () { window.scrollTo(0, document.body.scrollHeight); messagesEl.scrollTop = messagesEl.scrollHeight; }); }
+
+function escapeHtml(s) { return s.replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function format(s) { return escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
+
+function addMessage(text, who) {
+  var w = document.getElementById('welcome'); if (w) w.remove();
+  var el = document.createElement('div');
+  el.className = 'msg ' + who;
+  el.innerHTML = who === 'ai' ? format(text) : escapeHtml(text);
+  messagesEl.appendChild(el);
+  scrollDown();
+  return el;
+}
+function showTyping() {
+  var t = document.createElement('div');
+  t.className = 'typing'; t.id = 'typing';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  messagesEl.appendChild(t); scrollDown();
+}
+function hideTyping() { var t = document.getElementById('typing'); if (t) t.remove(); }
+
+function sendSuggestion(btn) { inputEl.value = btn.textContent.trim(); toggleSend(); send(); }
+
+function clearChat() {
+  history = [];
+  messagesEl.innerHTML = '';
+  location.reload();
+}
+
+/* ===== Get a fresh Firebase ID token (waits for auth to resolve) ===== */
+function getIdToken() {
+  return new Promise(function (resolve, reject) {
+    if (typeof firebase === 'undefined' || !firebase.auth) { reject(new Error('Auth tidak tersedia')); return; }
+    var auth = firebase.auth();
+    if (auth.currentUser) { auth.currentUser.getIdToken().then(resolve, reject); return; }
+    var unsub = auth.onAuthStateChanged(function (u) {
+      unsub();
+      if (u) u.getIdToken().then(resolve, reject);
+      else reject(new Error('Anda belum login'));
+    });
+  });
+}
+
+/* ===== Send via secure proxy (/api/chat) ===== */
+function send() {
+  var text = inputEl.value.trim();
+  if (!text || sending) return;
+  addMessage(text, 'user');
+  history.push({ role: 'user', parts: [{ text: text }] });
+  inputEl.value = ''; autosize(inputEl);
+  sending = true; toggleSend();
+  showTyping();
+
+  var payload = JSON.stringify({ system: systemPrompt(), contents: history });
+
+  getIdToken()
+    .then(function (token) {
+      function call(attempt) {
+        return fetch(CHAT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: payload
+        }).then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (j) {
+            if (!r.ok && (r.status === 503 || r.status === 429) && attempt < 1) {
+              return new Promise(function (res) { setTimeout(res, 1500); }).then(function () { return call(attempt + 1); });
+            }
+            return { ok: r.ok, j: j };
+          });
+        });
+      }
+      return call(0);
+    })
+    .then(function (res) {
+      hideTyping();
+      if (!res.ok) throw new Error((res.j && res.j.error) || 'Layanan AI gagal merespons.');
+      var reply = res.j.reply || 'Maaf, tidak ada jawaban. Coba lagi.';
+      addMessage(reply, 'ai');
+      history.push({ role: 'model', parts: [{ text: reply }] });
+    })
+    .catch(function (err) {
+      hideTyping();
+      var el = addMessage('⚠ ' + err.message + '\nPeriksa koneksi Anda, atau coba login ulang.', 'ai');
+      el.classList.remove('ai'); el.classList.add('err');
+    })
+    .finally(function () { sending = false; toggleSend(); });
+}
+
+/* Enter to send (Shift+Enter = newline) */
+inputEl.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+</script>
+</body>
+</html>

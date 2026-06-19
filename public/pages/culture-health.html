@@ -26,15 +26,15 @@
     <div class="card hero-card aura-green" data-pattern="plant">
       <div class="hero-left">
         <p class="hero-label">Biomass Density</p>
-        <div class="hero-value"><span class="hero-num">1.32</span><span class="hero-unit">OD680</span></div>
-        <p class="hero-desc">Hari ke-25 / 30 · fase eksponensial</p>
-        <div class="progress-bar"><div class="progress-fill" style="width:83%"></div></div>
+        <div class="hero-value"><span class="hero-num" data-bind="culture.od" data-dec="2">1.32</span><span class="hero-unit">OD680</span></div>
+        <p class="hero-desc">Kesiapan <b data-bind="harvest.readiness">83</b>% · panen ~<span data-bind="harvest.days">5</span> hari lagi</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:83%" data-bind-w="harvest.readiness"></div></div>
       </div>
       <div class="hero-right">
         <svg viewBox="0 0 120 120" class="ring">
           <circle cx="60" cy="60" r="50" class="ring-track"/>
           <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:53"/>
-          <text x="60" y="58" text-anchor="middle" class="ring-num">83%</text>
+          <text x="60" y="58" text-anchor="middle" class="ring-num"><tspan data-bind="harvest.readiness">83</tspan>%</text>
           <text x="60" y="78" text-anchor="middle" class="ring-sub">GROW</text>
         </svg>
       </div>
@@ -43,20 +43,20 @@
     <h3 class="section-title">Culture Parameters</h3>
     <section class="grid-2">
       <div class="card metric-card aura-blue" data-pattern="drop">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop-half"></i></div><span class="metric-trend up">Optimal</span></div>
-        <p class="metric-label">DO mg/L</p><div class="metric-value"><span>11.2</span></div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up">Nutrisi</span></div>
+        <p class="metric-label">TDS</p><div class="metric-value"><span data-bind="culture.tds">864</span><span class="metric-unit">ppm</span></div>
       </div>
       <div class="card metric-card aura-amber" data-pattern="sun">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer"></i></div><span class="metric-trend up">Ideal</span></div>
-        <p class="metric-label">Temperature</p><div class="metric-value"><span>27</span><span class="metric-unit">°C</span></div>
+        <p class="metric-label">Temperature</p><div class="metric-value"><span data-bind="culture.temp" data-dec="1">27</span><span class="metric-unit">°C</span></div>
       </div>
       <div class="card metric-card aura-violet" data-pattern="flask">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Optimal</span></div>
-        <p class="metric-label">pH</p><div class="metric-value"><span>9.4</span></div>
+        <p class="metric-label">pH</p><div class="metric-value"><span data-bind="culture.ph" data-dec="1">9.4</span></div>
       </div>
       <div class="card metric-card aura-green" data-pattern="plant">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-plant"></i></div><span class="metric-trend up">Healthy</span></div>
-        <p class="metric-label">Chlorophyll</p><div class="metric-value"><span>92</span><span class="metric-unit">%</span></div>
+        <p class="metric-label">Chlorophyll</p><div class="metric-value"><span data-bind="culture.chl">92</span><span class="metric-unit">%</span></div>
       </div>
     </section>
 
@@ -74,7 +74,16 @@
       <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Hari ke-25 dari 30 — Fase pertumbuhan eksponensial</div>
     </div>
 
-    <div class="alert success"><i class="ph-fill ph-plant"></i><div class="alert-content"><h4>Culture Status: Optimal</h4><small>Spirulina berkembang dengan sangat baik. Pertahankan pengaturan LED saat ini.</small></div></div>
+    <h3 class="section-title">Diagnosa &amp; Rekomendasi</h3>
+    <div class="card no-pattern" data-bind-aura="culture.aura" id="diagCard">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+        <i class="ph-fill ph-stethoscope" style="font-size:1.3rem;color:var(--accent)"></i>
+        <b id="diagStatus" style="font-size:.95rem">Status kultur</b>
+      </div>
+      <ul class="rec-list" id="diagList"></ul>
+    </div>
+
+    <div class="alert" data-bind-aura="culture.aura" id="cultureAlert"><i class="ph-fill ph-plant" id="cultureAlertIcon"></i><div class="alert-content"><h4 id="cultureAlertTitle">Culture Status</h4><small id="cultureAlertSub">—</small></div></div>
   </div>
 
   <div class="spacer-bottom"></div>
@@ -88,6 +97,20 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
-<script>requireAuthPage();</script>
+<script src="../js/sensors-engine.js"></script>
+<script>
+requireAuthPage();
+ALCURA.on(function (d) {
+  var c = d.culture;
+  var label = c.status === 'optimal' ? 'Optimal' : c.status === 'attention' ? 'Perlu Perhatian' : 'Kritis';
+  document.getElementById('diagStatus').textContent = 'Status kultur: ' + label;
+  document.getElementById('diagList').innerHTML = c.recommendations.map(function (r) {
+    return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>';
+  }).join('');
+  document.getElementById('cultureAlertIcon').className = 'ph-fill ' + (c.status === 'optimal' ? 'ph-check-circle' : c.status === 'attention' ? 'ph-warning' : 'ph-warning-octagon');
+  document.getElementById('cultureAlertTitle').textContent = 'Culture Status: ' + label;
+  document.getElementById('cultureAlertSub').textContent = c.recommendations[0];
+});
+</script>
 </body>
 </html>

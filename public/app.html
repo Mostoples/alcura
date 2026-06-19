@@ -18,9 +18,9 @@
 <body>
 <div class="bg-grain"></div>
 
-<div class="app-container">
+<div class="app-container dash-shell">
   <header class="top-bar">
-    <div class="hi"><span>Selamat pagi 👋</span><h2 data-user-name>Theresa Pena</h2></div>
+    <div class="hi"><span id="greeting">Selamat datang 👋</span><h2 data-user-name>Theresa Pena</h2></div>
     <div class="top-bar-actions">
       <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
       <button class="btn-icon notif" onclick="window.location.href='pages/alerts.html'" aria-label="Notifikasi"><i class="ph ph-bell"></i><span class="badge-dot"></span></button>
@@ -28,14 +28,18 @@
     </div>
   </header>
 
-  <div class="app-scroll">
+  <div class="app-scroll dash">
+    <section class="dash-block dash-hero span-2">
       <div class="card hero-status aura-green no-pattern">
         <div class="top"><span class="tag"><i class="ph-fill ph-leaf"></i> ALCURA · Living Room</span><span class="tag"><i class="ph-fill ph-wifi-high"></i> Online</span></div>
-        <div class="gauge-wrap"><div class="gauge" style="--gp:88%"><div class="val"><b>88</b><span>HEALTH</span></div></div>
-          <div class="meta"><div class="m"><i class="ph-fill ph-wind"></i><div><b>Excellent</b><small>Air Quality 94</small></div></div><div class="m"><i class="ph-fill ph-plant"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m"><i class="ph-fill ph-drop"></i><div><b>8 L O₂</b><small>diproduksi hari ini</small></div></div></div>
+        <div class="gauge-wrap"><div class="gauge" style="--gp:88%" data-bind-gp="air.score"><div class="val"><b data-bind="air.score">88</b><span>HEALTH</span></div></div>
+          <div class="meta"><div class="m"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">Excellent</b><small>Air Quality <span data-bind="air.score">94</span></small></div></div><div class="m"><i class="ph-fill ph-plant"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">8</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
         </div>
       </div>
 
+    </section>
+
+    <section class="dash-block dash-pbr">
       <div class="sec-title"><h3>Photobioreactor Live</h3><a href="pages/culture-health.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="card aura-green no-pattern pbr-card">
         <div class="pbr-head"><h3>Spirulina Culture</h3><span class="live"><span class="blink"></span> LIVE</span></div>
@@ -43,39 +47,63 @@
         <div class="pbr-foot"><div class="f"><b>1.32</b><span>OD680</span></div><div class="f"><b>11.2</b><span>DO mg/L</span></div><div class="f"><b>72%</b><span>LED PAR</span></div><div class="f"><b>60%</b><span>AERASI</span></div></div>
       </div>
 
-      <div class="sec-title"><h3>Metrik Cepat</h3><a href="pages/air-quality.html">Semua <i class="ph ph-arrow-right"></i></a></div>
+    </section>
+
+    <section class="dash-block dash-metrik span-2">
+      <div class="sec-title"><h3>Metrik Cepat</h3><a href="pages/sensors.html">Semua sensor <i class="ph ph-arrow-right"></i></a></div>
       <div class="metric-scroll">
-        <div class="metric co2"><div class="ic"><i class="ph ph-cloud"></i></div><b>480<small> ppm</small></b><span>CO₂</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
-        <div class="metric do"><div class="ic"><i class="ph ph-drop-half"></i></div><b>11.2</b><span>DO mg/L</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
-        <div class="metric temp"><div class="ic"><i class="ph ph-thermometer"></i></div><b>27<small>°C</small></b><span>Suhu Kultur</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
-        <div class="metric ph"><div class="ic"><i class="ph ph-flask"></i></div><b>9.4</b><span>pH</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
+        <div class="metric co2"><div class="ic"><i class="ph ph-cloud"></i></div><b><span data-bind="air.co2">480</span><small> ppm</small></b><span>CO₂</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
+        <div class="metric do"><div class="ic"><i class="ph ph-test-tube"></i></div><b><span data-bind="culture.tds">864</span></b><span>TDS ppm</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
+        <div class="metric temp"><div class="ic"><i class="ph ph-thermometer"></i></div><b><span data-bind="culture.temp" data-dec="1">27</span><small>°C</small></b><span>Suhu Kultur</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
+        <div class="metric ph"><div class="ic"><i class="ph ph-flask"></i></div><b data-bind="culture.ph" data-dec="1">9.4</b><span>pH</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
       </div>
 
+    </section>
+
+    <section class="dash-block dash-harvest">
       <div class="sec-title"><h3>Panen Berikutnya</h3></div>
       <div class="card aura-green harvest" data-pattern="plant">
-        <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-plant"></i></div><div><h4>Spirulina siap dalam 5 hari</h4><span>Probabilitas kesiapan 85%</span></div></div>
-        <div class="progress"><i style="width:83%"></i></div>
-        <div class="stat-row"><span>Estimasi yield <b>280 g</b></span><span>Densitas <b>1.32 OD</b></span></div>
+        <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-plant"></i></div><div><h4>Spirulina siap dalam <span data-bind="harvest.days">5</span> hari</h4><span>Probabilitas kesiapan <span data-bind="harvest.readiness">85</span>%</span></div></div>
+        <div class="progress"><i style="width:83%" data-bind-w="harvest.readiness"></i></div>
+        <div class="stat-row"><span>Estimasi yield <b><span data-bind="harvest.yieldG">280</span> g</b></span><span>Densitas <b><span data-bind="harvest.od" data-dec="2">1.32</span> OD</b></span></div>
         <button class="btn btn-primary btn-block" onclick="window.location.href='pages/culture-health.html'"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
       </div>
 
+    </section>
+
+    <section class="dash-block dash-impact">
       <div class="card aura-green impact" data-pattern="leaf">
         <div class="label"><i class="ph-fill ph-sparkle"></i> Dampak Hari Ini</div>
-        <h3>Hari ini Anda menghirup udara lebih bersih — <b>12 g CO₂</b> terserap.</h3>
-        <div class="ig"><div class="x"><b>8 L</b><span>O₂ diproduksi</span></div><div class="x"><b>0.4 g</b><span>VOC dihapus</span></div><div class="x"><b>1.2 kWh</b><span>HVAC dihemat</span></div></div>
+        <h3>Hari ini Anda menghirup udara lebih bersih — <b><span data-bind="impact.co2Today">12</span> g CO₂</b> terserap.</h3>
+        <div class="ig"><div class="x"><b><span data-bind="impact.o2Today" data-dec="1">8</span> L</b><span>O₂ diproduksi</span></div><div class="x"><b><span data-bind="impact.vocMonth" data-dec="1">0.4</span> g</b><span>VOC dihapus</span></div><div class="x"><b><span data-bind="impact.energyMonth" data-dec="1">1.2</span> kWh</b><span>HVAC dihemat</span></div></div>
       </div>
 
+    </section>
+
+    <section class="dash-block dash-tren">
       <div class="sec-title"><h3>Tren Udara 24 Jam</h3><a href="pages/impact.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="card aura-blue" data-pattern="cloud">
-        <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-size:.82rem;color:var(--text-muted)">Rata-rata CO₂</span><div style="font-weight:800;font-size:1.5rem">498 <small style="font-size:.8rem;color:var(--text-muted);font-weight:600">ppm</small></div></div><span class="pill"><i class="ph-fill ph-trend-down"></i> 23% lebih bersih</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-size:.82rem;color:var(--text-muted)">Rata-rata CO₂</span><div style="font-weight:800;font-size:1.5rem"><span data-bind="air.co2">498</span> <small style="font-size:.8rem;color:var(--text-muted);font-weight:600">ppm</small></div></div><span class="pill"><i class="ph-fill ph-trend-down"></i> 23% lebih bersih</span></div>
         <div class="spark" id="spark"></div>
       </div>
 
+    </section>
+
+    <section class="dash-block dash-qa span-2">
       <div class="sec-title"><h3>Aksi Cepat</h3></div>
-      <div class="qa-grid"><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small>72%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small>60%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></a></div>
+      <div class="qa-grid"><a class="qa" href="pages/sensors.html"><div class="ic"><i class="ph-fill ph-cpu"></i></div><span>Sensor</span><small>13 aktif</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small><span data-bind="applied.ledIntensity">72</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small><span data-bind="applied.aeration">60</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></a></div>
+    </section>
   </div>
 
   <div class="spacer-bottom"></div>
+
+  <!-- Floating AI assistant button — melayang di atas bottom-nav -->
+  <a href="pages/ai-chat.html" class="ai-fab" aria-label="Tanya ALCURA AI">
+    <span class="ai-fab-glow"></span>
+    <i class="ph-fill ph-sparkle"></i>
+    <span class="ai-fab-label">Tanya AI</span>
+  </a>
+
   <nav class="bottom-nav" aria-label="Navigasi utama">
     <a href="app.html" class="nav-item active"><i class="ph-fill ph-house" data-icon="ph-house"></i><span>Home</span></a>
     <a href="pages/air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
@@ -88,6 +116,16 @@
 <script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
+<script src="js/sensors-engine.js"></script>
+<script>
+// Reflect active critical/warning alerts on the bell badge
+ALCURA.on(function (d) {
+  var dot = document.querySelector('.notif .badge-dot');
+  if (!dot) return;
+  var active = d.alerts.some(function (a) { return a.level === 'critical' || a.level === 'warning'; });
+  dot.style.display = active ? '' : 'none';
+});
+</script>
 
 <script>
 // Firebase initialized in firebase-config.js
@@ -108,6 +146,67 @@ function handleLogout() {
       .catch((error) => { alert('Logout gagal: ' + error.message); });
   }
 }
+
+// Time-based, warm & human-like greeting (sapaan hangat sesuai waktu)
+(function () {
+  // Sapaan singkat & berkesan, bertema ALCURA (udara bersih, oksigen, hijau,
+  // fotosintesis) — gaya evokatif seperti "Moonlit chat?". Dipilih acak.
+  var PHRASES = {
+    pagi: [
+      'Selamat pagi',
+      'Udara segar pagi ini?',
+      'Napas pertama hari ini',
+      'Pagi yang hijau',
+      'Fotosintesis dimulai',
+      'Oksigen baru menyapa'
+    ],
+    siang: [
+      'Selamat siang',
+      'Hijau di tengah hari',
+      'Udara siang yang sejuk',
+      'Cahaya untuk si hijau',
+      'Sejuk di balik kesibukan'
+    ],
+    sore: [
+      'Selamat sore',
+      'Senja yang lapang',
+      'Udara sore yang lembut',
+      'Hijau menyambut senja',
+      'Napas tenang sebelum malam'
+    ],
+    malam: [
+      'Selamat malam',
+      'Malam yang hening',
+      'Bernapas tenang malam ini',
+      'Hijau di bawah bulan',
+      'Udara bersih, malam tenang',
+      'Tumbuh dalam senyap'
+    ]
+  };
+
+  function periodOf(h) {
+    if (h >= 4 && h < 11) return 'pagi';
+    if (h >= 11 && h < 15) return 'siang';
+    if (h >= 15 && h < 18) return 'sore';
+    return 'malam';
+  }
+
+  var lastPeriod = null;
+  function greet() {
+    var el = document.getElementById('greeting');
+    if (!el) return;
+    var p = periodOf(new Date().getHours());
+    if (p === lastPeriod) return;           // hanya ganti kalimat saat periode berubah
+    lastPeriod = p;
+    var list = PHRASES[p];
+    el.textContent = list[Math.floor(Math.random() * list.length)];
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; // re-trigger fade
+
+  }
+  greet();
+  // cek tiap menit; kalimat hanya berubah bila berpindah periode (pagi→siang, dst)
+  setInterval(greet, 60000);
+})();
 
 // Display user info (name + avatar)
 function renderUser(user) {

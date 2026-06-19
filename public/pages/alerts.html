@@ -29,13 +29,7 @@
       <li class="tab" onclick="filterAlerts('critical', this)">Critical</li>
     </ul>
 
-    <div class="alert critical"><i class="ph-fill ph-warning"></i><div class="alert-content"><h4>pH kultur turun drastis</h4><small>pH menurun ke 8.8. Sesuaikan nutrisi dalam 24 jam untuk mencegah stress pada kultur.</small></div></div>
-    <div class="alert warning"><i class="ph-fill ph-warning"></i><div class="alert-content"><h4>Panen siap dalam 3 hari</h4><small>Berdasarkan proyeksi, Spirulina akan siap panen dalam 3 hari. Siapkan peralatan panen.</small></div></div>
-    <div class="alert success"><i class="ph-fill ph-check-circle"></i><div class="alert-content"><h4>Kualitas udara meningkat 23%</h4><small>Dibandingkan minggu lalu, indoor air quality meningkat signifikan. Excellent progress!</small></div></div>
-    <div class="alert"><i class="ph-fill ph-info"></i><div class="alert-content"><h4>Firmware update tersedia</h4><small>Update v2.1.3 tersedia. Fitur baru: sensor calibration tool. Update sekarang?</small></div></div>
-    <div class="alert success"><i class="ph-fill ph-check-circle"></i><div class="alert-content"><h4>Sensor calibration selesai</h4><small>Sensor pH dan DO telah dikalibrasi. Akurasi: 99.2%</small></div></div>
-    <div class="alert warning"><i class="ph-fill ph-warning"></i><div class="alert-content"><h4>LED intensity tinggi</h4><small>LED berjalan di 95% intensity selama 8 jam terakhir. Pertimbangkan untuk cooling period.</small></div></div>
-    <div class="alert success"><i class="ph-fill ph-check-circle"></i><div class="alert-content"><h4>Network connection stable</h4><small>WiFi signal: excellent. Data sync: up-to-date. No connectivity issues.</small></div></div>
+    <div id="alertFeed"><!-- alerts rendered live by sensors-engine --></div>
   </div>
 
   <div class="spacer-bottom"></div>
@@ -49,18 +43,33 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/sensors-engine.js"></script>
 <script>
 requireAuthPage();
+var currentFilter = 'all';
+
+// Render the live alert feed, then re-apply the active filter on every update.
+ALCURA.renderAlerts('#alertFeed');
+ALCURA.on(function () { applyFilter(); });
+
 function filterAlerts(filter, tab) {
+  currentFilter = filter;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
-  document.querySelectorAll('.alert').forEach(alert => {
-    if (filter === 'critical') {
-      alert.style.display = alert.classList.contains('critical') ? 'flex' : 'none';
-    } else {
-      alert.style.display = 'flex';
-    }
+  applyFilter();
+}
+function applyFilter() {
+  document.querySelectorAll('#alertFeed .alert').forEach(function (a) {
+    var lvl = a.getAttribute('data-level');
+    var show = currentFilter === 'all'
+      || (currentFilter === 'critical' && lvl === 'critical')
+      || (currentFilter === 'unread' && lvl !== 'success');
+    a.style.display = show ? 'flex' : 'none';
   });
+  var feed = document.getElementById('alertFeed');
+  if (feed && !feed.querySelector('.alert[style*="flex"]') && !feed.textContent.trim().length) {
+    /* nothing */
+  }
 }
 </script>
 </body>

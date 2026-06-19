@@ -23,40 +23,42 @@
   </header>
 
   <div class="app-scroll">
+    <div class="checkbox" style="border:0"><input type="checkbox" id="autoMode" checked><label for="autoMode"><b>Auto Mode (AI Optimized)</b> — Sistem menyesuaikan parameter otomatis dari data sensor.</label></div>
+
+    <div class="auto-banner on" id="autoBanner"><i class="ph-fill ph-robot"></i><div><b id="autoState">AI Auto Mode aktif</b><ul class="rec-list" id="autoRecs" style="margin-top:.4rem"></ul></div></div>
+
     <h3 class="section-title">LED & Environment</h3>
     <div class="slider-group">
       <label><span>LED Intensity</span><span id="ledVal">72%</span></label>
-      <input type="range" min="0" max="100" value="72" oninput="document.getElementById('ledVal').textContent = this.value + '%'">
+      <input type="range" min="0" max="100" value="72" id="ledSlider" oninput="onSlider('ledIntensity', this)">
     </div>
 
     <h3 class="section-title">Spectrum Tuning</h3>
     <div class="spectrum-grid">
-      <div class="spectrum-item"><label>Red</label><div class="spectrum-swatch" style="background:#ff4444"></div><input type="range" min="0" max="100" value="85"></div>
-      <div class="spectrum-item"><label>Blue</label><div class="spectrum-swatch" style="background:#4488ff"></div><input type="range" min="0" max="100" value="60"></div>
-      <div class="spectrum-item"><label>Green</label><div class="spectrum-swatch" style="background:#44ff44"></div><input type="range" min="0" max="100" value="45"></div>
-      <div class="spectrum-item"><label>Far-Red</label><div class="spectrum-swatch" style="background:#cc3333"></div><input type="range" min="0" max="100" value="30"></div>
-      <div class="spectrum-item"><label>UV</label><div class="spectrum-swatch" style="background:#9944ff"></div><input type="range" min="0" max="100" value="15"></div>
+      <div class="spectrum-item"><label>Red</label><div class="spectrum-swatch" style="background:#ff4444"></div><input type="range" min="0" max="100" value="85" data-spec="red" oninput="onSpectrum(this)"></div>
+      <div class="spectrum-item"><label>Blue</label><div class="spectrum-swatch" style="background:#4488ff"></div><input type="range" min="0" max="100" value="60" data-spec="blue" oninput="onSpectrum(this)"></div>
+      <div class="spectrum-item"><label>Green</label><div class="spectrum-swatch" style="background:#44ff44"></div><input type="range" min="0" max="100" value="45" data-spec="green" oninput="onSpectrum(this)"></div>
+      <div class="spectrum-item"><label>Far-Red</label><div class="spectrum-swatch" style="background:#cc3333"></div><input type="range" min="0" max="100" value="30" data-spec="farRed" oninput="onSpectrum(this)"></div>
+      <div class="spectrum-item"><label>UV</label><div class="spectrum-swatch" style="background:#9944ff"></div><input type="range" min="0" max="100" value="15" data-spec="uv" oninput="onSpectrum(this)"></div>
     </div>
 
     <div class="slider-group">
       <label><span>Aeration Rate</span><span id="aerVal">60%</span></label>
-      <input type="range" min="0" max="100" value="60" oninput="document.getElementById('aerVal').textContent = this.value + '%'">
+      <input type="range" min="0" max="100" value="60" id="aerSlider" oninput="onSlider('aeration', this)">
     </div>
 
     <h3 class="section-title">Advanced Settings</h3>
     <div class="card no-pattern aura-green">
-      <div class="checkbox" style="border:0;padding:.4rem 0"><input type="checkbox" id="co2" checked><label for="co2">CO₂ Injection</label></div>
-      <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.4rem;font-size:.8rem"><span style="color:var(--text-muted)">Status: <b style="color:var(--accent)">Aktif</b></span></div>
+      <div class="checkbox" style="border:0;padding:.4rem 0"><input type="checkbox" id="co2" checked onchange="onCo2(this)"><label for="co2">CO₂ Injection</label></div>
+      <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.4rem;font-size:.8rem"><span style="color:var(--text-muted)">Status: <b style="color:var(--accent)" id="co2Status">Aktif</b></span></div>
     </div>
 
     <h3 class="section-title">Mode Preset</h3>
     <div class="btn-group">
-      <button class="btn btn-secondary" onclick="setMode('siang', this)"><i class="ph-fill ph-sun"></i> Siang</button>
-      <button class="btn btn-secondary" onclick="setMode('malam', this)"><i class="ph-fill ph-moon-stars"></i> Malam</button>
-      <button class="btn btn-primary" onclick="setMode('growth', this)"><i class="ph-fill ph-rocket"></i> Growth</button>
+      <button class="btn btn-secondary" data-mode="siang" onclick="setMode('siang', this)"><i class="ph-fill ph-sun"></i> Siang</button>
+      <button class="btn btn-secondary" data-mode="malam" onclick="setMode('malam', this)"><i class="ph-fill ph-moon-stars"></i> Malam</button>
+      <button class="btn btn-primary" data-mode="growth" onclick="setMode('growth', this)"><i class="ph-fill ph-rocket"></i> Growth</button>
     </div>
-
-    <div class="checkbox" style="border:0"><input type="checkbox" id="autoMode" checked><label for="autoMode"><b>Auto Mode (AI Optimized)</b> — Sistem menyesuaikan parameter otomatis.</label></div>
 
     <button class="btn btn-primary btn-block" onclick="saveSettings()"><i class="ph ph-floppy-disk"></i> Simpan Pengaturan</button>
   </div>
@@ -72,19 +74,74 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/sensors-engine.js"></script>
 <script>
 requireAuthPage();
+
+var ledSlider = document.getElementById('ledSlider');
+var aerSlider = document.getElementById('aerSlider');
+var autoChk = document.getElementById('autoMode');
+var co2Chk = document.getElementById('co2');
+
+// --- Initialise inputs from saved control state ---
+(function initFromControl() {
+  var c = ALCURA.control;
+  autoChk.checked = !!c.autoMode;
+  co2Chk.checked = !!c.co2Injection;
+  document.querySelectorAll('[data-spec]').forEach(function (s) {
+    var k = s.getAttribute('data-spec'); if (c.spectrum[k] != null) s.value = c.spectrum[k];
+  });
+  document.querySelectorAll('.btn-group .btn').forEach(function (b) {
+    var on = b.getAttribute('data-mode') === c.mode;
+    b.classList.toggle('btn-primary', on); b.classList.toggle('btn-secondary', !on);
+  });
+})();
+
+autoChk.addEventListener('change', function () {
+  ALCURA.setControl('autoMode', autoChk.checked);
+  toast(autoChk.checked ? 'AI Auto Mode diaktifkan' : 'Mode manual diaktifkan');
+});
+
+function onSlider(key, el) {
+  document.getElementById(key === 'ledIntensity' ? 'ledVal' : 'aerVal').textContent = el.value + '%';
+  if (!autoChk.checked) ALCURA.setControl(key, +el.value);
+}
+function onSpectrum(el) {
+  var obj = {}; obj[el.getAttribute('data-spec')] = +el.value;
+  ALCURA.setControl('spectrum', obj);
+}
+function onCo2(el) {
+  ALCURA.setControl('co2Injection', el.checked);
+  document.getElementById('co2Status').textContent = el.checked ? 'Aktif' : 'Nonaktif';
+}
 function setMode(mode, el) {
-  localStorage.setItem('controlMode', mode);
+  ALCURA.setControl('mode', mode);
   document.querySelectorAll('.btn-group .btn').forEach(b => { b.classList.add('btn-secondary'); b.classList.remove('btn-primary'); });
   if (el) { el.classList.add('btn-primary'); el.classList.remove('btn-secondary'); }
-  const label = mode === 'siang' ? 'Siang' : mode === 'malam' ? 'Malam' : 'Growth';
-  toast('Mode diubah ke: ' + label);
+  toast('Mode diubah ke: ' + (mode === 'siang' ? 'Siang' : mode === 'malam' ? 'Malam' : 'Growth'));
 }
-function saveSettings() {
-  localStorage.setItem('autoMode', document.getElementById('autoMode').checked);
-  toast('Pengaturan tersimpan ✓');
-}
+function saveSettings() { toast('Pengaturan tersimpan ✓'); }
+
+// --- Reflect engine state: when Auto Mode is on, sliders mirror the AI setpoints ---
+ALCURA.on(function (d) {
+  var auto = autoChk.checked;
+  // Lock manual sliders while AI drives them
+  ledSlider.disabled = auto; aerSlider.disabled = auto;
+  ledSlider.style.opacity = auto ? '.6' : '1'; aerSlider.style.opacity = auto ? '.6' : '1';
+
+  ledSlider.value = d.applied.ledIntensity;
+  aerSlider.value = d.applied.aeration;
+  document.getElementById('ledVal').textContent = d.applied.ledIntensity + '%';
+  document.getElementById('aerVal').textContent = d.applied.aeration + '%';
+  if (auto) { co2Chk.checked = d.applied.co2Injection; document.getElementById('co2Status').textContent = d.applied.co2Injection ? 'Aktif' : 'Nonaktif'; }
+
+  var banner = document.getElementById('autoBanner');
+  banner.classList.toggle('on', auto);
+  document.getElementById('autoState').textContent = auto ? 'AI Auto Mode aktif — keputusan terkini:' : 'Mode manual — Auto Mode nonaktif';
+  document.getElementById('autoRecs').innerHTML = auto
+    ? d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('')
+    : '<li><i class="ph-fill ph-hand"></i><span>Aktifkan Auto Mode agar sistem mengatur LED, aerasi & CO₂ otomatis.</span></li>';
+});
 </script>
 </body>
 </html>

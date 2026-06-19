@@ -107,6 +107,11 @@ const I18N={
     'auth.fs2.t':'Pair Alat','auth.fs2.s':'Hubungkan ALCURA Anda via QR atau Bluetooth.',
     'auth.fs3.t':'Pantau','auth.fs3.s':'Lihat data kultur Anda secara real-time.',
 
+    'wl.label':'Belum siap mendaftar? Gabung waitlist:','wl.ph':'email@anda.com','wl.btn':'Gabung',
+    'wl.count':'calon pengguna sudah bergabung',
+    'wl.success':'🎉 Kamu masuk daftar! Kami kabari saat ALCURA rilis.',
+    'wl.invalid':'Masukkan alamat email yang valid.',
+    'wl.already':'Email ini sudah terdaftar. Sampai jumpa saat rilis!',
     'social.title':'Tetap terhubung dengan <em>ALCURA</em>','social.desc':'Ikuti perjalanan kami di media sosial.',
     'foot.tagline':'Lampu photobioreactor pintar untuk udara yang lebih bersih dan budi daya Spirulina — memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.',
     'foot.product':'Produk','foot.science':'Sains & Riset','foot.legal':'Legal',
@@ -209,6 +214,11 @@ const I18N={
     'auth.fs2.t':'Pair Device','auth.fs2.s':'Connect your ALCURA via QR or Bluetooth.',
     'auth.fs3.t':'Monitor','auth.fs3.s':'Watch your culture data in real time.',
 
+    'wl.label':'Not ready to sign up? Join the waitlist:','wl.ph':'you@email.com','wl.btn':'Join',
+    'wl.count':'people have already joined',
+    'wl.success':'🎉 You’re on the list! We’ll email you when ALCURA launches.',
+    'wl.invalid':'Please enter a valid email address.',
+    'wl.already':'This email is already on the list. See you at launch!',
     'social.title':'Stay connected with <em>ALCURA</em>','social.desc':'Follow our journey on social media.',
     'foot.tagline':'A smart photobioreactor lamp for cleaner air and Spirulina cultivation — purifying the air, producing oxygen, and monitored in real time by AI.',
     'foot.product':'Product','foot.science':'Science & Research','foot.legal':'Legal',
@@ -226,8 +236,13 @@ function applyLang(lang){
     const v=dict[el.getAttribute('data-i18n')];
     if(v!=null)el.innerHTML=v;
   });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const v=dict[el.getAttribute('data-i18n-ph')];
+    if(v!=null)el.setAttribute('placeholder',v);
+  });
   document.documentElement.setAttribute('lang',lang);
   localStorage.setItem('lang',lang);
+  if(window.__wlRender)window.__wlRender();
   const tog=document.getElementById('langToggle');
   if(tog){tog.classList.toggle('en',lang==='en');tog.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));}
 }
@@ -303,6 +318,57 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* ---- Count-up on the validated numbers (runs once on scroll-in) ---- */
+  (function(){
+    function countUp(el){
+      const m=el.textContent.trim().match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+      if(!m)return;
+      const prefix=m[1],target=parseFloat(m[2]),suffix=m[3],dec=(m[2].split('.')[1]||'').length;
+      if(reduced){el.textContent=prefix+target.toFixed(dec)+suffix;return;}
+      const dur=1400,start=performance.now();
+      (function tick(now){
+        const p=Math.min((now-start)/dur,1),e=1-Math.pow(1-p,3);
+        el.textContent=prefix+(target*e).toFixed(dec)+suffix;
+        if(p<1)requestAnimationFrame(tick);
+      })(start);
+    }
+    const targets=document.querySelectorAll('[data-countup]');
+    if(!targets.length)return;
+    const obs=new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{if(e.isIntersecting){countUp(e.target);obs.unobserve(e.target);}});
+    },{threshold:.6});
+    targets.forEach(el=>obs.observe(el));
+  })();
+
+  /* ---- Waitlist (email capture + momentum counter) ---- */
+  (function(){
+    const form=document.getElementById('waitlist');
+    if(!form)return;
+    const input=document.getElementById('wlEmail'),msg=document.getElementById('wlMsg'),
+          countEl=document.getElementById('wlCount'),wrap=form.querySelector('.wl-input');
+    const SEED=1240;                 // TODO: set to your real waitlist size
+    const KEY='alcura_waitlist';
+    const ENDPOINT='';               // TODO: put a Formspree/Firebase URL here to actually collect emails
+    const stored=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}};
+    const t=(k)=>{const d=I18N[document.documentElement.getAttribute('lang')||'id']||I18N.id;return d[k]||k;};
+    function render(){if(countEl)countEl.textContent=(SEED+stored().length).toLocaleString(
+      (document.documentElement.getAttribute('lang')||'id')==='en'?'en-US':'id-ID');}
+    window.__wlRender=render; render();
+    form.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const email=(input.value||'').trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        wrap.classList.add('invalid');msg.className='wl-msg err';msg.textContent=t('wl.invalid');return;
+      }
+      wrap.classList.remove('invalid');
+      const list=stored();
+      if(list.includes(email.toLowerCase())){msg.className='wl-msg ok';msg.textContent=t('wl.already');return;}
+      list.push(email.toLowerCase());try{localStorage.setItem(KEY,JSON.stringify(list));}catch(e){}
+      if(ENDPOINT){try{fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});}catch(e){}}
+      render();msg.className='wl-msg ok';msg.textContent=t('wl.success');input.value='';
+    });
+  })();
 
 
   // Perf: mark off-screen slides so their shine/glow animations pause

@@ -1,6 +1,0 @@
-node_modules/
-# Local secrets for the Functions emulator — NEVER commit
-.env
-.env.local
-.secret.local
-*.log

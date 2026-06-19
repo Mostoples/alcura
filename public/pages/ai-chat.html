@@ -8,7 +8,6 @@
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,12 +16,16 @@
   <link rel="stylesheet" href="../css/mobile.css">
   <style>
     .chat-page{display:flex;flex-direction:column;min-height:100dvh}
-    .chat-top{display:flex;align-items:center;gap:.7rem;padding-bottom:.4rem}
-    .chat-top .back{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--bg);box-shadow:var(--shadow-raised-sm);color:var(--text);text-decoration:none;flex-shrink:0;font-size:1.2rem}
-    .chat-avatar{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.3rem;box-shadow:0 0 18px rgba(var(--aura-green),.5);flex-shrink:0}
-    .chat-id h2{font-size:1rem;margin:0;color:var(--text)}
-    .chat-id small{font-size:.72rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:.3rem}
-    .chat-id small .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.6s infinite}
+    /* override .top-bar's space-between so header items sit tight & aligned */
+    .chat-top{display:flex;align-items:center;justify-content:flex-start;gap:.6rem;padding-bottom:.6rem}
+    .chat-top .back,.chat-top .btn-icon{width:40px;height:40px;margin:0;border-radius:13px;display:grid;place-items:center;background:var(--bg);box-shadow:var(--shadow-raised-sm);color:var(--text);text-decoration:none;flex-shrink:0;font-size:1.15rem;border:0;cursor:pointer}
+    .chat-top>*{align-self:center}
+    .chat-avatar{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.25rem;box-shadow:0 0 16px rgba(var(--aura-green),.45);flex-shrink:0}
+    .chat-id{flex:1;min-width:0;line-height:1.2}
+    .chat-id h2{font-size:1rem;margin:0;line-height:1.15;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chat-id small{font-size:.72rem;color:var(--text-muted);display:flex;align-items:center;gap:.35rem;margin-top:2px}
+    .chat-id small .st{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+    .chat-id small .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 1.6s infinite;flex-shrink:0}
 
     .chat-messages{flex:1;display:flex;flex-direction:column;gap:.7rem;padding:1rem 0 150px}
     .msg{max-width:84%;padding:.7rem .9rem;border-radius:18px;font-size:.88rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;animation:msgIn .3s ease}
@@ -54,6 +57,18 @@
     .send-btn{width:42px;height:42px;border-radius:50%;border:0;flex-shrink:0;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.2rem;display:grid;place-items:center;cursor:pointer;transition:.2s;box-shadow:0 4px 12px -2px rgba(var(--aura-green),.5)}
     .send-btn:disabled{opacity:.45;cursor:not-allowed}
     .send-btn:not(:disabled):active{transform:scale(.9)}
+
+    /* Desktop: keep the conversation in a comfortable, elegant reading column */
+    @media (min-width:1024px){
+      .app-container.chat-page{ max-width:860px; }
+      .chat-messages{ padding-top:1.4rem; }
+      .msg{ max-width:74%; font-size:.92rem; }
+      .chat-composer{ max-width:860px; padding-bottom:1.4rem; }
+    }
+    /* Subtle divider so the header reads as a distinct bar */
+    .chat-top{ border-bottom:1px solid var(--line); margin-bottom:.2rem; }
+    .msg.ai{ border:1px solid rgba(var(--aura-green),.10); }
+    .msg + .msg{ margin-top:0; }
   </style>
 </head>
 <body>
@@ -63,10 +78,10 @@
     <div class="chat-avatar"><i class="ph-fill ph-sparkle"></i></div>
     <div class="chat-id">
       <h2>ALCURA AI</h2>
-      <small><span class="dot"></span> Online · Gemini · paham data sensor Anda</small>
+      <small><span class="dot"></span><span class="st">Online · ditenagai Gemini</span></small>
     </div>
-    <div class="top-bar-actions" style="margin-left:auto">
-      <button class="btn-icon" onclick="clearChat()" aria-label="Chat baru"><i class="ph ph-trash"></i></button>
+    <div class="top-bar-actions">
+      <button class="btn-icon" onclick="clearChat()" aria-label="Chat baru" title="Chat baru"><i class="ph ph-trash"></i></button>
     </div>
   </header>
 
@@ -94,17 +109,23 @@
 
 <script src="../js/firebase-config.js"></script>
 <script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/ai-secret.js" onerror="void 0"></script>
 <script>
 requireAuthPage();
 
-/* ===== AI endpoint =====
-   The Gemini key lives ONLY on the server (Cloud Function + Secret
-   Manager). The browser calls our own /api/chat proxy with the
-   signed-in user's Firebase ID token. No key is shipped to the client. */
-var CHAT_ENDPOINT = '/api/chat';
+/* ===== AI transport =====
+   The Gemini keys live in js/ai-secret.js — a file that is gitignored (never
+   pushed to GitHub) but IS deployed to Firebase Hosting. The chat calls Gemini
+   directly from the browser and rotates to the next key when one hits its limit. */
+var GEMINI_DIRECT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+var DEV_KEYS = Array.isArray(window.ALCURA_AI_DEV_KEYS) ? window.ALCURA_AI_DEV_KEYS.filter(Boolean)
+  : (typeof window.ALCURA_AI_DEV_KEY === 'string' && window.ALCURA_AI_DEV_KEY ? [window.ALCURA_AI_DEV_KEY] : []);
+var keyIdx = (function () { var n = parseInt(localStorage.getItem('alcuraKeyIdx') || '0', 10); return (n >= 0 && n < DEV_KEYS.length) ? n : 0; })();
 
-var history = [];           // [{role:'user'|'model', parts:[{text}]}]
+var chatHistory = [];           // [{role:'user'|'model', parts:[{text}]}]
 var sending = false;
 var messagesEl = document.getElementById('messages');
 var inputEl = document.getElementById('input');
@@ -130,8 +151,16 @@ function liveContext() {
 function systemPrompt() {
   return 'Kamu adalah ALCURA AI, asisten cerdas di dalam aplikasi ALCURA — sebuah fotobioreaktor Spirulina pintar yang memurnikan udara dalam ruangan dengan menyerap CO₂ dan memproduksi O₂.\n' +
     'Perangkat memiliki sensor: 3× MQ-2 (asap/gas), MG811 (CO₂), ENS160+AHT21 (TVOC/eCO₂/suhu/kelembapan), DHT-11, MLX90614 (suhu kultur non-kontak), pH meter, TDS, HC-SR04 (level air), TCS3200 (warna/klorofil kultur), sensor UV, serta lampu grow LED WS2812B & strip.\n' +
-    'Tugasmu: bantu pengguna memahami kualitas udara, kesehatan kultur, jadwal panen, dan perawatan. Jawab dalam Bahasa Indonesia yang ramah, ringkas, dan praktis (gunakan poin bila perlu). Jika ditanya kondisi terkini, gunakan DATA SENSOR di bawah. Jangan mengarang angka di luar data yang diberikan.\n\n' +
+    'Tugasmu: bantu pengguna memahami kualitas udara, kesehatan kultur, jadwal panen, dan perawatan. Jawab ramah, ringkas, dan praktis (gunakan poin bila perlu). Jika ditanya kondisi terkini, gunakan DATA SENSOR di bawah. Jangan mengarang angka di luar data yang diberikan.\n' +
+    replyLangInstruction() + '\n\n' +
     liveContext();
+}
+
+function replyLangInstruction() {
+  var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en';
+  if (l === 'id') return 'PENTING: Jawab SELALU dalam Bahasa Indonesia.';
+  if (l === 'ja') return 'IMPORTANT: Always reply in Japanese (日本語).';
+  return 'IMPORTANT: Always reply in English.';
 }
 
 /* ===== UI helpers ===== */
@@ -140,7 +169,12 @@ function toggleSend() { sendBtn.disabled = sending || !inputEl.value.trim(); }
 function scrollDown() { requestAnimationFrame(function () { window.scrollTo(0, document.body.scrollHeight); messagesEl.scrollTop = messagesEl.scrollHeight; }); }
 
 function escapeHtml(s) { return s.replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-function format(s) { return escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
+function format(s) {
+  s = escapeHtml(s);
+  s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');           // **bold**
+  s = s.replace(/(^|\n)\s*[\*\-]\s+/g, '$1• ');           // bullet lists
+  return s.trim();
+}
 
 function addMessage(text, who) {
   var w = document.getElementById('welcome'); if (w) w.remove();
@@ -162,65 +196,85 @@ function hideTyping() { var t = document.getElementById('typing'); if (t) t.remo
 function sendSuggestion(btn) { inputEl.value = btn.textContent.trim(); toggleSend(); send(); }
 
 function clearChat() {
-  history = [];
+  chatHistory = [];
   messagesEl.innerHTML = '';
   location.reload();
 }
 
-/* ===== Get a fresh Firebase ID token (waits for auth to resolve) ===== */
-function getIdToken() {
-  return new Promise(function (resolve, reject) {
-    if (typeof firebase === 'undefined' || !firebase.auth) { reject(new Error('Auth tidak tersedia')); return; }
-    var auth = firebase.auth();
-    if (auth.currentUser) { auth.currentUser.getIdToken().then(resolve, reject); return; }
-    var unsub = auth.onAuthStateChanged(function (u) {
-      unsub();
-      if (u) u.getIdToken().then(resolve, reject);
-      else reject(new Error('Anda belum login'));
-    });
-  });
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+/* Extract text from a raw Gemini response (direct mode) */
+function extractDirect(j) {
+  var c = j && j.candidates && j.candidates[0];
+  var t = c && c.content && c.content.parts && c.content.parts.map(function (p) { return p.text || ''; }).join('');
+  if (!t) { var b = j && j.promptFeedback && j.promptFeedback.blockReason; if (b) t = 'Maaf, permintaan tidak dapat diproses (' + b + ').'; }
+  return t || '';
 }
 
-/* ===== Send via secure proxy (/api/chat) ===== */
+/* A key is considered exhausted/unusable for these statuses -> rotate to next */
+function isKeyLimit(status) { return status === 429 || status === 403 || status === 401 || status === 400; }
+
+/* LOCAL DEV: call Gemini directly, auto-rotating through DEV_KEYS on limit */
+function callDirectRotating() {
+  var attempts = 0, max = DEV_KEYS.length + 2;
+  function once() {
+    attempts++;
+    var key = DEV_KEYS[keyIdx];
+    return fetch(GEMINI_DIRECT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt() }] },
+        contents: chatHistory,
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048, topP: 0.95, thinkingConfig: { thinkingBudget: 0 } }
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.ok) {
+          var t = extractDirect(j);
+          if (!t) throw new Error('Maaf, tidak ada jawaban. Coba lagi.');
+          localStorage.setItem('alcuraKeyIdx', String(keyIdx)); // remember the working key
+          return t;
+        }
+        if (isKeyLimit(r.status) && attempts < max) {
+          keyIdx = (keyIdx + 1) % DEV_KEYS.length;             // ⟳ next key
+          localStorage.setItem('alcuraKeyIdx', String(keyIdx));
+          return once();
+        }
+        if (r.status === 503 && attempts < max) return sleep(1200).then(once); // transient
+        throw new Error((j.error && j.error.message) || ('Semua API key sedang limit (kode ' + r.status + '). Coba lagi nanti.'));
+      });
+    });
+  }
+  return once();
+}
+
+/* One reply request */
+function requestReply() {
+  if (!DEV_KEYS.length) return Promise.reject(new Error('API key belum tersedia (js/ai-secret.js).'));
+  return callDirectRotating();
+}
+
 function send() {
   var text = inputEl.value.trim();
   if (!text || sending) return;
   addMessage(text, 'user');
-  history.push({ role: 'user', parts: [{ text: text }] });
+  chatHistory.push({ role: 'user', parts: [{ text: text }] });
   inputEl.value = ''; autosize(inputEl);
   sending = true; toggleSend();
   showTyping();
 
-  var payload = JSON.stringify({ system: systemPrompt(), contents: history });
-
-  getIdToken()
-    .then(function (token) {
-      function call(attempt) {
-        return fetch(CHAT_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: payload
-        }).then(function (r) {
-          return r.json().catch(function () { return {}; }).then(function (j) {
-            if (!r.ok && (r.status === 503 || r.status === 429) && attempt < 1) {
-              return new Promise(function (res) { setTimeout(res, 1500); }).then(function () { return call(attempt + 1); });
-            }
-            return { ok: r.ok, j: j };
-          });
-        });
-      }
-      return call(0);
-    })
-    .then(function (res) {
+  requestReply()
+    .then(function (reply) {
       hideTyping();
-      if (!res.ok) throw new Error((res.j && res.j.error) || 'Layanan AI gagal merespons.');
-      var reply = res.j.reply || 'Maaf, tidak ada jawaban. Coba lagi.';
       addMessage(reply, 'ai');
-      history.push({ role: 'model', parts: [{ text: reply }] });
+      chatHistory.push({ role: 'model', parts: [{ text: reply }] });
     })
     .catch(function (err) {
       hideTyping();
-      var el = addMessage('⚠ ' + err.message + '\nPeriksa koneksi Anda, atau coba login ulang.', 'ai');
+      // Drop the failed user turn so retry doesn't duplicate it in chatHistory
+      if (chatHistory.length && chatHistory[chatHistory.length - 1].role === 'user') chatHistory.pop();
+      var el = addMessage('⚠ ' + (err.message || 'Terjadi kesalahan.') + '\nPeriksa koneksi internet Anda lalu coba lagi.', 'ai');
       el.classList.remove('ai'); el.classList.add('err');
     })
     .finally(function () { sending = false; toggleSend(); });

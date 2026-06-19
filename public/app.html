@@ -33,7 +33,7 @@
       <div class="card hero-status aura-green no-pattern">
         <div class="top"><span class="tag"><i class="ph-fill ph-leaf"></i> ALCURA · Living Room</span><span class="tag"><i class="ph-fill ph-wifi-high"></i> Online</span></div>
         <div class="gauge-wrap"><div class="gauge" style="--gp:88%" data-bind-gp="air.score"><div class="val"><b data-bind="air.score">88</b><span>HEALTH</span></div></div>
-          <div class="meta"><div class="m"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">Excellent</b><small>Air Quality <span data-bind="air.score">94</span></small></div></div><div class="m"><i class="ph-fill ph-plant"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">8</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
+          <div class="meta"><div class="m m-air"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">Excellent</b><small>Air Quality <span data-bind="air.score">94</span></small></div></div><div class="m m-grow"><i class="ph-fill ph-plant"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m m-o2"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">8</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
         </div>
       </div>
 
@@ -72,8 +72,9 @@
     </section>
 
     <section class="dash-block dash-impact">
+      <div class="sec-title"><h3>Dampak Hari Ini</h3></div>
       <div class="card aura-green impact" data-pattern="leaf">
-        <div class="label"><i class="ph-fill ph-sparkle"></i> Dampak Hari Ini</div>
+        <div class="label"><i class="ph-fill ph-sparkle"></i> Ringkasan hari ini</div>
         <h3>Hari ini Anda menghirup udara lebih bersih — <b><span data-bind="impact.co2Today">12</span> g CO₂</b> terserap.</h3>
         <div class="ig"><div class="x"><b><span data-bind="impact.o2Today" data-dec="1">8</span> L</b><span>O₂ diproduksi</span></div><div class="x"><b><span data-bind="impact.vocMonth" data-dec="1">0.4</span> g</b><span>VOC dihapus</span></div><div class="x"><b><span data-bind="impact.energyMonth" data-dec="1">1.2</span> kWh</b><span>HVAC dihemat</span></div></div>
       </div>
@@ -117,6 +118,8 @@
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 <script src="js/sensors-engine.js"></script>
+<script src="js/more-menu.js"></script>
+<script src="js/i18n.js"></script>
 <script>
 // Reflect active critical/warning alerts on the bell badge
 ALCURA.on(function (d) {
@@ -147,65 +150,43 @@ function handleLogout() {
   }
 }
 
-// Time-based, warm & human-like greeting (sapaan hangat sesuai waktu)
+// Time-based, warm, trilingual greeting (evocative, ALCURA-themed)
 (function () {
-  // Sapaan singkat & berkesan, bertema ALCURA (udara bersih, oksigen, hijau,
-  // fotosintesis) — gaya evokatif seperti "Moonlit chat?". Dipilih acak.
-  var PHRASES = {
-    pagi: [
-      'Selamat pagi',
-      'Udara segar pagi ini?',
-      'Napas pertama hari ini',
-      'Pagi yang hijau',
-      'Fotosintesis dimulai',
-      'Oksigen baru menyapa'
-    ],
-    siang: [
-      'Selamat siang',
-      'Hijau di tengah hari',
-      'Udara siang yang sejuk',
-      'Cahaya untuk si hijau',
-      'Sejuk di balik kesibukan'
-    ],
-    sore: [
-      'Selamat sore',
-      'Senja yang lapang',
-      'Udara sore yang lembut',
-      'Hijau menyambut senja',
-      'Napas tenang sebelum malam'
-    ],
-    malam: [
-      'Selamat malam',
-      'Malam yang hening',
-      'Bernapas tenang malam ini',
-      'Hijau di bawah bulan',
-      'Udara bersih, malam tenang',
-      'Tumbuh dalam senyap'
-    ]
+  var PH = {
+    pagi: {
+      en: ['Good morning', 'Fresh air this morning?', 'First breath of the day', 'A green morning', 'Photosynthesis begins', 'New oxygen says hi'],
+      id: ['Selamat pagi', 'Udara segar pagi ini?', 'Napas pertama hari ini', 'Pagi yang hijau', 'Fotosintesis dimulai', 'Oksigen baru menyapa'],
+      ja: ['おはようございます', '今朝は新鮮な空気？', '今日の最初の呼吸', '緑の朝', '光合成のはじまり', '新しい酸素のあいさつ']
+    },
+    siang: {
+      en: ['Good afternoon', 'Green at midday', 'Cool midday air', 'Light for the green', 'Cool amid the busy day'],
+      id: ['Selamat siang', 'Hijau di tengah hari', 'Udara siang yang sejuk', 'Cahaya untuk si hijau', 'Sejuk di balik kesibukan'],
+      ja: ['こんにちは', '真昼の緑', '涼しい昼の空気', '緑のための光', '忙しさの中の涼']
+    },
+    sore: {
+      en: ['Good evening', 'A spacious dusk', 'Soft evening air', 'Green greets the dusk', 'A calm breath before night'],
+      id: ['Selamat sore', 'Senja yang lapang', 'Udara sore yang lembut', 'Hijau menyambut senja', 'Napas tenang sebelum malam'],
+      ja: ['こんばんは', '広がる夕暮れ', 'やわらかな夕方の空気', '緑が夕暮れを迎える', '夜の前の静かな呼吸']
+    },
+    malam: {
+      en: ['Good night', 'A quiet night', 'Breathing easy tonight', 'Green under the moon', 'Clean air, calm night', 'Growing in silence'],
+      id: ['Selamat malam', 'Malam yang hening', 'Bernapas tenang malam ini', 'Hijau di bawah bulan', 'Udara bersih, malam tenang', 'Tumbuh dalam senyap'],
+      ja: ['おやすみなさい', '静かな夜', '今夜は安らかな呼吸', '月の下の緑', 'きれいな空気、穏やかな夜', '静けさの中で育つ']
+    }
   };
-
-  function periodOf(h) {
-    if (h >= 4 && h < 11) return 'pagi';
-    if (h >= 11 && h < 15) return 'siang';
-    if (h >= 15 && h < 18) return 'sore';
-    return 'malam';
-  }
-
-  var lastPeriod = null;
-  function greet() {
-    var el = document.getElementById('greeting');
-    if (!el) return;
+  function periodOf(h) { return (h >= 4 && h < 11) ? 'pagi' : (h >= 11 && h < 15) ? 'siang' : (h >= 15 && h < 18) ? 'sore' : 'malam'; }
+  function lng() { return (window.ALCURA_I18N && ALCURA_I18N.lang) || localStorage.getItem('lang') || 'en'; }
+  var curP = null, curI = 0;
+  function render() {
+    var el = document.getElementById('greeting'); if (!el) return;
     var p = periodOf(new Date().getHours());
-    if (p === lastPeriod) return;           // hanya ganti kalimat saat periode berubah
-    lastPeriod = p;
-    var list = PHRASES[p];
-    el.textContent = list[Math.floor(Math.random() * list.length)];
-    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; // re-trigger fade
-
+    if (p !== curP) { curP = p; curI = Math.floor(Math.random() * PH[p].en.length); }
+    el.textContent = (PH[p][lng()] || PH[p].en)[curI];
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
   }
-  greet();
-  // cek tiap menit; kalimat hanya berubah bila berpindah periode (pagi→siang, dst)
-  setInterval(greet, 60000);
+  render();
+  setInterval(render, 60000);
+  document.addEventListener('alcura:lang', render);
 })();
 
 // Display user info (name + avatar)

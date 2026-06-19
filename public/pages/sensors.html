@@ -210,16 +210,19 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script>
 requireAuthPage();
+function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
 // Bind the safety banner (icon + state) to the engine.
 ALCURA.on(function (d) {
   var icon = document.getElementById('safetyIcon');
   var title = document.getElementById('safetyTitle');
   if (icon) icon.className = 'ph-fill ' + (d.safety.level === 'danger' ? 'ph-fire' : d.safety.level === 'warn' ? 'ph-warning' : 'ph-shield-check');
-  if (title) title.textContent = d.safety.level === 'danger' ? 'Bahaya terdeteksi' : d.safety.level === 'warn' ? 'Perlu diperhatikan' : 'Lingkungan aman';
-  var u = document.getElementById('lastUpdate'); if (u) u.textContent = 'baru saja';
+  if (title) title.textContent = d.safety.level === 'danger' ? T('Danger detected', 'Bahaya terdeteksi', '危険を検知') : d.safety.level === 'warn' ? T('Needs attention', 'Perlu diperhatikan', '要注意') : T('Environment safe', 'Lingkungan aman', '環境は安全');
+  var u = document.getElementById('lastUpdate'); if (u) u.textContent = T('just now', 'baru saja', 'たった今');
 });
 </script>
 </body>

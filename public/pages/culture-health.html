@@ -97,18 +97,21 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script>
 requireAuthPage();
+function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
 ALCURA.on(function (d) {
   var c = d.culture;
-  var label = c.status === 'optimal' ? 'Optimal' : c.status === 'attention' ? 'Perlu Perhatian' : 'Kritis';
-  document.getElementById('diagStatus').textContent = 'Status kultur: ' + label;
+  var label = c.status === 'optimal' ? T('Optimal', 'Optimal', '最適') : c.status === 'attention' ? T('Needs attention', 'Perlu Perhatian', '要注意') : T('Critical', 'Kritis', '危機');
+  document.getElementById('diagStatus').textContent = T('Culture status: ', 'Status kultur: ', '培養の状態: ') + label;
   document.getElementById('diagList').innerHTML = c.recommendations.map(function (r) {
     return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>';
   }).join('');
   document.getElementById('cultureAlertIcon').className = 'ph-fill ' + (c.status === 'optimal' ? 'ph-check-circle' : c.status === 'attention' ? 'ph-warning' : 'ph-warning-octagon');
-  document.getElementById('cultureAlertTitle').textContent = 'Culture Status: ' + label;
+  document.getElementById('cultureAlertTitle').textContent = T('Culture Status: ', 'Status Kultur: ', '培養の状態: ') + label;
   document.getElementById('cultureAlertSub').textContent = c.recommendations[0];
 });
 </script>

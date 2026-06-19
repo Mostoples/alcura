@@ -74,6 +74,8 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script>
 requireAuthPage();
@@ -97,9 +99,10 @@ var co2Chk = document.getElementById('co2');
   });
 })();
 
+function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
 autoChk.addEventListener('change', function () {
   ALCURA.setControl('autoMode', autoChk.checked);
-  toast(autoChk.checked ? 'AI Auto Mode diaktifkan' : 'Mode manual diaktifkan');
+  toast(autoChk.checked ? T('AI Auto Mode on', 'AI Auto Mode diaktifkan', 'AIオートモード オン') : T('Manual mode on', 'Mode manual diaktifkan', '手動モード オン'));
 });
 
 function onSlider(key, el) {
@@ -112,15 +115,16 @@ function onSpectrum(el) {
 }
 function onCo2(el) {
   ALCURA.setControl('co2Injection', el.checked);
-  document.getElementById('co2Status').textContent = el.checked ? 'Aktif' : 'Nonaktif';
+  document.getElementById('co2Status').textContent = el.checked ? T('Active', 'Aktif', '有効') : T('Inactive', 'Nonaktif', '無効');
 }
 function setMode(mode, el) {
   ALCURA.setControl('mode', mode);
   document.querySelectorAll('.btn-group .btn').forEach(b => { b.classList.add('btn-secondary'); b.classList.remove('btn-primary'); });
   if (el) { el.classList.add('btn-primary'); el.classList.remove('btn-secondary'); }
-  toast('Mode diubah ke: ' + (mode === 'siang' ? 'Siang' : mode === 'malam' ? 'Malam' : 'Growth'));
+  var mn = mode === 'siang' ? T('Day', 'Siang', '昼') : mode === 'malam' ? T('Night', 'Malam', '夜') : T('Growth', 'Growth', 'グロース');
+  toast(T('Mode changed to: ', 'Mode diubah ke: ', 'モード変更: ') + mn);
 }
-function saveSettings() { toast('Pengaturan tersimpan ✓'); }
+function saveSettings() { toast(T('Settings saved ✓', 'Pengaturan tersimpan ✓', '設定を保存しました ✓')); }
 
 // --- Reflect engine state: when Auto Mode is on, sliders mirror the AI setpoints ---
 ALCURA.on(function (d) {
@@ -133,14 +137,14 @@ ALCURA.on(function (d) {
   aerSlider.value = d.applied.aeration;
   document.getElementById('ledVal').textContent = d.applied.ledIntensity + '%';
   document.getElementById('aerVal').textContent = d.applied.aeration + '%';
-  if (auto) { co2Chk.checked = d.applied.co2Injection; document.getElementById('co2Status').textContent = d.applied.co2Injection ? 'Aktif' : 'Nonaktif'; }
+  if (auto) { co2Chk.checked = d.applied.co2Injection; document.getElementById('co2Status').textContent = d.applied.co2Injection ? T('Active', 'Aktif', '有効') : T('Inactive', 'Nonaktif', '無効'); }
 
   var banner = document.getElementById('autoBanner');
   banner.classList.toggle('on', auto);
-  document.getElementById('autoState').textContent = auto ? 'AI Auto Mode aktif — keputusan terkini:' : 'Mode manual — Auto Mode nonaktif';
+  document.getElementById('autoState').textContent = auto ? T('AI Auto Mode active — latest decisions:', 'AI Auto Mode aktif — keputusan terkini:', 'AIオートモード有効 — 最新の判断:') : T('Manual mode — Auto Mode off', 'Mode manual — Auto Mode nonaktif', '手動モード — オートモード オフ');
   document.getElementById('autoRecs').innerHTML = auto
     ? d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('')
-    : '<li><i class="ph-fill ph-hand"></i><span>Aktifkan Auto Mode agar sistem mengatur LED, aerasi & CO₂ otomatis.</span></li>';
+    : '<li><i class="ph-fill ph-hand"></i><span>' + T('Turn on Auto Mode so the system manages LED, aeration & CO₂ automatically.', 'Aktifkan Auto Mode agar sistem mengatur LED, aerasi & CO₂ otomatis.', 'オートモードを有効にすると、LED・エアレーション・CO₂を自動管理します。') + '</span></li>';
 });
 </script>
 </body>

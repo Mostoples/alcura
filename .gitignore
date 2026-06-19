@@ -1,6 +1,9 @@
 node_modules/
 .env
 .env.local
+# Local-only AI key for dev (never commit, never deploy)
+ai-secret.js
+**/ai-secret.js
 .firebase/
 dist/
 build/

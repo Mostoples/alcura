@@ -1,97 +1,561 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-  <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
+<link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALCURA — Living Air for Living Spaces</title>
+<meta name="description" content="ALCURA is a smart photobioreactor lamp that purifies indoor air, produces oxygen, and cultivates Spirulina microalgae — monitored in real time by AI. Living air for living spaces.">
+<meta name="theme-color" content="#1b2629">
+<meta name="keywords" content="ALCURA, photobioreactor, air purifier, Spirulina, microalgae, indoor air quality, AIoT, oxygen, CO2">
+<!-- Update the URLs below to your real domain once deployed -->
+<link rel="canonical" href="https://alcura.id/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ALCURA">
+<meta property="og:title" content="ALCURA — Living Air for Living Spaces">
+<meta property="og:description" content="A smart photobioreactor lamp that purifies indoor air, produces oxygen, and cultivates Spirulina microalgae — monitored in real time by AI.">
+<meta property="og:url" content="https://alcura.id/">
+<meta property="og:image" content="https://alcura.id/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ALCURA — Living Air for Living Spaces">
+<meta name="twitter:description" content="A smart photobioreactor lamp that purifies indoor air, produces oxygen, and cultivates Spirulina microalgae — monitored in real time by AI.">
+<meta name="twitter:image" content="https://alcura.id/img/og-image.png">
+<meta name="twitter:site" content="@alcura.id">
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
-<div class="bg-grain"></div>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <canvas class="particles" id="particles"></canvas>
+  <div class="culture-cells" aria-hidden="true"></div>
+  <div class="story-bg" aria-hidden="true"></div>
+</div>
 
-<nav class="nav land-nav" id="nav" style="max-width:min(1440px,94vw);margin:16px auto 36px;left:0;right:0">
-  <div class="brand"><span class="mark"><i class="ph-fill ph-leaf"></i></span> ALCURA</div>
-  <div class="nav-links" id="navLinks">
-    <a href="#features" onclick="closeNav()">Fitur</a><a href="#how" onclick="closeNav()">Cara Kerja</a><a href="#impact" onclick="closeNav()">Dampak</a><a href="app.html">Demo App</a>
-    <div class="nav-links-cta"><button class="btn btn-secondary btn-block" onclick="window.location.href='login.html'">Masuk</button><button class="btn btn-primary btn-block" onclick="window.location.href='register.html'">Mulai Gratis</button></div>
+<!-- ============ NAV ============ -->
+<nav class="lg-nav" id="lgNav">
+  <div class="brand"><span class="mark mark-algae" aria-hidden="true"></span> ALCURA</div>
+  <div class="lg-links" id="navLinks">
+    <a href="#general" onclick="closeNav()" data-i18n="nav.general">Umum</a>
+    <a href="#validation" onclick="closeNav()" data-i18n="nav.validation">Data</a>
+    <a href="#features" onclick="closeNav()" data-i18n="nav.features">Fitur</a>
+    <a href="#pricing" onclick="closeNav()" data-i18n="nav.pricing">Langganan</a>
+    <a href="#team" onclick="closeNav()" data-i18n="nav.team">Tim</a>
+    <a href="#faq" onclick="closeNav()" data-i18n="nav.faq">FAQ</a>
+    <div class="lg-mobile-cta">
+      <button class="btn btn-ghost btn-block" onclick="closeNav();window.location.href='login.html'" data-i18n="nav.login">Masuk</button>
+      <button class="btn btn-primary btn-block" onclick="closeNav();window.location.href='register.html'" data-i18n="nav.register">Mulai Gratis</button>
+    </div>
   </div>
-  <div class="nav-cta">
-    <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
-    <button class="btn btn-secondary" onclick="window.location.href='login.html'" style="padding:10px 18px;font-size:13px">Masuk</button>
-    <button class="btn btn-primary" onclick="window.location.href='register.html'" style="padding:10px 18px;font-size:13px">Mulai Gratis</button>
+  <div class="lg-nav-actions">
+    <div class="lang-toggle" id="langToggle">
+      <span class="lang-knob"></span>
+      <button data-lang="id" class="active" onclick="setLang('id')">ID</button>
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Theme"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
+    <button class="btn btn-ghost desktop-only" onclick="window.location.href='login.html'" data-i18n="nav.login">Masuk</button>
+    <button class="btn btn-primary desktop-only" onclick="window.location.href='register.html'" data-i18n="nav.register">Mulai Gratis</button>
+    <button class="burger" id="burger" onclick="toggleNav()" aria-label="Menu"><i class="ph ph-list"></i></button>
   </div>
-  <button class="burger" id="burger" onclick="toggleNav()" aria-label="Menu"><i class="ph ph-list"></i></button>
 </nav>
 
-<header class="hero">
-  <div class="hero-copy">
-    <span class="pill hero-eyebrow"><i class="ph-fill ph-sparkle"></i> AIoT Photobioreactor</span>
-    <h1>Udara <em>Hidup</em><br>untuk Ruang yang<br><span class="grad">Hidup.</span></h1>
-    <p class="lead">ALCURA adalah lampu photobioreactor pintar berisi mikroalga Spirulina — memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.</p>
-    <div class="hero-actions">
-      <button class="btn btn-primary" onclick="window.location.href='register.html'"><i class="ph ph-rocket-launch"></i> Mulai Sekarang</button>
-      <button class="btn btn-secondary" onclick="window.location.href='app.html'"><i class="ph ph-play-circle"></i> Lihat Demo</button>
-    </div>
-    <div class="hero-stats"><div class="s"><b>90%</b><span>CO₂ terserap</span></div><div class="s"><b>100%</b><span>VOC &amp; HCHO bersih</span></div><div class="s"><b>30 hari</b><span>siklus panen</span></div></div>
-  </div>
-  <div class="hero-visual">
-    <div class="glow-orb"></div>
-    <div class="float-card fc-1"><span class="ic"><i class="ph-fill ph-wind"></i></span><div>Udara Bersih<small>CO₂ 480 ppm</small></div></div>
-    <div class="float-card fc-2"><span class="ic"><i class="ph-fill ph-drop"></i></span><div>DO 11.2 mg/L<small>Fotosintesis aktif</small></div></div>
-    <div class="float-card fc-3"><span class="ic"><i class="ph-fill ph-plant"></i></span><div>Panen 5 hari<small>85% siap</small></div></div>
-    <div class="phone"><div class="screen"><div class="notch"></div>
-      <div class="mini-status"><span>9:41</span><span><i class="ph-fill ph-wifi-high"></i> <i class="ph-fill ph-battery-high"></i></span></div>
-      <div class="mini-hero"><div class="ring"><b>92</b></div><div class="lbl">Culture Health · Day 25/30</div></div>
-      <div class="mini-cards">
-        <div class="mini-card"><span class="ic"><i class="ph-fill ph-cloud"></i></span><b>480</b><span>CO₂ ppm</span></div>
-        <div class="mini-card"><span class="ic"><i class="ph-fill ph-drop-half"></i></span><b>11.2</b><span>DO mg/L</span></div>
-        <div class="mini-card"><span class="ic"><i class="ph-fill ph-thermometer"></i></span><b>27°</b><span>Suhu</span></div>
-        <div class="mini-card"><span class="ic"><i class="ph-fill ph-flask"></i></span><b>9.4</b><span>pH</span></div>
+<!-- ============ SLIDE DOT NAV ============ -->
+<div class="dot-nav">
+  <a href="#general" data-label="General" class="active"></a>
+  <a href="#validation" data-label="Data"></a>
+  <a href="#installation" data-label="Instalasi"></a>
+  <a href="#features" data-label="Fitur"></a>
+  <a href="#innovation" data-label="Inovasi"></a>
+  <a href="#comparison" data-label="Perbandingan"></a>
+  <a href="#pricing" data-label="Langganan"></a>
+  <a href="#team" data-label="Tim"></a>
+  <a href="#reviews" data-label="Review"></a>
+  <a href="#faq" data-label="FAQ"></a>
+  <a href="#auth" data-label="Daftar"></a>
+  <a href="#social" data-label="Sosial"></a>
+</div>
+
+<main class="slides">
+
+<!-- ============ SLIDE 1 — GENERAL ============ -->
+<section class="slide s-hero" id="general">
+  <div class="hero-copy reveal">
+    <span class="slide-tag eyebrow"><i class="ph-fill ph-sparkle"></i> <span data-i18n="hero.eyebrow">AIoT Photobioreactor</span></span>
+    <h1 data-i18n="hero.h1">Udara <em>Hidup</em><br>untuk Ruang yang<br><span class="grad">Hidup.</span></h1>
+    <p class="lead" data-i18n="hero.lead">ALCURA adalah lampu multifungsi yang dapat berperan sebagai photobioreactor pintar untuk budi daya mikroalga Spirulina dan air purifier. Alat ini dapat memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.</p>
+
+    <!-- Start / register popup -->
+    <div class="start-card glass">
+      <h4><i class="ph-fill ph-rocket-launch"></i> <span data-i18n="hero.start.title">Mulai bernapas lebih bersih</span></h4>
+      <p data-i18n="hero.start.desc">Buat akun gratis dan pantau ALCURA Anda secara real-time.</p>
+      <div class="start-row">
+        <button class="btn btn-primary" onclick="window.location.href='register.html'"><i class="ph ph-user-plus"></i> <span data-i18n="hero.start.register">Daftar Akun</span></button>
+        <button class="btn btn-ghost" onclick="window.location.href='login.html'"><i class="ph ph-sign-in"></i> <span data-i18n="hero.start.login">Sudah punya akun</span></button>
       </div>
-    </div></div>
+    </div>
   </div>
-</header>
 
-<section class="section" id="features">
-  <div class="section-head"><span class="pill"><i class="ph-fill ph-leaf"></i> Apa yang dilakukan ALCURA</span><h2>Satu unit, <em>lima</em> manfaat hidup</h2><p>Bukan sekadar lampu hias. Ini ekosistem mini yang bekerja untuk udara dan kesehatan ruangan Anda.</p></div>
+  <!-- Scrollable phone mock -->
+  <div class="phone-wrap reveal">
+    <div class="phone-glow"></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="phone-screen">
+        <div class="ph-status"><span>9:41</span><span class="ph-status-r"><i class="ph-fill ph-wifi-high"></i> <i class="ph-fill ph-battery-high"></i></span></div>
+
+        <div class="ph-views" id="phViews">
+          <!-- HOME -->
+          <section class="ph-view active" data-view="home">
+            <div class="ph-head">
+              <div class="ph-greet"><span data-i18n="phone.greet">Selamat pagi 👋</span><b data-i18n="phone.room">ALCURA · Ruang Tamu</b></div>
+              <div class="ph-head-act">
+                <button class="ph-icbtn" type="button" aria-label="Notifications"><i class="ph-fill ph-bell"></i><span class="ph-icbtn-dot"></span></button>
+                <span class="ph-av">E</span>
+              </div>
+            </div>
+            <div class="ph-hero">
+              <div class="ph-gauge">
+                <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="42"/><circle class="prg" cx="50" cy="50" r="42" style="--val:94"/></svg>
+                <div class="ph-gauge-c"><b data-live="health">94</b><small>HEALTH</small></div>
+              </div>
+              <div class="ph-hero-meta">
+                <span class="ph-chip"><i class="ph-fill ph-check-circle"></i> <span data-i18n="phone.aqi.status">Sangat Baik</span></span>
+                <div class="ph-hs"><b data-i18n="phone.dayval">Hari 25/30</b><span data-i18n="phone.cycle">Siklus kultur</span></div>
+                <div class="ph-hs"><b>8 L</b><span data-i18n="phone.o2today">O₂ hari ini</span></div>
+              </div>
+            </div>
+            <div class="ph-cards">
+              <button class="ph-card" type="button"><span class="ic"><i class="ph-fill ph-cloud"></i></span><b data-live="co2">480</b><span>CO₂ ppm</span></button>
+              <button class="ph-card" type="button"><span class="ic"><i class="ph-fill ph-drop-half"></i></span><b data-live="do">11.2</b><span>DO mg/L</span></button>
+              <button class="ph-card" type="button"><span class="ic"><i class="ph-fill ph-thermometer"></i></span><b data-live="temp">27°</b><span data-i18n="phone.temp">Suhu</span></button>
+              <button class="ph-card" type="button"><span class="ic"><i class="ph-fill ph-flask"></i></span><b data-live="ph">9.4</b><span>pH</span></button>
+            </div>
+            <div class="ph-sec" data-i18n="phone.ctrl">Kontrol Cepat</div>
+            <div class="ph-ctrl">
+              <button class="ph-toggle is-on" id="phAer" type="button"><span class="ic"><i class="ph-fill ph-wind"></i></span><div class="t"><b data-i18n="phone.aeration">Aerasi</b><span class="st" data-i18n="phone.on">Aktif</span></div><span class="sw"></span></button>
+              <button class="ph-mode" id="phMode" type="button"><span class="ic"><i class="ph-fill ph-lightbulb-filament"></i></span><div class="t"><b data-i18n="phone.light">Mode Lampu</b><span class="md" data-i18n="phone.mode.grow">Pertumbuhan</span></div><i class="ph-bold ph-arrows-clockwise chev"></i></button>
+            </div>
+            <div class="ph-sec" data-i18n="phone.live">Sensor Langsung</div>
+            <div class="ph-row"><span class="ic" style="background:linear-gradient(145deg,#5aa7f0,var(--blue))"><i class="ph-fill ph-wind"></i></span><div><b data-i18n="phone.aq">Air Quality</b><span>AQI <span data-live="aqi">18</span> · <span data-i18n="phone.good">Good</span></span></div><span class="val" data-i18n="phone.good">Good</span></div>
+            <div class="ph-row"><span class="ic" style="background:linear-gradient(145deg,var(--leaf-400),var(--forest-600))"><i class="ph-fill ph-drop"></i></span><div><b>O₂ Output</b><span><span data-live="o2">240</span> <span data-i18n="phone.permonth">L/bulan</span></span></div><span class="val">+8%</span></div>
+            <div class="ph-sec" data-i18n="phone.trend">Tren CO₂ 24 jam</div>
+            <div class="ph-spark" id="phSpark"></div>
+          </section>
+
+          <!-- AIR -->
+          <section class="ph-view" data-view="air">
+            <div class="ph-vtitle"><b data-i18n="phone.air.title">Kualitas Udara</b><span data-i18n="phone.air.sub">Indoor real-time</span></div>
+            <div class="ph-airhero">
+              <span class="lab" data-i18n="phone.aqi.label">AQI Indoor</span>
+              <b data-live="aqi2">19</b>
+              <span class="ph-chip"><i class="ph-fill ph-check-circle"></i> <span data-i18n="phone.aqi.status">Sangat Baik</span></span>
+            </div>
+            <div class="ph-cards">
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-wind"></i></span><b data-live="o2p">21%</b><span>O₂</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-cloud"></i></span><b data-live="co2b">480</b><span>CO₂ ppm</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-circles-three"></i></span><b data-live="pm25">8</b><span>PM2.5</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-circles-four"></i></span><b data-live="pm10">14</b><span>PM10</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-test-tube"></i></span><b data-live="voc">0.3</b><span>VOC mg/m³</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-flask"></i></span><b data-live="hcho">0.02</b><span>HCHO ppm</span></div>
+            </div>
+          </section>
+
+          <!-- CULTURE (FAB) -->
+          <section class="ph-view" data-view="culture">
+            <div class="ph-vtitle"><b>Culture Health</b><span data-i18n="phone.culture.sub">Spirulina · Hari 25/30</span></div>
+            <div class="ph-hero">
+              <div class="ph-gauge">
+                <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="42"/><circle class="prg" cx="50" cy="50" r="42" style="--val:83"/></svg>
+                <div class="ph-gauge-c"><b data-live="biomass">1.34</b><small>OD680</small></div>
+              </div>
+              <div class="ph-hero-meta">
+                <span class="ph-chip"><i class="ph-fill ph-trend-up"></i> <span data-i18n="phone.phase">Eksponensial</span></span>
+                <div class="ph-hs"><b>83%</b><span data-i18n="phone.growth">Pertumbuhan</span></div>
+                <div class="ph-hs"><b data-i18n="phone.dayval">Hari 25/30</b><span data-i18n="phone.cycle">Siklus kultur</span></div>
+              </div>
+            </div>
+            <div class="ph-cards">
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-drop-half"></i></span><b data-live="do2">11.2</b><span>DO mg/L</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-flask"></i></span><b data-live="ph2">9.4</b><span>pH</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-thermometer"></i></span><b data-live="temp2">27°</b><span data-i18n="phone.temp">Suhu</span></div>
+              <div class="ph-card"><span class="ic"><i class="ph-fill ph-sun"></i></span><b data-live="par">420</b><span>PAR µmol</span></div>
+            </div>
+            <div class="ph-sec" data-i18n="phone.harvest">Panen Berikutnya</div>
+            <div class="ph-harvest">
+              <div class="hh"><b data-i18n="phone.harvest.days">5 hari lagi</b><span data-i18n="phone.harvest.ready">Spirulina 83% siap dipanen</span></div>
+              <div class="ph-bar"><i style="width:83%"></i></div>
+            </div>
+          </section>
+
+          <!-- ALERTS -->
+          <section class="ph-view" data-view="alerts">
+            <div class="ph-vtitle"><b data-i18n="phone.alerts.title">Peringatan</b><span data-i18n="phone.alerts.new">3 baru</span></div>
+            <div class="ph-alert warn"><span class="ic"><i class="ph-fill ph-warning"></i></span><div><b data-i18n="phone.al1.t">pH kultur turun</b><span data-i18n="phone.al1.s">Sesuaikan nutrisi dalam 24 jam.</span></div></div>
+            <div class="ph-alert info"><span class="ic"><i class="ph-fill ph-plant"></i></span><div><b data-i18n="phone.al2.t">Panen siap 3 hari</b><span data-i18n="phone.al2.s">Siapkan peralatan panen.</span></div></div>
+            <div class="ph-alert ok"><span class="ic"><i class="ph-fill ph-check-circle"></i></span><div><b data-i18n="phone.al3.t">Kualitas udara +23%</b><span data-i18n="phone.al3.s">Dibanding minggu lalu. Bagus!</span></div></div>
+            <div class="ph-alert ok"><span class="ic"><i class="ph-fill ph-wind"></i></span><div><b data-i18n="phone.al4.t">Aerasi optimal</b><span data-i18n="phone.al4.s">DO stabil di 11 mg/L.</span></div></div>
+          </section>
+
+          <!-- MORE -->
+          <section class="ph-view" data-view="more">
+            <div class="ph-vtitle"><b data-i18n="phone.more.title">Pengaturan</b><span data-i18n="phone.more.sub">Perangkat & akun</span></div>
+            <div class="ph-acct"><span class="av">E</span><div><b>Ezz z</b><span>ezz…@gmail.com</span></div><i class="ph-bold ph-caret-right"></i></div>
+            <div class="ph-sec" data-i18n="phone.device">Perangkat</div>
+            <div class="ph-kv"><span>Serial</span><b>ALG-2024-0547</b></div>
+            <div class="ph-kv"><span>Firmware</span><b>v2.1.2</b></div>
+            <div class="ph-kv"><span data-i18n="phone.uptime">Uptime</span><b data-i18n="phone.uptime.val">45 hari</b></div>
+            <div class="ph-kv"><span data-i18n="phone.conn">Koneksi</span><b class="on">WiFi ✓</b></div>
+          </section>
+        </div>
+
+        <nav class="ph-tabs">
+          <button class="ph-tab active" type="button" data-view="home"><i class="ph-fill ph-house"></i><span data-i18n="phone.tab.home">Beranda</span></button>
+          <button class="ph-tab" type="button" data-view="air"><i class="ph-fill ph-wind"></i><span data-i18n="phone.tab.air">Udara</span></button>
+          <button class="ph-tab ph-fab" type="button" data-view="culture" aria-label="Culture"><i class="ph-fill ph-leaf"></i></button>
+          <button class="ph-tab" type="button" data-view="alerts"><i class="ph-fill ph-bell"></i><span data-i18n="phone.tab.alerts">Alarm</span><span class="ph-badge">3</span></button>
+          <button class="ph-tab" type="button" data-view="more"><i class="ph-fill ph-squares-four"></i><span data-i18n="phone.tab.more">Lainnya</span></button>
+        </nav>
+      </div>
+      <div class="phone-hint" id="phHint"><i class="ph-fill ph-hand-tap"></i> <span data-i18n="phone.hint">Coba ketuk menu</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 — VALIDATION ============ -->
+<section class="slide acc-sky" id="validation">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-flask"></i> <span data-i18n="val.tag">Validasi</span></span>
+    <h2 data-i18n="val.title">Dibangun di atas <em>data</em>, bukan klaim</h2>
+    <p data-i18n="val.sub">Landasan ilmiah pembuatan ALCURA — hasil peer-reviewed dan prediksi performa alat.</p>
+  </div>
+  <div class="val-lead glass reveal">
+    <div class="kpi"><b data-countup>39</b><span data-i18n="val.kpi">makalah peer-reviewed</span></div>
+    <div class="vt">
+      <h3 data-i18n="val.lead.title">Landasan Peer-Reviewed</h3>
+      <p data-i18n="val.lead.desc">ALCURA dikembangkan berdasarkan 39 makalah peer-reviewed melalui tinjauan literatur sistematis sesuai PRISMA untuk periode 2018–2026.</p>
+      <div class="src">
+        <span>PRISMA</span><span>2018–2026</span><span>PubMed</span><span>Consensus</span><span data-i18n="val.src.more">+ basis data terkait</span>
+      </div>
+    </div>
+  </div>
+  <div class="val-band">
+    <div class="val-metric glass reveal"><div class="card-art art-co2"></div><b>55–90%</b><span data-i18n="val.m1">Penurunan CO₂ dalam ruangan</span></div>
+    <div class="val-metric glass reveal"><div class="card-art art-algae"></div><b data-countup>+76%</b><span data-i18n="val.m2">Produktivitas budi daya mikroalga</span></div>
+    <div class="val-metric glass reveal"><div class="card-art art-energy"></div><b data-countup>−17.4%</b><span data-i18n="val.m3">Konsumsi energi sistem HVAC</span></div>
+    <div class="val-metric glass reveal"><div class="card-art art-temp"></div><b data-countup>+16.9%</b><span data-i18n="val.m4">Kenyamanan termal</span></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 — INSTALLATION ============ -->
+<section class="slide acc-amber" id="installation">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-wrench"></i> <span data-i18n="inst.tag">Instalasi</span></span>
+    <h2 data-i18n="inst.title">Hidup dalam <em>empat</em> langkah</h2>
+    <p data-i18n="inst.sub">Dari pemasangan sampai panen — ALCURA membuat semuanya sederhana.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card glass reveal"><div class="num">01</div><h4 data-i18n="inst.s1.title">Sambungkan Daya</h4><p data-i18n="inst.s1.desc">Colok ALCURA ke sumber listrik rumah tangga.</p></div>
+    <div class="step-card glass reveal"><div class="num">02</div><h4 data-i18n="inst.s2.title">Pasang & Nyalakan</h4><p data-i18n="inst.s2.desc">Masukkan mikroalga ke unit, pastikan semua komponen terpasang benar, lalu nyalakan unit.</p></div>
+    <div class="step-card glass reveal"><div class="num">03</div><h4 data-i18n="inst.s3.title">Pantau Pertumbuhan</h4><p data-i18n="inst.s3.desc">Pantau pertumbuhan mikroalga lewat notifikasi atau data pertumbuhan di web app ALCURA.</p></div>
+    <div class="step-card glass reveal"><div class="num">04</div><h4 data-i18n="inst.s4.title">Panen Tiap 14 Hari</h4><p data-i18n="inst.s4.desc">Panen dan ganti mikroalga setiap 14 hari.</p></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 — FEATURES ============ -->
+<section class="slide" id="features">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-squares-four"></i> <span data-i18n="feat.tag">Fitur Alat</span></span>
+    <h2 data-i18n="feat.title">Satu unit, <em>lima</em> manfaat hidup</h2>
+    <p data-i18n="feat.sub">Bukan sekadar lampu hias. Ini ekosistem mini untuk udara dan kesehatan ruangan Anda.</p>
+  </div>
   <div class="feat-grid">
-    <div class="feat-card a"><div class="ic"><i class="ph-fill ph-wind"></i></div><h3>Pemurni Udara</h3><p>Mikroalga menyerap 55–90% CO₂ serta menghilangkan VOC dan formaldehida hingga 100% dari udara indoor.</p></div>
-    <div class="feat-card b"><div class="ic"><i class="ph-fill ph-drop"></i></div><h3>Produksi Oksigen</h3><p>Fotosintesis aktif menghasilkan O₂ segar terus-menerus, langsung ke ruangan Anda.</p></div>
-    <div class="feat-card c"><div class="ic"><i class="ph-fill ph-plant"></i></div><h3>Budidaya Spirulina</h3><p>Panen biomassa Spirulina bergizi tinggi tiap siklus ±30 hari, lengkap prediksi hasil.</p></div>
-    <div class="feat-card d"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><h3>Lampu Ambient</h3><p>LED tunable spectrum (RGB + far-red) untuk pertumbuhan algae sekaligus pencahayaan estetik.</p></div>
-    <div class="feat-card e"><div class="ic"><i class="ph-fill ph-brain"></i></div><h3>AI Optimasi</h3><p>Model ML mengatur LED, aerasi, dan injeksi CO₂ otomatis untuk hasil maksimal.</p></div>
-    <div class="feat-card f"><div class="ic"><i class="ph-fill ph-pulse"></i></div><h3>Monitor Real-time</h3><p>Sensor memantau DO, pH, suhu, dan kualitas udara — semua dalam genggaman.</p></div>
+    <div class="feat-card glass reveal"><div class="card-art art-flask"></div><h3 data-i18n="feat.f1.title">Lampu Photobioreactor</h3><p data-i18n="feat.f1.desc">Lampu photobioreactor akrilik di atas rangka logam. Pas di sudut kantor atau ruang tamu mana pun.</p></div>
+    <div class="feat-card glass b reveal"><div class="card-art art-air"></div><h3 data-i18n="feat.f2.title">Pemurnian Udara Aktif</h3><p data-i18n="feat.f2.desc">Menyerap 55–90% CO₂ dan menghilangkan VOC hingga 100%. Mengurangi PM2.5 dan PM10.</p></div>
+    <div class="feat-card glass c reveal"><div class="card-art art-oxygen"></div><h3 data-i18n="feat.f3.title">Produksi Oksigen</h3><p data-i18n="feat.f3.desc">Fotosintesis kultur Spirulina menghasilkan O₂ segar secara terus-menerus.</p></div>
+    <div class="feat-card glass d reveal"><div class="card-art art-monitor"></div><h3 data-i18n="feat.f4.title">Monitoring Real-Time</h3><p data-i18n="feat.f4.desc">Kesehatan kultur Spirulina, produksi biomassa, dan konsentrasi CO₂–O₂ dipantau real-time.</p></div>
+    <div class="feat-card glass e reveal"><div class="card-art art-algae"></div><h3 data-i18n="feat.f5.title">Budi Daya Spirulina</h3><p data-i18n="feat.f5.desc">Biomassa tinggi dapat dipanen setiap siklus 30 hari.</p></div>
+    <div class="feat-card glass f reveal"><div class="card-art art-light"></div><h3 data-i18n="feat.f6.title">Pencahayaan Ambient</h3><p data-i18n="feat.f6.desc">LED tunable spectrum untuk pertumbuhan mikroalga yang optimal.</p></div>
+    <div class="feat-card glass g reveal"><div class="card-art art-ai"></div><h3 data-i18n="feat.f7.title">Optimasi AI Otomatis</h3><p data-i18n="feat.f7.desc">Machine learning mengatur LED, aerasi, dan injeksi CO₂ secara otomatis.</p></div>
   </div>
 </section>
 
-<section class="section" id="how"><div class="how"><div class="inner">
-  <div class="section-head"><h2>Hidup dalam <em>empat</em> langkah</h2><p>Dari pemasangan sampai panen — ALCURA membuat semuanya sederhana.</p></div>
-  <div class="steps">
-    <div class="step"><div class="num">01</div><h4>Pasang &amp; Pair</h4><p>Scan QR atau hubungkan via Bluetooth. Aktif dalam menit.</p></div>
-    <div class="step"><div class="num">02</div><h4>Algae Bekerja</h4><p>Spirulina menyerap CO₂, melepas O₂, tumbuh di bawah LED.</p></div>
-    <div class="step"><div class="num">03</div><h4>AI Memantau</h4><p>Sensor &amp; model ML menjaga kultur tetap optimal otomatis.</p></div>
-    <div class="step"><div class="num">04</div><h4>Panen &amp; Nikmati</h4><p>Aplikasi memberi tahu kapan Spirulina siap dipanen.</p></div>
+<!-- ============ SLIDE 5 — INNOVATION ============ -->
+<section class="slide acc-teal" id="innovation">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-lightbulb"></i> <span data-i18n="innov.tag">Inovasi</span></span>
+    <h2 data-i18n="innov.title">Dua dunia dalam <em>satu</em> alat</h2>
+    <p data-i18n="innov.sub">Manfaat nyata untuk kualitas udara dalam ruangan dan budi daya mikroalga.</p>
   </div>
-</div></div></section>
-
-<section class="section" id="impact">
-  <div class="section-head"><span class="pill"><i class="ph-fill ph-globe-hemisphere-west"></i> Dampak Nyata</span><h2>Angka yang bisa Anda <em>hirup</em></h2></div>
-  <div class="band"><div class="b"><b>2.4 kg</b><span>CO₂ terserap / bulan</span></div><div class="b"><b>240 L</b><span>O₂ diproduksi / bulan</span></div><div class="b"><b>18 km</b><span>setara emisi mobil</span></div><div class="b"><b>34 kWh</b><span>HVAC dihemat</span></div></div>
+  <div class="innov-grid">
+    <div class="innov-card glass fn-air reveal">
+      <div class="card-art art-air"></div>
+      <span class="innov-fn" data-i18n="innov.fn1">Fungsi 01</span>
+      <div class="innov-ic"><i class="ph-fill ph-wind"></i></div>
+      <h3 data-i18n="innov.a.title">Kualitas Udara Dalam Ruangan</h3>
+      <p data-i18n="innov.a.desc">ALCURA mengurangi CO₂ dan memproduksi O₂ beserta udara segar, berperan sebagai air purifier:</p>
+      <ul>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.a.li1">Menyerap CO₂ dan melepas oksigen segar</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.a.li2">Menghilangkan VOC, asap, dan formaldehida</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.a.li3">Mengurangi ketergantungan filter HVAC</span></li>
+      </ul>
+      <span class="tag-pill"><i class="ph-fill ph-wind"></i> <span data-i18n="innov.a.pill">Air Purifier</span></span>
+    </div>
+    <div class="innov-vs">+</div>
+    <div class="innov-card glass fn-cult reveal">
+      <div class="card-art art-algae"></div>
+      <span class="innov-fn" data-i18n="innov.fn2">Fungsi 02</span>
+      <div class="innov-ic"><i class="ph-fill ph-plant"></i></div>
+      <h3 data-i18n="innov.b.title">Budi Daya Mikroalga</h3>
+      <p data-i18n="innov.b.desc">ALCURA membudidayakan dan mendukung produksi biomassa Spirulina yang kaya manfaat kesehatan:</p>
+      <ul>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.b.li1">Produksi Spirulina bergizi tinggi</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.b.li2">Panen berkelanjutan tiap siklus</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.b.li3">Dioptimalkan AI untuk hasil maksimal</span></li>
+      </ul>
+      <span class="tag-pill"><i class="ph-fill ph-leaf"></i> <span data-i18n="innov.b.pill">Photobioreactor</span></span>
+    </div>
+  </div>
 </section>
 
-<section class="section"><div class="cta-final"><h2>Bawa pulang udara yang hidup.</h2><p>Bergabung dengan ratusan ruang yang sudah bernapas lebih bersih bersama ALCURA.</p><button class="btn btn-primary" onclick="window.location.href='register.html'"><i class="ph ph-leaf"></i> Mulai Gratis Sekarang</button></div></section>
+<!-- ============ SLIDE 6 — COMPARISON ============ -->
+<section class="slide acc-violet" id="comparison">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-scales"></i> <span data-i18n="cmp.tag">Perbandingan</span></span>
+    <h2 data-i18n="cmp.title">Mengapa <em>ALCURA</em>?</h2>
+    <p data-i18n="cmp.sub">Dibandingkan air purifier dan lampu konvensional di pasaran.</p>
+  </div>
+  <div class="compare glass reveal">
+    <table>
+      <colgroup><col><col><col><col class="us-col"></colgroup>
+      <thead><tr>
+        <th data-i18n="cmp.feature">Fitur</th>
+        <th data-i18n="cmp.purifier">Air Purifier Biasa</th>
+        <th data-i18n="cmp.lamp">Lampu Pintar</th>
+        <th class="us">ALCURA</th>
+      </tr></thead>
+      <tbody>
+        <tr><td data-i18n="cmp.r1">Memurnikan udara</td><td class="yes"><i class="ph-bold ph-check"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+        <tr><td data-i18n="cmp.r2">Memproduksi oksigen</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+        <tr><td data-i18n="cmp.r3">Budi daya Spirulina</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+        <tr><td data-i18n="cmp.r4">Pencahayaan ambient</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="yes"><i class="ph-bold ph-check"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+        <tr><td data-i18n="cmp.r5">Monitoring AI real-time</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+        <tr><td data-i18n="cmp.r6">Tanpa filter habis pakai</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="yes"><i class="ph-bold ph-check"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="text-align:center;margin-top:1.6rem"><span class="soon"><i class="ph ph-clock"></i> <span data-i18n="common.soon">Data menyusul</span> · harga & merk</span></p>
+</section>
 
-<footer><div class="brand" style="justify-content:center;margin-bottom:1rem"><span class="mark"><i class="ph-fill ph-leaf"></i></span> ALCURA</div><p>© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.</p></footer>
+<!-- ============ SLIDE 7 — SUBSCRIPTION ============ -->
+<section class="slide acc-gold" id="pricing">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-crown-simple"></i> <span data-i18n="price.tag">Langganan</span></span>
+    <h2 data-i18n="price.title">Pilih paket yang <em>hidup</em></h2>
+    <p data-i18n="price.sub">Harga, benefit, dan nama langganan — detail menyusul.</p>
+  </div>
+  <div class="price-grid">
+    <div class="price-card glass tier-spora reveal">
+      <div class="plan-ic"><i class="ph-fill ph-plant"></i></div>
+      <span class="plan-eyebrow" data-i18n="price.p1.tag">Pemula</span>
+      <h3 data-i18n="price.p1.name">Spora</h3>
+      <div class="price">$4.89<small data-i18n="price.month">/bulan</small></div>
+      <p class="desc" data-i18n="price.p1.desc">Untuk memulai perjalanan udara bersih.</p>
+      <ul>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p1.f1">1 unit ALCURA</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p1.f2">Monitoring dasar</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p1.f3">Notifikasi panen</span></li>
+      </ul>
+      <button class="btn btn-ghost btn-block" onclick="window.location.href='register.html'" data-i18n="price.choose">Pilih Paket</button>
+    </div>
+    <div class="price-card glass tier-bloom featured reveal">
+      <div class="ribbon"><i class="ph-fill ph-star"></i> <span data-i18n="price.bestseller">Paling Populer</span></div>
+      <div class="plan-ic"><i class="ph-fill ph-flower-lotus"></i></div>
+      <span class="plan-eyebrow" data-i18n="price.p2.tag">Terlaris</span>
+      <h3 data-i18n="price.p2.name">Bloom</h3>
+      <div class="price">$7.89<small data-i18n="price.month">/bulan</small></div>
+      <p class="desc" data-i18n="price.p2.desc">Untuk pengalaman penuh ALCURA.</p>
+      <ul>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p2.f1">Semua fitur Spora</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p2.f2">Optimasi AI penuh</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p2.f3">Prediksi hasil panen</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p2.f4">Riwayat data tak terbatas</span></li>
+      </ul>
+      <button class="btn btn-primary btn-block" onclick="window.location.href='register.html'" data-i18n="price.choose">Pilih Paket</button>
+    </div>
+    <div class="price-card glass tier-canopy reveal">
+      <div class="plan-ic"><i class="ph-fill ph-tree"></i></div>
+      <span class="plan-eyebrow" data-i18n="price.p3.tag">Skala</span>
+      <h3 data-i18n="price.p3.name">Canopy</h3>
+      <div class="price">$9.89<small data-i18n="price.month">/bulan</small></div>
+      <p class="desc" data-i18n="price.p3.desc">Untuk ruang dan tim yang lebih besar.</p>
+      <ul>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p3.f1">Semua fitur Bloom</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p3.f2">Multi-unit dashboard</span></li>
+        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="price.p3.f3">Dukungan prioritas</span></li>
+      </ul>
+      <button class="btn btn-ghost btn-block" onclick="window.location.href='register.html'" data-i18n="price.choose">Pilih Paket</button>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:1.6rem"><span class="soon"><i class="ph ph-clock"></i> <span data-i18n="common.soon">Data menyusul</span></span></p>
+</section>
 
-<script src="js/app.js"></script>
-<script>
-(function(){function sync(){var d=document.documentElement.getAttribute('data-theme');document.querySelectorAll('[data-theme-icon]').forEach(function(i){i.className=(d==='dark'?'ph ph-sun':'ph ph-moon');});}var o=window.toggleTheme;window.toggleTheme=function(){if(o)o();sync();};sync();})();
-</script>
+<!-- ============ SLIDE 8 — TEAM ============ -->
+<section class="slide acc-sky" id="team">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-users-three"></i> <span data-i18n="team.tag">Tim Kami</span></span>
+    <h2 data-i18n="team.title">Orang di balik <em>ALCURA</em></h2>
+    <p data-i18n="team.sub">Tim yang menghidupkan udara untuk ruang yang hidup.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card glass reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m1">Anggota 1</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+    <div class="team-card glass b reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m2">Anggota 2</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+    <div class="team-card glass c reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m3">Anggota 3</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+    <div class="team-card glass d reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m4">Anggota 4</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+    <div class="team-card glass e reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m5">Anggota 5</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+    <div class="team-card glass f reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m6">Anggota 6</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+    <div class="team-card glass g reveal"><div class="team-photo"><i class="ph-fill ph-user"></i></div><h4 data-i18n="team.m7">Anggota 7</h4><div class="role soon" data-i18n="common.soon">Data menyusul</div></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 — REVIEWS (optional) ============ -->
+<section class="slide acc-amber" id="reviews">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-star"></i> <span data-i18n="rev.tag">Review Pengguna</span></span>
+    <h2 data-i18n="rev.title">Apa kata <em>mereka</em></h2>
+    <p data-i18n="rev.sub">Pengalaman nyata dari ruang yang sudah bernapas lebih bersih.</p>
+  </div>
+  <div class="review-grid">
+    <div class="review-card glass reveal">
+      <div class="stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+      <p>"Ruang kerja terasa jauh lebih segar, dan memantau kultur lewat aplikasi itu menyenangkan."</p>
+      <div class="who"><div class="av">R</div><div><b>Reviewer 1</b><span>Pengguna ALCURA</span></div></div>
+    </div>
+    <div class="review-card glass reveal">
+      <div class="stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star-half"></i></div>
+      <p>"Desainnya estetik dan fungsional. Panen Spirulina pertama saya berhasil!"</p>
+      <div class="who"><div class="av">S</div><div><b>Reviewer 2</b><span>Pengguna ALCURA</span></div></div>
+    </div>
+    <div class="review-card glass reveal">
+      <div class="stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+      <p>"Optimasi AI-nya benar-benar otomatis. Tinggal pasang lalu nikmati udara bersih."</p>
+      <div class="who"><div class="av">T</div><div><b>Reviewer 3</b><span>Pengguna ALCURA</span></div></div>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:1.6rem"><span class="soon"><i class="ph ph-clock"></i> <span data-i18n="common.soon">Data menyusul</span></span></p>
+</section>
+
+<!-- ============ SLIDE 10 — FAQ ============ -->
+<section class="slide acc-teal" id="faq">
+  <div class="slide-head reveal">
+    <span class="slide-tag"><i class="ph-fill ph-question"></i> <span data-i18n="faq.tag">FAQ</span></span>
+    <h2 data-i18n="faq.title">Pertanyaan yang <em>sering</em> muncul</h2>
+    <p data-i18n="faq.sub">Klik pertanyaan untuk melihat jawabannya.</p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item glass reveal"><button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq.q1">Apa itu ALCURA?</span><i class="ph ph-plus"></i></button><div class="faq-a"><div data-i18n="faq.a1">ALCURA adalah lampu multifungsi...</div></div></div>
+    <div class="faq-item glass reveal"><button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq.q2">Apakah aman digunakan di dalam rumah?</span><i class="ph ph-plus"></i></button><div class="faq-a"><div data-i18n="faq.a2">Ya...</div></div></div>
+    <div class="faq-item glass reveal"><button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq.q3">Seberapa sering Spirulina perlu dipanen?</span><i class="ph ph-plus"></i></button><div class="faq-a"><div data-i18n="faq.a3">Umumnya...</div></div></div>
+    <div class="faq-item glass reveal"><button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq.q4">Apakah perlu mengganti filter?</span><i class="ph ph-plus"></i></button><div class="faq-a"><div data-i18n="faq.a4">Tidak...</div></div></div>
+    <div class="faq-item glass reveal"><button class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq.q5">Bagaimana cara memantau alat?</span><i class="ph ph-plus"></i></button><div class="faq-a"><div data-i18n="faq.a5">Melalui aplikasi ALCURA...</div></div></div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 — LOGIN / REGISTER ============ -->
+<section class="slide" id="auth">
+  <div class="auth-cta glass reveal">
+    <div>
+      <span class="slide-tag"><i class="ph-fill ph-sign-in"></i> <span data-i18n="auth.tag">Mulai</span></span>
+      <h2 data-i18n="auth.title">Siap menghidupkan <em>udara</em> Anda?</h2>
+      <p data-i18n="auth.desc">Buat akun atau masuk untuk mulai memantau ALCURA. Prosesnya cepat dan gratis.</p>
+      <div class="start-row">
+        <button class="btn btn-primary" onclick="window.location.href='register.html'"><i class="ph ph-user-plus"></i> <span data-i18n="nav.register">Mulai Gratis</span></button>
+        <button class="btn btn-ghost" onclick="window.location.href='login.html'"><i class="ph ph-sign-in"></i> <span data-i18n="nav.login">Masuk</span></button>
+      </div>
+      <form class="waitlist" id="waitlist" novalidate>
+        <label class="wl-label" for="wlEmail" data-i18n="wl.label">Belum siap mendaftar? Gabung waitlist:</label>
+        <div class="wl-row">
+          <span class="wl-input"><i class="ph ph-envelope-simple"></i><input type="email" id="wlEmail" autocomplete="email" placeholder="email@anda.com" data-i18n-ph="wl.ph"></span>
+          <button class="btn btn-primary" type="submit"><i class="ph ph-paper-plane-tilt"></i> <span data-i18n="wl.btn">Gabung</span></button>
+        </div>
+        <p class="wl-msg" id="wlMsg" role="status" aria-live="polite"></p>
+        <p class="wl-meta"><span class="wl-dots"><i class="ph-fill ph-user-circle"></i><i class="ph-fill ph-user-circle"></i><i class="ph-fill ph-user-circle"></i></span> <b id="wlCount">1.240</b> <span data-i18n="wl.count">calon pengguna sudah bergabung</span></p>
+      </form>
+    </div>
+    <div class="auth-flow">
+      <div class="flow-step"><span class="n">1</span><div><b data-i18n="auth.fs1.t">Daftar</b><span data-i18n="auth.fs1.s">Buat akun dengan email atau Google.</span></div></div>
+      <div class="flow-arrow"><i class="ph-bold ph-arrow-down"></i></div>
+      <div class="flow-step"><span class="n">2</span><div><b data-i18n="auth.fs2.t">Pair Alat</b><span data-i18n="auth.fs2.s">Hubungkan ALCURA Anda via QR atau Bluetooth.</span></div></div>
+      <div class="flow-arrow"><i class="ph-bold ph-arrow-down"></i></div>
+      <div class="flow-step"><span class="n">3</span><div><b data-i18n="auth.fs3.t">Pantau</b><span data-i18n="auth.fs3.s">Lihat data kultur Anda secara real-time.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 — SOCIAL / CONTACT ============ -->
+<section class="slide acc-violet" id="social">
+  <div class="social-foot glass reveal">
+    <div class="brand" style="justify-content:center;margin-bottom:1.2rem"><span class="mark mark-algae" aria-hidden="true"></span> ALCURA</div>
+    <h2 data-i18n="social.title">Tetap terhubung dengan <em>ALCURA</em></h2>
+    <p data-i18n="social.desc">Ikuti perjalanan kami di media sosial.</p>
+    <div class="social-links">
+      <a href="https://instagram.com/alcura.id" target="_blank" rel="noopener"><i class="ph-fill ph-instagram-logo"></i> @alcura.id</a>
+      <a href="https://wa.me/6282123689289" target="_blank" rel="noopener"><i class="ph-fill ph-whatsapp-logo"></i> +62 821-2368-9289</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="brand"><span class="mark mark-algae" aria-hidden="true"></span> ALCURA</div>
+      <p data-i18n="foot.tagline">Lampu photobioreactor pintar untuk udara yang lebih bersih dan budi daya Spirulina — memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.</p>
+      <div class="footer-socials">
+        <a href="https://instagram.com/alcura.id" target="_blank" rel="noopener" aria-label="Instagram"><i class="ph-fill ph-instagram-logo"></i></a>
+        <a href="https://wa.me/6282123689289" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="ph-fill ph-whatsapp-logo"></i></a>
+        <a href="https://tiktok.com/@alcura.id" target="_blank" rel="noopener" aria-label="TikTok"><i class="ph-fill ph-tiktok-logo"></i></a>
+        <a href="mailto:hello@alcura.id" aria-label="Email"><i class="ph-fill ph-envelope-simple"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5 data-i18n="foot.product">Produk</h5>
+      <a href="#features" data-i18n="foot.l.features">Fitur</a>
+      <a href="#installation" data-i18n="foot.l.how">Cara Kerja</a>
+      <a href="#pricing" data-i18n="foot.l.pricing">Langganan</a>
+      <a href="app.html" data-i18n="foot.l.demo">Demo App</a>
+      <a href="#faq" data-i18n="foot.l.faq">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h5 data-i18n="foot.science">Sains &amp; Riset</h5>
+      <a href="#validation" data-i18n="foot.l.evidence">Bukti Riset</a>
+      <a href="#innovation" data-i18n="foot.l.innovation">Inovasi</a>
+      <a href="#comparison" data-i18n="foot.l.comparison">Perbandingan</a>
+      <a href="#team" data-i18n="foot.l.about">Tentang Kami</a>
+    </div>
+    <div class="footer-col">
+      <h5 data-i18n="foot.legal">Legal</h5>
+      <a href="#" data-i18n="foot.l.privacy">Kebijakan Privasi</a>
+      <a href="#" data-i18n="foot.l.terms">Syarat Layanan</a>
+      <a href="#faq" data-i18n="foot.l.help">Bantuan</a>
+      <a href="mailto:hello@alcura.id">hello@alcura.id</a>
+    </div>
+  </div>
+  <div class="footer-bottom"><span data-i18n="footer.copy">© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.</span></div>
+</footer>
+
+<script src="js/landing.js"></script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" font-family="Helvetica, Arial, sans-serif">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#2f5142"/><stop offset="42%" stop-color="#243a37"/><stop offset="100%" stop-color="#19242a"/>
+</linearGradient>
+<radialGradient id="cell" cx="36%" cy="32%" r="72%">
+<stop offset="0" stop-color="#cbf3dc"/><stop offset=".55" stop-color="#5cc185"/><stop offset="1" stop-color="#2e9c5b"/>
+</radialGradient>
+<radialGradient id="bub" cx="40%" cy="34%" r="62%">
+<stop offset="0%" stop-color="#cdeee9" stop-opacity=".14"/><stop offset="55%" stop-color="#5cc1b6" stop-opacity=".22"/>
+<stop offset="84%" stop-color="#9fe9dd" stop-opacity=".45"/><stop offset="94%" stop-color="#ffffff" stop-opacity=".5"/><stop offset="100%" stop-color="#5cc1b6" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<rect width="1200" height="630" fill="url(#bg)"/>
+<!-- bubble culture, lower-right -->
+<g>
+<circle cx="1010" cy="560" r="150" fill="url(#bub)"/><circle cx="860" cy="600" r="95" fill="url(#bub)"/><circle cx="1140" cy="430" r="90" fill="url(#bub)"/>
+<circle cx="950" cy="470" r="60" fill="url(#bub)"/><circle cx="1090" cy="600" r="55" fill="url(#bub)"/><circle cx="780" cy="560" r="48" fill="url(#bub)"/>
+<circle cx="1160" cy="560" r="42" fill="url(#bub)"/><circle cx="900" cy="540" r="34" fill="url(#bub)"/><circle cx="1040" cy="430" r="30" fill="url(#bub)"/>
+</g>
+<!-- logo mark: microalgae cluster -->
+<g transform="translate(90,86)">
+<circle cx="22" cy="20" r="22" fill="url(#cell)"/><circle cx="46" cy="34" r="16" fill="url(#cell)"/><circle cx="28" cy="48" r="12" fill="url(#cell)"/>
+<circle cx="15" cy="13" r="6" fill="#ffffff" opacity=".5"/>
+</g>
+<text x="156" y="124" font-size="46" font-weight="700" letter-spacing="3" fill="#ffffff">ALCURA</text>
+<!-- eyebrow -->
+<text x="92" y="250" font-size="22" font-weight="700" letter-spacing="3" fill="#7fe3b6">AIoT PHOTOBIOREACTOR</text>
+<!-- headline -->
+<text x="90" y="330" font-size="76" font-weight="800" fill="#ffffff">Living Air</text>
+<text x="90" y="412" font-size="76" font-weight="800" fill="#56c47e">for Living Spaces.</text>
+<!-- subline -->
+<text x="92" y="470" font-size="27" font-weight="400" fill="#cfe3d6">A smart photobioreactor lamp that purifies air, makes O</text>
+<text x="92" y="508" font-size="27" font-weight="400" fill="#cfe3d6">and cultivates Spirulina — monitored in real time by AI.</text>
+<!-- stat chips -->
+<g font-size="22" font-weight="700">
+<rect x="92" y="540" width="190" height="50" rx="25" fill="#ffffff" opacity=".08"/>
+<text x="118" y="572" fill="#7fe3b6">55–90% CO₂ ↓</text>
+<rect x="298" y="540" width="170" height="50" rx="25" fill="#ffffff" opacity=".08"/>
+<text x="324" y="572" fill="#7fe3b6">~100% VOC ↓</text>
+<rect x="484" y="540" width="220" height="50" rx="25" fill="#ffffff" opacity=".08"/>
+<text x="510" y="572" fill="#7fe3b6">39 peer-reviewed</text>
+</g>
+</svg>

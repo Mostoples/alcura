@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="640" height="640">
+<defs>
+<radialGradient id="fade" cx="50%" cy="50%" r="50%">
+<stop offset="55%" stop-color="#fff" stop-opacity="1"/>
+<stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+</radialGradient>
+<mask id="m"><rect width="100%" height="100%" fill="url(#fade)"/></mask>
+<radialGradient id="cell" cx="36%" cy="32%" r="72%">
+<stop offset="0%" stop-color="#c8f3da"/><stop offset="55%" stop-color="#5cc185"/><stop offset="100%" stop-color="#2e9c5b"/>
+</radialGradient>
+<radialGradient id="cell2" cx="36%" cy="32%" r="72%">
+<stop offset="0%" stop-color="#dcf7e6"/><stop offset="60%" stop-color="#7fd3a0"/><stop offset="100%" stop-color="#3f9d63"/>
+</radialGradient>
+</defs>
+
+<!-- Round microalgae cells (Chlorella-like), simple + modern cluster -->
+<g mask="url(#m)" stroke="#2e9c5b" stroke-opacity="0.45">
+  <circle cx="232" cy="208" r="46" fill="url(#cell)"  fill-opacity="0.55" stroke-width="2"/>
+  <circle cx="330" cy="250" r="38" fill="url(#cell2)" fill-opacity="0.5"  stroke-width="2"/>
+  <circle cx="180" cy="330" r="42" fill="url(#cell2)" fill-opacity="0.55" stroke-width="2"/>
+  <circle cx="300" cy="362" r="30" fill="url(#cell)"  fill-opacity="0.5"  stroke-width="2"/>
+  <circle cx="412" cy="300" r="34" fill="url(#cell)"  fill-opacity="0.5"  stroke-width="2"/>
+  <circle cx="150" cy="212" r="28" fill="url(#cell2)" fill-opacity="0.5"  stroke-width="2"/>
+  <circle cx="392" cy="182" r="26" fill="url(#cell)"  fill-opacity="0.48" stroke-width="2"/>
+  <circle cx="252" cy="440" r="36" fill="url(#cell2)" fill-opacity="0.52" stroke-width="2"/>
+  <circle cx="362" cy="430" r="24" fill="url(#cell)"  fill-opacity="0.46" stroke-width="2"/>
+  <circle cx="452" cy="420" r="30" fill="url(#cell2)" fill-opacity="0.5"  stroke-width="2"/>
+  <circle cx="210" cy="470" r="22" fill="url(#cell)"  fill-opacity="0.46" stroke-width="2"/>
+  <circle cx="120" cy="300" r="18" fill="url(#cell)"  fill-opacity="0.44" stroke-width="1.6"/>
+  <circle cx="470" cy="252" r="20" fill="url(#cell2)" fill-opacity="0.46" stroke-width="1.6"/>
+  <circle cx="332" cy="152" r="22" fill="url(#cell2)" fill-opacity="0.46" stroke-width="1.6"/>
+  <circle cx="442" cy="160" r="16" fill="url(#cell)"  fill-opacity="0.42" stroke-width="1.6"/>
+  <circle cx="282" cy="300" r="20" fill="url(#cell2)" fill-opacity="0.46" stroke-width="1.6"/>
+</g>
+
+<!-- Specular highlights so the cells read as 3D droplets -->
+<g mask="url(#m)" fill="#ffffff" fill-opacity="0.45">
+  <circle cx="216" cy="192" r="10"/>
+  <circle cx="317" cy="237" r="8"/>
+  <circle cx="166" cy="315" r="9"/>
+  <circle cx="400" cy="289" r="7"/>
+  <circle cx="240" cy="427" r="8"/>
+  <circle cx="403" cy="291" r="5"/>
+</g>
+
+<!-- Tiny free single cells / specks -->
+<g mask="url(#m)" fill="#3f9d63" fill-opacity="0.4">
+  <circle cx="500" cy="330" r="5"/>
+  <circle cx="160" cy="420" r="5"/>
+  <circle cx="430" cy="360" r="4"/>
+  <circle cx="300" cy="200" r="4"/>
+  <circle cx="360" cy="330" r="5"/>
+  <circle cx="205" cy="150" r="4"/>
+  <circle cx="248" cy="360" r="4"/>
+</g>
+</svg>

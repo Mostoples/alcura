@@ -685,9 +685,9 @@ body{font-family:var(--font-helios)}
    bleeding off the bottom-right corner like the reference.
    ============================================================ */
 .card-art{
-  position:absolute;z-index:0;pointer-events:none;
-  background-repeat:no-repeat;background-position:right bottom;background-size:contain;
-  opacity:.5;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-repeat:no-repeat;background-position:right -6% center;background-size:auto 88%;
+  opacity:.2;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);
 }
 /* Paths are relative to THIS stylesheet (css/), like the colony accent */
 .art-flask{background-image:url(../img/art/flask.svg)}
@@ -700,12 +700,13 @@ body{font-family:var(--font-helios)}
 .art-co2{background-image:url(../img/art/co2.svg)}
 .art-energy{background-image:url(../img/art/energy.svg)}
 .art-temp{background-image:url(../img/art/temp.svg)}
-.feat-card .card-art{right:5%;bottom:5%;width:40%;height:50%}
-.innov-card .card-art{right:4%;bottom:5%;width:32%;height:54%;opacity:.42}
-.val-metric .card-art{right:5%;bottom:7%;width:42%;height:46%;opacity:.4}
-.feat-card:hover .card-art,.innov-card:hover .card-art{opacity:.72;transform:translateY(-4px) scale(1.05)}
-:root[data-theme="dark"] .card-art{opacity:.5}
-:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art{opacity:.72}
+.feat-card .card-art{background-position:right -8% center;background-size:auto 86%;opacity:.22}
+.innov-card .card-art{background-position:right -6% bottom -8%;background-size:auto 78%;opacity:.16}
+.val-metric .card-art{background-position:right -8% bottom -8%;background-size:auto 74%;opacity:.18}
+.feat-card:hover .card-art,.innov-card:hover .card-art,.val-metric:hover .card-art{opacity:.34;transform:scale(1.04)}
+:root[data-theme="dark"] .card-art{opacity:.26}
+:root[data-theme="dark"] .feat-card .card-art{opacity:.3}
+:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art,:root[data-theme="dark"] .val-metric:hover .card-art{opacity:.42}
 @media(prefers-reduced-motion:reduce){.card-art{transition:none}}
 
 /* ============================================================
@@ -750,3 +751,15 @@ body{font-family:var(--font-helios)}
   .slide h2 em,.slide h1 em,:root[data-theme="dark"] .step-card .num{animation:none;background-position:0 center}
   .s-hero h1 .grad{animation:none}
 }
+
+/* ---- Perf: freeze decorative animations on off-screen slides ----
+   (purely invisible — these elements aren't on screen when paused,
+   but it stops the browser repainting them every frame) */
+.slide.offscreen .hero-stats .s b,
+.slide.offscreen .val-lead .kpi b,
+.slide.offscreen .val-metric b,
+.slide.offscreen .price-card .price,
+.slide.offscreen .step-card .num,
+.slide.offscreen h2 em,
+.slide.offscreen h1 em,
+.slide.offscreen .grad{animation-play-state:paused}

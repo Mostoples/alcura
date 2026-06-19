@@ -276,27 +276,34 @@ document.addEventListener('DOMContentLoaded',()=>{
   const finePointer=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
 
-  /* ---- Cursor-following glass glare ---- */
+  // Perf: mark off-screen slides so their shine/glow animations pause
+  const vis=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{e.target.classList.toggle('offscreen',!e.isIntersecting);});
+  },{rootMargin:'160px 0px'});
+  document.querySelectorAll('.slide').forEach(s=>vis.observe(s));
+
+  /* ---- Cursor-following glass glare (rAF-throttled, one write/frame) ---- */
   if(finePointer){
     document.querySelectorAll('.glass').forEach(el=>{
+      let pend=false,mx=50,my=50;
       el.addEventListener('pointermove',e=>{
         const r=el.getBoundingClientRect();
-        el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
-        el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
-      });
+        mx=(e.clientX-r.left)/r.width*100;my=(e.clientY-r.top)/r.height*100;
+        if(!pend){pend=true;requestAnimationFrame(()=>{pend=false;el.style.setProperty('--mx',mx.toFixed(1)+'%');el.style.setProperty('--my',my.toFixed(1)+'%');});}
+      },{passive:true});
     });
   }
 
-  /* ---- Gentle 3D tilt toward the cursor ---- */
+  /* ---- Gentle 3D tilt toward the cursor (rAF-throttled) ---- */
   if(finePointer && !reduced){
     const MAX=5; // degrees
     document.querySelectorAll('.feat-card,.team-card,.val-card,.step-card,.review-card,.price-card,.innov-card').forEach(card=>{
+      let pend=false,rx=0,ry=0;
       card.addEventListener('pointermove',e=>{
         const r=card.getBoundingClientRect();
-        const px=(e.clientX-r.left)/r.width-.5;
-        const py=(e.clientY-r.top)/r.height-.5;
-        card.style.transform='perspective(900px) rotateX('+(-py*MAX).toFixed(2)+'deg) rotateY('+(px*MAX).toFixed(2)+'deg) translateY(-6px)';
-      });
+        rx=((e.clientY-r.top)/r.height-.5)*-MAX;ry=((e.clientX-r.left)/r.width-.5)*MAX;
+        if(!pend){pend=true;requestAnimationFrame(()=>{pend=false;card.style.transform='perspective(900px) rotateX('+rx.toFixed(2)+'deg) rotateY('+ry.toFixed(2)+'deg) translateY(-6px)';});}
+      },{passive:true});
       card.addEventListener('pointerleave',()=>{card.style.transform='';});
     });
   }
@@ -309,11 +316,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     let w=0,h=0,dpr=1,parts=[],raf=null;
     const dotRGB=()=>document.documentElement.getAttribute('data-theme')==='dark'?'160,228,188':'42,128,86';
     function resize(){
-      dpr=Math.min(window.devicePixelRatio||1,2);
+      dpr=Math.min(window.devicePixelRatio||1,1.5);
       w=canvas.clientWidth;h=canvas.clientHeight;
       canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
       ctx.setTransform(dpr,0,0,dpr,0,0);
-      const count=Math.round(Math.min(70,Math.max(26,(w*h)/26000)));
+      const count=Math.round(Math.min(46,Math.max(20,(w*h)/34000)));
       parts=[];
       for(let i=0;i<count;i++){
         parts.push({
@@ -327,10 +334,12 @@ document.addEventListener('DOMContentLoaded',()=>{
         });
       }
     }
-    function frame(){
+    let last=0;
+    function frame(ts){
+      raf=requestAnimationFrame(frame);
+      if(ts-last<32)return; last=ts;   // cap ~30fps to ease backdrop recompute
       ctx.clearRect(0,0,w,h);
       const rgb=dotRGB();
-      ctx.shadowColor='rgba('+rgb+',.6)';ctx.shadowBlur=6;
       for(const p of parts){
         p.x+=p.vx;p.y+=p.vy;p.tw+=p.ts;
         if(p.y<-6)p.y=h+6;
@@ -341,7 +350,6 @@ document.addEventListener('DOMContentLoaded',()=>{
         ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
         ctx.fill();
       }
-      raf=requestAnimationFrame(frame);
     }
     function start(){if(!raf)raf=requestAnimationFrame(frame);}
     function stop(){if(raf){cancelAnimationFrame(raf);raf=null;}}

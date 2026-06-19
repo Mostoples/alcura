@@ -17,6 +17,29 @@
   --blob-a:rgba(86,185,124,.55);
   --blob-b:rgba(77,143,240,.32);
   --blob-c:rgba(159,224,181,.5);
+
+  /* Brand palette referenced throughout this file (light) */
+  --leaf-400:#5cc185;
+  --leaf-500:#2e9e5e;
+  --forest-600:#1f7a48;
+  --forest-700:#155f38;
+  --mint-300:#9fe0b5;
+  --spirulina:#1f9d57;
+  --mint-bg:#dcefe3;
+  --mint-bg-2:#cde9d6;
+  --amber:#e8a13c;
+  --blue:#4d8ff0;
+  --violet:#8d6df0;
+
+  /* Text inks (mirror the styles.css text tokens) */
+  --ink:#16271c;
+  --ink-soft:#4d6354;
+  --ink-mute:#8aa094;
+
+  /* Type + shadows used by the landing layout */
+  --font-display:'Space Grotesk','Inter',sans-serif;
+  --shadow-sm:0 2px 8px rgba(22,39,28,.14);
+  --shadow-lg:0 30px 60px -15px rgba(22,39,28,.35);
 }
 :root[data-theme="dark"]{
   --g-fill:rgba(26,42,32,.55);
@@ -29,6 +52,26 @@
   --blob-a:rgba(52,196,118,.4);
   --blob-b:rgba(77,143,240,.22);
   --blob-c:rgba(35,79,55,.6);
+
+  /* Brand palette (dark) */
+  --leaf-400:#46d189;
+  --leaf-500:#34c476;
+  --forest-600:#1f8a4f;
+  --forest-700:#13693c;
+  --mint-300:#9fe0b5;
+  --spirulina:#34c476;
+  --mint-bg:#1d3528;
+  --mint-bg-2:#264433;
+  --amber:#f0b659;
+  --blue:#6aa6ff;
+  --violet:#a78bff;
+
+  --ink:#e8f3ec;
+  --ink-soft:#a7c2b2;
+  --ink-mute:#6f8a7b;
+
+  --shadow-sm:0 2px 8px rgba(0,0,0,.45);
+  --shadow-lg:0 30px 60px -15px rgba(0,0,0,.6);
 }
 
 /* ---------- Animated liquid background ---------- */
@@ -54,10 +97,20 @@
   overflow:hidden;
 }
 .glass::before{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
   background:linear-gradient(140deg,var(--g-highlight),transparent 40%);
   opacity:.5;mix-blend-mode:overlay;
 }
+/* Cursor-following glare — JS feeds --mx/--my; falls back to centre */
+.glass{--mx:50%;--my:50%}
+.glass::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
+  background:radial-gradient(240px circle at var(--mx) var(--my),var(--g-highlight),transparent 62%);
+  opacity:0;mix-blend-mode:soft-light;transition:opacity .4s ease;
+}
+.glass:hover::after{opacity:.9}
+/* Keep real content above both decorative layers so text stays crisp */
+.glass>*{position:relative;z-index:1}
 .glass-soft{background:var(--g-fill-2);border-color:var(--g-stroke-soft)}
 
 /* ---------- Top navigation (glass pill) ---------- */
@@ -151,8 +204,8 @@
 @keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
 .phone{position:relative;z-index:2;width:300px;height:610px;border-radius:48px;background:#0a120c;padding:11px;box-shadow:var(--shadow-lg),inset 0 0 0 2px rgba(255,255,255,.06)}
 .phone .screen{width:100%;height:100%;border-radius:38px;overflow:hidden;background:linear-gradient(180deg,var(--mint-bg),var(--surface));position:relative}
-.phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:100px;height:26px;background:#0a120c;border-radius:14px;z-index:5}
-.phone-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-top:42px;scroll-behavior:smooth}
+.phone .notch{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:96px;height:24px;background:#0a120c;border-radius:14px;z-index:5}
+.phone-scroll{position:absolute;inset:11px;border-radius:37px;overflow-y:auto;overflow-x:hidden;padding-top:46px;scroll-behavior:smooth;background:linear-gradient(180deg,var(--mint-bg),var(--surface));-webkit-overflow-scrolling:touch}
 .phone-scroll::-webkit-scrollbar{width:0}
 .phone-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:.4rem;font-family:var(--font-mono);font-size:.66rem;font-weight:600;color:#fff;background:rgba(10,18,12,.55);backdrop-filter:blur(6px);padding:.35rem .7rem;border-radius:100px;animation:bob 2s ease-in-out infinite;pointer-events:none}
 @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
@@ -312,10 +365,10 @@
 .dot-nav a:hover::after{opacity:1}
 @media(max-width:1100px){.dot-nav{display:none}}
 
-/* ---------- Reveal-on-scroll ---------- */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
-.reveal.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+/* ---------- Reveal-on-scroll (frosted blur-in) ---------- */
+.reveal{opacity:0;transform:translateY(28px) scale(.985);filter:blur(7px);transition:opacity .75s cubic-bezier(.2,.8,.2,1),transform .75s cubic-bezier(.2,.8,.2,1),filter .75s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none;filter:blur(0)}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;filter:none}}
 
 /* ---------- Responsive ---------- */
 @media(max-width:980px){
@@ -334,4 +387,69 @@
   .phone{width:260px;height:540px}
   .phone-wrap{min-height:auto}
   .lg-nav{padding-left:1rem}
+}
+
+/* ============================================================
+   Ambient particles + glassmorphic polish + signature hovers
+   ============================================================ */
+
+/* ---- Particle canvas (sits above blobs, below content) ---- */
+.particles{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ---- Card lift + cursor tilt smoothing ---- */
+.feat-card,.team-card,.val-card,.step-card,.review-card,.price-card,.innov-card{
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease;
+  transform-style:preserve-3d;will-change:transform;
+}
+.val-card:hover,.step-card:hover,.review-card:hover,.innov-card:hover{
+  transform:translateY(-6px);box-shadow:var(--g-shadow-hover);
+}
+/* Inner icon chip reacts when its card is hovered */
+.feat-card .ic,.val-card .ic,.innov-card .ic{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.feat-card:hover .ic,.val-card:hover .ic,.innov-card:hover .ic{transform:translateZ(28px) rotate(-6deg) scale(1.08);box-shadow:0 14px 30px -8px rgba(46,158,94,.5)}
+
+/* ---- Glassmorphic buttons (override neumorphic base from styles.css) ---- */
+.btn,.btn-ghost,.btn-block{
+  position:relative;overflow:hidden;
+  background:var(--g-fill-2);color:var(--ink);
+  border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);
+  backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,color .25s ease,background .3s ease;
+}
+.btn:hover,.btn-ghost:hover,.btn-block:hover{transform:translateY(-2px);box-shadow:var(--g-shadow-hover);color:var(--leaf-500)}
+.btn:active,.btn-block:active{transform:translateY(0) scale(.98)}
+.btn-primary,.btn-block.primary{
+  background:linear-gradient(135deg,var(--leaf-400),var(--forest-700));
+  border:1px solid rgba(255,255,255,.28);color:#fff;
+  box-shadow:0 12px 30px -8px rgba(46,158,94,.55),inset 0 1px 0 rgba(255,255,255,.45);
+}
+.btn-primary:hover,.btn-block.primary:hover{color:#fff;transform:translateY(-2px);box-shadow:0 18px 42px -8px rgba(46,158,94,.7),inset 0 1px 0 rgba(255,255,255,.55)}
+/* Shimmer sweep on hover */
+.btn::after,.btn-block::after{
+  content:"";position:absolute;top:0;left:-130%;width:60%;height:100%;pointer-events:none;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:skewX(-18deg);transition:left .65s cubic-bezier(.3,.7,.2,1);
+}
+.btn:hover::after,.btn-block:hover::after{left:150%}
+
+/* ---- Glass theme toggle ---- */
+.theme-toggle{background:var(--g-fill-2);box-shadow:var(--g-shadow);border:1px solid var(--g-stroke-soft);backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%)}
+.theme-toggle .knob{background:var(--g-fill);box-shadow:var(--g-shadow-hover);border:1px solid var(--g-stroke)}
+
+/* ---- Nav link underline grow ---- */
+.lg-links a{position:relative}
+.lg-links a::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:2px;border-radius:2px;background:var(--leaf-500);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.lg-links a:hover::after{transform:scaleX(1)}
+@media(max-width:920px){.lg-links a::after{display:none}}
+
+/* ---- Phone inner cards → subtle glass ---- */
+.ph-card,.ph-row,.ph-spark{
+  background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);
+  backdrop-filter:blur(6px) saturate(150%);-webkit-backdrop-filter:blur(6px) saturate(150%);
+}
+.ph-card .ic{background:var(--g-fill);border:1px solid var(--g-stroke-soft)}
+
+@media(prefers-reduced-motion:reduce){
+  .feat-card,.team-card,.val-card,.step-card,.review-card,.price-card,.innov-card{transition:none}
+  .btn::after,.btn-block::after{display:none}
 }

@@ -5,15 +5,15 @@
    ============================================================ */
 
 :root{
-  /* Liquid-glass surface tokens (light defaults) */
-  --g-fill:rgba(255,255,255,.55);
-  --g-fill-2:rgba(255,255,255,.35);
-  --g-stroke:rgba(255,255,255,.65);
-  --g-stroke-soft:rgba(255,255,255,.4);
-  --g-blur:22px;
-  --g-shadow:0 18px 50px -12px rgba(22,39,28,.22), inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(255,255,255,.15);
-  --g-shadow-hover:0 28px 70px -14px rgba(22,39,28,.3), inset 0 1px 0 rgba(255,255,255,.75);
-  --g-highlight:rgba(255,255,255,.85);
+  /* Liquid-glass surface tokens (light defaults) — frosted, gradient edge */
+  --g-fill:rgba(255,255,255,.18);
+  --g-fill-2:rgba(255,255,255,.1);
+  --g-stroke:rgba(255,255,255,.5);
+  --g-stroke-soft:rgba(255,255,255,.28);
+  --g-blur:30px;
+  --g-shadow:0 22px 60px -14px rgba(22,39,28,.2);
+  --g-shadow-hover:0 32px 78px -16px rgba(22,39,28,.28);
+  --g-highlight:rgba(255,255,255,.7);
   --blob-a:rgba(86,185,124,.55);
   --blob-b:rgba(77,143,240,.32);
   --blob-c:rgba(159,224,181,.5);
@@ -42,13 +42,13 @@
   --shadow-lg:0 30px 60px -15px rgba(22,39,28,.35);
 }
 :root[data-theme="dark"]{
-  --g-fill:rgba(26,42,32,.55);
-  --g-fill-2:rgba(21,33,26,.4);
-  --g-stroke:rgba(86,185,124,.22);
-  --g-stroke-soft:rgba(86,185,124,.12);
-  --g-shadow:0 20px 60px -12px rgba(0,0,0,.6), inset 0 1px 0 rgba(86,185,124,.14), inset 0 -1px 0 rgba(0,0,0,.2);
-  --g-shadow-hover:0 30px 80px -14px rgba(0,0,0,.7), inset 0 1px 0 rgba(86,185,124,.2);
-  --g-highlight:rgba(86,185,124,.35);
+  --g-fill:rgba(255,255,255,.06);
+  --g-fill-2:rgba(255,255,255,.04);
+  --g-stroke:rgba(255,255,255,.22);
+  --g-stroke-soft:rgba(255,255,255,.1);
+  --g-shadow:0 26px 70px -14px rgba(0,0,0,.7);
+  --g-shadow-hover:0 36px 90px -16px rgba(0,0,0,.78);
+  --g-highlight:rgba(255,255,255,.35);
   --blob-a:rgba(52,196,118,.4);
   --blob-b:rgba(77,143,240,.22);
   --blob-c:rgba(35,79,55,.6);
@@ -76,6 +76,23 @@
 
 /* ---------- Animated liquid background ---------- */
 .liquid-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+
+/* Single algae-colony accent (ALCURA Spirulina motif) that bleeds off one
+   corner and relocates to a new corner each time a section becomes active.
+   JS sets --tx/--ty to move it; the inner layer handles a slow idle float. */
+.cell-accent-layer{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.cell-accent{
+  position:absolute;top:50%;left:50%;width:clamp(300px,42vw,560px);aspect-ratio:1;
+  transform:translate(-50%,-50%) translate(var(--tx,-42vw),var(--ty,-40vh));
+  transition:transform 1.3s cubic-bezier(.4,0,.2,1);will-change:transform;
+}
+.cell-accent-inner{
+  width:100%;height:100%;background:url(../img/colony.svg) center/contain no-repeat;
+  opacity:.4;animation:accentfloat 26s ease-in-out infinite;
+}
+:root[data-theme="dark"] .cell-accent-inner{opacity:.6}
+@keyframes accentfloat{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.06) rotate(6deg)}}
+@media(prefers-reduced-motion:reduce){.cell-accent-inner{animation:none}.cell-accent{transition:none}}
 .liquid-bg .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.9;mix-blend-mode:normal;will-change:transform}
 .liquid-bg .b1{width:46vw;height:46vw;background:radial-gradient(circle at 30% 30%,var(--blob-a),transparent 70%);top:-12vw;left:-8vw;animation:drift1 22s ease-in-out infinite}
 .liquid-bg .b2{width:40vw;height:40vw;background:radial-gradient(circle at 60% 40%,var(--blob-b),transparent 70%);top:10vh;right:-12vw;animation:drift2 26s ease-in-out infinite}
@@ -96,10 +113,12 @@
   position:relative;
   overflow:hidden;
 }
+/* Textured-glass grain — even across the surface, no corner highlight */
 .glass::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
-  background:linear-gradient(140deg,var(--g-highlight),transparent 40%);
-  opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  opacity:.07;mix-blend-mode:overlay;
 }
 /* Cursor-following glare — JS feeds --mx/--my; falls back to centre */
 .glass{--mx:50%;--my:50%}
@@ -132,12 +151,12 @@
 .lg-nav-actions{display:flex;align-items:center;gap:.55rem}
 
 /* Segmented language toggle */
-.lang-toggle{display:inline-flex;align-items:center;background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);border-radius:100px;padding:.25rem;position:relative;font-family:var(--font-mono);font-weight:600;font-size:.72rem}
-.lang-toggle button{padding:.32rem .6rem;border-radius:100px;color:var(--ink-mute);transition:.2s;z-index:1;position:relative}
+.lang-toggle{--lang-toggle-pad:.25rem;--lang-toggle-segment:2.35rem;display:inline-flex;align-items:center;background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);border-radius:100px;padding:var(--lang-toggle-pad);position:relative;font-family:var(--font-mono);font-weight:600;font-size:.72rem}
+.lang-toggle button{width:var(--lang-toggle-segment);height:1.7rem;display:grid;place-items:center;border-radius:100px;color:var(--ink-mute);transition:.2s;z-index:1;position:relative}
 .lang-toggle button.active{color:#fff}
-.lang-toggle .lang-knob{position:absolute;top:.25rem;bottom:.25rem;left:.25rem;width:calc(50% - .25rem);border-radius:100px;background:var(--forest-700);box-shadow:var(--shadow-sm);transition:.28s cubic-bezier(.2,.8,.2,1)}
+.lang-toggle .lang-knob{position:absolute;top:var(--lang-toggle-pad);bottom:var(--lang-toggle-pad);left:var(--lang-toggle-pad);width:var(--lang-toggle-segment);border-radius:100px;background:var(--forest-700);box-shadow:var(--shadow-sm);transition:.28s cubic-bezier(.2,.8,.2,1)}
 :root[data-theme="dark"] .lang-toggle .lang-knob{background:var(--leaf-500)}
-.lang-toggle.en .lang-knob{transform:translateX(100%)}
+.lang-toggle.en .lang-knob{transform:translateX(var(--lang-toggle-segment))}
 
 .burger{display:none;font-size:1.6rem;color:var(--ink);width:42px;height:42px;border-radius:12px;align-items:center;justify-content:center}
 

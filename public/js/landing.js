@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   },{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  // Dot-nav active state
+  // Dot-nav active state (+ relocate the algae accent per section)
   const dots=[...document.querySelectorAll('.dot-nav a')];
   const sections=dots.map(d=>document.querySelector(d.getAttribute('href'))).filter(Boolean);
   if(sections.length){
@@ -230,6 +230,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
 
   /* ---- Cursor-following glass glare ---- */
   if(finePointer){

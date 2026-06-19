@@ -562,10 +562,10 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
 /* =========================================================
    THEME TOGGLE (legacy knob switch) — neumorphic restyle
    ========================================================= */
-.theme-toggle{display:inline-flex;align-items:center;gap:.5rem;background:var(--bg);box-shadow:var(--shadow-inset);border-radius:var(--radius-pill);padding:.4rem;cursor:pointer;position:relative}
+.theme-toggle{--theme-toggle-size:34px;--theme-toggle-gap:.5rem;--theme-toggle-pad:.4rem;--theme-toggle-shift:calc(var(--theme-toggle-size) + var(--theme-toggle-gap));display:inline-flex;align-items:center;gap:var(--theme-toggle-gap);background:var(--bg);box-shadow:var(--shadow-inset);border-radius:var(--radius-pill);padding:var(--theme-toggle-pad);cursor:pointer;position:relative}
 .theme-toggle .tt{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem;color:var(--text-dim);z-index:1}
-.theme-toggle .knob{position:absolute;width:34px;height:34px;border-radius:50%;background:var(--bg);box-shadow:var(--shadow-raised-sm);transition:.3s cubic-bezier(.2,.8,.2,1);left:.4rem}
-:root[data-theme="dark"] .theme-toggle .knob{transform:translateX(38px)}
+.theme-toggle .knob{position:absolute;top:50%;left:var(--theme-toggle-pad);width:var(--theme-toggle-size);height:var(--theme-toggle-size);border-radius:50%;background:var(--bg);box-shadow:var(--shadow-raised-sm);transition:.3s cubic-bezier(.2,.8,.2,1);transform:translateY(-50%)}
+:root[data-theme="dark"] .theme-toggle .knob{transform:translate(var(--theme-toggle-shift), -50%)}
 :root[data-theme="light"] .theme-toggle .tt.sun{color:var(--accent)}
 :root[data-theme="dark"] .theme-toggle .tt.moon{color:var(--accent)}
 

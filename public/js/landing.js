@@ -25,9 +25,25 @@ const I18N={
     'hero.start.desc':'Buat akun gratis dan pantau ALCURA Anda secara real-time.',
     'hero.start.register':'Daftar Akun','hero.start.login':'Sudah punya akun',
     'hero.stat1':'CO₂ terserap','hero.stat2':'VOC & HCHO bersih','hero.stat3':'siklus panen',
-    'phone.hint':'Geser ke bawah','phone.health':'Culture Health · Hari 25/30',
+    'phone.hint':'Coba ketuk menu','phone.health':'Culture Health · Hari 25/30',
     'phone.live':'Sensor Langsung','phone.harvest':'Panen Berikutnya','phone.trend':'Tren CO₂ 24 jam',
     'phone.harvest.sub':'Spirulina 83% siap','phone.harvest.val':'5 hari',
+    'phone.ctrl':'Kontrol Cepat','phone.aeration':'Aerasi','phone.light':'Mode Lampu',
+    'phone.air.title':'Kualitas Udara','phone.alerts.title':'Peringatan','phone.more.title':'Pengaturan',
+    'phone.tab.home':'Beranda','phone.tab.air':'Udara','phone.tab.alerts':'Alarm','phone.tab.more':'Lainnya',
+    'phone.greet':'Selamat pagi 👋','phone.room':'ALCURA · Ruang Tamu','phone.temp':'Suhu',
+    'phone.on':'Aktif','phone.off':'Mati','phone.mode.grow':'Pertumbuhan','phone.mode.day':'Siang','phone.mode.night':'Malam',
+    'phone.aq':'Air Quality','phone.good':'Baik','phone.permonth':'L/bulan',
+    'phone.air.sub':'Indoor real-time','phone.aqi.label':'AQI Indoor','phone.aqi.status':'Sangat Baik',
+    'phone.culture.sub':'Spirulina · Hari 25/30','phone.biomass':'Biomass OD680 · Fase eksponensial',
+    'phone.harvest.days':'5 hari lagi','phone.harvest.ready':'Spirulina 83% siap dipanen',
+    'phone.alerts.new':'3 baru','phone.al1.t':'pH kultur turun','phone.al1.s':'Sesuaikan nutrisi dalam 24 jam.',
+    'phone.al2.t':'Panen siap 3 hari','phone.al2.s':'Siapkan peralatan panen.',
+    'phone.al3.t':'Kualitas udara +23%','phone.al3.s':'Dibanding minggu lalu. Bagus!',
+    'phone.al4.t':'Aerasi optimal','phone.al4.s':'DO stabil di 11 mg/L.',
+    'phone.more.sub':'Perangkat & akun','phone.device':'Perangkat','phone.uptime':'Uptime','phone.uptime.val':'45 hari','phone.conn':'Koneksi',
+    'phone.dayval':'Hari 25/30','phone.cycle':'Siklus kultur','phone.o2today':'O₂ hari ini',
+    'phone.phase':'Eksponensial','phone.growth':'Pertumbuhan',
 
     'val.tag':'Validasi','val.title':'Dibangun di atas <em>data</em>, bukan klaim',
     'val.sub':'Landasan ilmiah pembuatan ALCURA — hasil peer-reviewed dan prediksi performa alat.',
@@ -104,9 +120,25 @@ const I18N={
     'hero.start.desc':'Create a free account and monitor your ALCURA in real time.',
     'hero.start.register':'Create Account','hero.start.login':'I have an account',
     'hero.stat1':'CO₂ absorbed','hero.stat2':'VOC & HCHO cleared','hero.stat3':'harvest cycle',
-    'phone.hint':'Scroll down','phone.health':'Culture Health · Day 25/30',
+    'phone.hint':'Try the menu','phone.health':'Culture Health · Day 25/30',
     'phone.live':'Live Sensors','phone.harvest':'Next Harvest','phone.trend':'CO₂ Trend 24h',
     'phone.harvest.sub':'Spirulina 83% ready','phone.harvest.val':'5 days',
+    'phone.ctrl':'Quick Controls','phone.aeration':'Aeration','phone.light':'Light Mode',
+    'phone.air.title':'Air Quality','phone.alerts.title':'Alerts','phone.more.title':'Settings',
+    'phone.tab.home':'Home','phone.tab.air':'Air','phone.tab.alerts':'Alerts','phone.tab.more':'More',
+    'phone.greet':'Good morning 👋','phone.room':'ALCURA · Living Room','phone.temp':'Temp',
+    'phone.on':'Active','phone.off':'Off','phone.mode.grow':'Growth','phone.mode.day':'Day','phone.mode.night':'Night',
+    'phone.aq':'Air Quality','phone.good':'Good','phone.permonth':'L/mo',
+    'phone.air.sub':'Indoor real-time','phone.aqi.label':'Indoor AQI','phone.aqi.status':'Excellent',
+    'phone.culture.sub':'Spirulina · Day 25/30','phone.biomass':'Biomass OD680 · Exponential phase',
+    'phone.harvest.days':'In 5 days','phone.harvest.ready':'Spirulina 83% ready',
+    'phone.alerts.new':'3 new','phone.al1.t':'Culture pH dropping','phone.al1.s':'Adjust nutrients within 24h.',
+    'phone.al2.t':'Harvest ready in 3 days','phone.al2.s':'Prepare harvest equipment.',
+    'phone.al3.t':'Air quality +23%','phone.al3.s':'Vs last week. Great progress!',
+    'phone.al4.t':'Aeration optimal','phone.al4.s':'DO stable at 11 mg/L.',
+    'phone.more.sub':'Device & account','phone.device':'Device','phone.uptime':'Uptime','phone.uptime.val':'45 days','phone.conn':'Connection',
+    'phone.dayval':'Day 25/30','phone.cycle':'Culture cycle','phone.o2today':'O₂ today',
+    'phone.phase':'Exponential','phone.growth':'Growth',
 
     'val.tag':'Validation','val.title':'Built on <em>data</em>, not claims',
     'val.sub':'The science behind ALCURA — peer-reviewed results and predicted device performance.',
@@ -316,5 +348,88 @@ document.addEventListener('DOMContentLoaded',()=>{
     let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(resize,160);});
     document.addEventListener('visibilitychange',()=>{document.hidden?stop():start();});
     resize();start();
+  })();
+
+  /* ---- Interactive phone app (tabs, toggles, live data) ---- */
+  (function(){
+    const phone=document.querySelector('.phone-screen');
+    if(!phone)return;
+    const tabs=[...phone.querySelectorAll('.ph-tab')];
+    const views=[...phone.querySelectorAll('.ph-view')];
+    const viewsWrap=phone.querySelector('.ph-views');
+    const hint=document.getElementById('phHint');
+    let hintHidden=false;
+    function show(v){
+      tabs.forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+      views.forEach(s=>s.classList.toggle('active',s.dataset.view===v));
+      if(viewsWrap)viewsWrap.scrollTop=0;
+      if(hint&&!hintHidden){hint.classList.add('hide');hintHidden=true;}
+    }
+    tabs.forEach(t=>t.addEventListener('click',()=>show(t.dataset.view)));
+
+    // Language-aware label helper (keeps data-i18n in sync so switching ID/EN works)
+    const curLang=()=>document.documentElement.getAttribute('lang')||localStorage.getItem('lang')||'id';
+    const t=(k)=>{const d=I18N[curLang()]||I18N.id;return d[k]!=null?d[k]:k;};
+    function setLabel(el,key){if(el){el.setAttribute('data-i18n',key);el.textContent=t(key);}}
+
+    // Aeration toggle
+    const aer=document.getElementById('phAer');
+    if(aer)aer.addEventListener('click',()=>{
+      const on=aer.classList.toggle('is-on');
+      setLabel(aer.querySelector('.st'),on?'phone.on':'phone.off');
+    });
+    // Light-mode cycle
+    const mode=document.getElementById('phMode');
+    if(mode){
+      const keys=['phone.mode.grow','phone.mode.day','phone.mode.night'];let mi=0;
+      mode.addEventListener('click',()=>{mi=(mi+1)%keys.length;setLabel(mode.querySelector('.md'),keys[mi]);});
+    }
+
+    // Gauge fill-in on first reveal (all SVG gauges sweep from 0)
+    if(!reduced){
+      phone.querySelectorAll('.ph-gauge .prg').forEach(prg=>{
+        const target=prg.style.getPropertyValue('--val')||'80';
+        prg.style.setProperty('--val','0');
+        requestAnimationFrame(()=>requestAnimationFrame(()=>prg.style.setProperty('--val',target)));
+      });
+    }
+
+    // Live values — gentle mean-reverting random walk on the active view only
+    const liveEls=[...phone.querySelectorAll('[data-live]')].map(el=>{
+      const raw=el.textContent.trim();
+      const m=raw.match(/^(-?[\d.]+)(.*)$/);
+      const num=m?parseFloat(m[1]):0;
+      const dec=(m&&m[1].indexOf('.')>=0)?m[1].split('.')[1].length:0;
+      const amp=Math.max(Math.abs(num)*0.02,dec?Math.pow(10,-dec):1);
+      // Only the health % drives its gauge ring; others just update text.
+      const prg=el.dataset.live==='health'?(el.closest('.ph-hero')||document).querySelector('.ph-gauge .prg'):null;
+      return {el,base:num,cur:num,dec,suffix:m?m[2]:'',amp,prg};
+    });
+    const spark=document.getElementById('phSpark');
+    function tick(){
+      liveEls.forEach(s=>{
+        const view=s.el.closest('.ph-view');
+        if(view&&!view.classList.contains('active'))return;
+        const drift=(Math.random()-0.5)*2*s.amp;
+        let v=s.base+(s.cur-s.base)*0.55+drift;
+        const lo=s.base-2*s.amp,hi=s.base+2*s.amp;
+        v=Math.min(hi,Math.max(lo,v));s.cur=v;
+        s.el.textContent=v.toFixed(s.dec)+s.suffix;
+        if(s.prg)s.prg.style.setProperty('--val',Math.round(v));
+        s.el.classList.remove('pulse');void s.el.offsetWidth;s.el.classList.add('pulse');
+      });
+      // animate the sparkline when Home is visible
+      if(spark&&phone.querySelector('.ph-view[data-view="home"]').classList.contains('active')){
+        [...spark.children].forEach(b=>{b.style.height=(38+Math.random()*30).toFixed(0)+'%';});
+      }
+    }
+    let timer=null;
+    if(!reduced){
+      const io=new IntersectionObserver(es=>es.forEach(e=>{
+        if(e.isIntersecting){if(!timer)timer=setInterval(tick,2600);}
+        else if(timer){clearInterval(timer);timer=null;}
+      }),{threshold:.2});
+      io.observe(phone);
+    }
   })();
 });

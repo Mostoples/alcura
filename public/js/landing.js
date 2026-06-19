@@ -266,6 +266,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   const nav=document.getElementById('lgNav');
   window.addEventListener('scroll',()=>{if(nav)nav.classList.toggle('scrolled',window.scrollY>20);});
 
+  // Interactive mobile menu: close on outside-click, Escape, or scroll
+  const navLinks=document.getElementById('navLinks');
+  const isOpen=()=>navLinks&&navLinks.classList.contains('mobile-open');
+  document.addEventListener('click',(e)=>{ if(isOpen()&&nav&&!nav.contains(e.target)) closeNav(); });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'&&isOpen()) closeNav(); });
+  window.addEventListener('scroll',()=>{ if(isOpen())closeNav(); },{passive:true});
+
   // Scroll reveal
   const io=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});

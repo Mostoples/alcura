@@ -50,15 +50,16 @@
   --ph-line:rgba(22,39,28,.08);
 }
 :root[data-theme="dark"]{
-  --g-fill:rgba(255,255,255,.06);
-  --g-fill-2:rgba(255,255,255,.04);
-  --g-stroke:rgba(255,255,255,.22);
-  --g-stroke-soft:rgba(255,255,255,.1);
-  --g-shadow:0 26px 70px -14px rgba(0,0,0,.7);
-  --g-shadow-hover:0 36px 90px -16px rgba(0,0,0,.78);
-  --g-highlight:rgba(255,255,255,.35);
-  --blob-a:rgba(52,196,118,.4);
-  --blob-b:rgba(77,143,240,.22);
+  /* Frosted dark-green glass panels with a glossy top edge (photo look) */
+  --g-fill:rgba(34,56,48,.5);
+  --g-fill-2:rgba(34,56,48,.34);
+  --g-stroke:rgba(200,232,214,.2);
+  --g-stroke-soft:rgba(200,232,214,.1);
+  --g-shadow:0 26px 70px -14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);
+  --g-shadow-hover:0 36px 90px -16px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.16);
+  --g-highlight:rgba(255,255,255,.3);
+  --blob-a:rgba(70,209,137,.42);
+  --blob-b:rgba(40,180,150,.28);
   --blob-c:rgba(35,79,55,.6);
 
   /* Brand palette (dark) */
@@ -904,3 +905,23 @@ body{font-family:var(--font-helios)}
   transition:--story-col 1.3s ease,--story-x 1.4s ease,--story-y 1.4s ease;
 }
 @media(prefers-reduced-motion:reduce){.story-bg{transition:none}}
+
+/* ============================================================
+   Photo look — green→teal gradient backdrop + microalgae cells
+   (dark theme only; light theme keeps its airy background)
+   ============================================================ */
+:root[data-theme="dark"] .liquid-bg{
+  background:linear-gradient(155deg,#2f5142 0%,#274039 38%,#20302f 68%,#1b2629 100%);
+}
+.culture-cells{position:absolute;inset:auto 0 -8vh 0;height:60vh;z-index:0;pointer-events:none;
+  background:url(../img/colony.svg) 22% 100% / 62vh 62vh no-repeat;opacity:0;transition:opacity .6s ease}
+:root[data-theme="dark"] .culture-cells{opacity:.55}
+
+/* ============================================================
+   Mobile menu — interactive CTA buttons inside the dropdown
+   ============================================================ */
+.lg-mobile-cta{display:none}
+@media(max-width:920px){
+  .lg-mobile-cta{display:flex;flex-direction:column;gap:.55rem;margin-top:.5rem;padding-top:.75rem;border-top:1px solid var(--g-stroke-soft)}
+  .lg-mobile-cta .btn{width:100%}
+}

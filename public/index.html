@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
@@ -19,6 +19,7 @@
   <div class="flow flow-b" aria-hidden="true"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   <canvas class="particles" id="particles"></canvas>
+  <div class="culture-cells" aria-hidden="true"></div>
   <div class="story-bg" aria-hidden="true"></div>
 </div>
 
@@ -32,6 +33,10 @@
     <a href="#pricing" onclick="closeNav()" data-i18n="nav.pricing">Langganan</a>
     <a href="#team" onclick="closeNav()" data-i18n="nav.team">Tim</a>
     <a href="#faq" onclick="closeNav()" data-i18n="nav.faq">FAQ</a>
+    <div class="lg-mobile-cta">
+      <button class="btn btn-ghost btn-block" onclick="closeNav();window.location.href='login.html'" data-i18n="nav.login">Masuk</button>
+      <button class="btn btn-primary btn-block" onclick="closeNav();window.location.href='register.html'" data-i18n="nav.register">Mulai Gratis</button>
+    </div>
   </div>
   <div class="lg-nav-actions">
     <div class="lang-toggle" id="langToggle">

@@ -39,6 +39,16 @@
 
     </section>
 
+    <section class="dash-block dash-brief span-2">
+      <div class="sec-title"><h3>Briefing Harian AI</h3><button class="btn-icon" id="briefRefresh" aria-label="Perbarui briefing" title="Perbarui" style="width:34px;height:34px"><i class="ph ph-arrows-clockwise"></i></button></div>
+      <div class="card aura-green no-pattern" data-pattern="leaf" id="briefCard">
+        <div style="display:flex;gap:.8rem;align-items:flex-start">
+          <div style="width:40px;height:40px;flex-shrink:0;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.2rem;box-shadow:0 0 16px rgba(var(--aura-green),.4)"><i class="ph-fill ph-sparkle"></i></div>
+          <div id="briefText" style="font-size:.86rem;line-height:1.55;color:var(--text);padding-top:.15rem">…</div>
+        </div>
+      </div>
+    </section>
+
     <section class="dash-block dash-pbr">
       <div class="sec-title"><h3>Photobioreactor Live</h3><a href="pages/culture-health.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="card aura-green no-pattern pbr-card">
@@ -50,7 +60,7 @@
     </section>
 
     <section class="dash-block dash-metrik span-2">
-      <div class="sec-title"><h3>Metrik Cepat</h3><a href="pages/sensors.html">Semua sensor <i class="ph ph-arrow-right"></i></a></div>
+      <div class="sec-title"><h3>Metrik Cepat</h3><a href="pages/air-quality.html">Detail udara <i class="ph ph-arrow-right"></i></a></div>
       <div class="metric-scroll">
         <div class="metric co2"><div class="ic"><i class="ph ph-cloud"></i></div><b><span data-bind="air.co2">480</span><small> ppm</small></b><span>CO₂</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
         <div class="metric do"><div class="ic"><i class="ph ph-test-tube"></i></div><b><span data-bind="culture.tds">864</span></b><span>TDS ppm</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
@@ -66,7 +76,7 @@
         <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-plant"></i></div><div><h4>Spirulina siap dalam <span data-bind="harvest.days">5</span> hari</h4><span>Probabilitas kesiapan <span data-bind="harvest.readiness">85</span>%</span></div></div>
         <div class="progress"><i style="width:83%" data-bind-w="harvest.readiness"></i></div>
         <div class="stat-row"><span>Estimasi yield <b><span data-bind="harvest.yieldG">280</span> g</b></span><span>Densitas <b><span data-bind="harvest.od" data-dec="2">1.32</span> OD</b></span></div>
-        <button class="btn btn-primary btn-block" onclick="window.location.href='pages/culture-health.html'"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
+        <button class="btn btn-primary btn-block" onclick="window.location.href='pages/simulator.html'"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
       </div>
 
     </section>
@@ -92,7 +102,7 @@
 
     <section class="dash-block dash-qa span-2">
       <div class="sec-title"><h3>Aksi Cepat</h3></div>
-      <div class="qa-grid"><a class="qa" href="pages/sensors.html"><div class="ic"><i class="ph-fill ph-cpu"></i></div><span>Sensor</span><small>13 aktif</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small><span data-bind="applied.ledIntensity">72</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small><span data-bind="applied.aeration">60</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></a></div>
+      <div class="qa-grid"><a class="qa" href="pages/air-quality.html"><div class="ic"><i class="ph-fill ph-shield-check"></i></div><span>Keamanan</span><small>Aman</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small><span data-bind="applied.ledIntensity">72</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small><span data-bind="applied.aeration">60</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></a></div>
     </section>
   </div>
 
@@ -118,16 +128,80 @@
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 <script src="js/sensors-engine.js"></script>
+<script src="js/history.js"></script>
+<script src="js/ai-secret.js" onerror="void 0"></script>
+<script src="js/ai-core.js"></script>
 <script src="js/more-menu.js"></script>
 <script src="js/i18n.js"></script>
 <script>
-// Reflect active critical/warning alerts on the bell badge
+// Reflect active critical/warning alerts on the bell badge + draw the live spark
 ALCURA.on(function (d) {
   var dot = document.querySelector('.notif .badge-dot');
-  if (!dot) return;
-  var active = d.alerts.some(function (a) { return a.level === 'critical' || a.level === 'warning'; });
-  dot.style.display = active ? '' : 'none';
+  if (dot) {
+    var active = d.alerts.some(function (a) { return a.level === 'critical' || a.level === 'warning'; });
+    dot.style.display = active ? '' : 'none';
+  }
+  if (window.ALCURA_HISTORY) ALCURA_HISTORY.renderSpark('#spark', 'co2', { n: 24 });
 });
+
+/* ===== AI Daily Briefing — generated once per day, cached ===== */
+(function () {
+  var BKEY = 'alcuraBriefV1';
+  function Tb(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+  function todayStr() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function lang() { return (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; }
+
+  function fmt(s) {
+    s = s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
+    return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|\n)\s*[\*\-]\s+/g, '$1• ').trim().replace(/\n/g, '<br>');
+  }
+  function setText(html) { var t = document.getElementById('briefText'); if (t) t.innerHTML = html; }
+
+  function context() {
+    var d = ALCURA.snapshot();
+    var co2 = window.ALCURA_HISTORY ? ALCURA_HISTORY.stat('co2', 86400000) : null;
+    var ph = window.ALCURA_HISTORY ? ALCURA_HISTORY.stat('ph', 86400000) : null;
+    return [
+      'Ringkasan 24 jam terakhir untuk briefing:',
+      '- Skor udara ' + d.air.score + '/100 (' + d.air.label + '), CO₂ ' + d.air.co2 + ' ppm' + (co2 ? ' (rata2 ' + Math.round(co2.avg) + ', perubahan ' + Math.round(co2.deltaPct) + '%)' : ''),
+      '- Keamanan gas: ' + d.safety.value + ' ppm di ' + d.safety.loc + ' (' + d.safety.level + ')',
+      '- Kultur: OD ' + d.culture.od + ', pH ' + d.culture.ph + (ph ? ' (dari ' + ph.first + ')' : '') + ', TDS ' + d.culture.tds + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status,
+      '- Panen ~' + d.harvest.days + ' hari lagi (kesiapan ' + d.harvest.readiness + '%, est ' + d.harvest.yieldG + ' g)',
+      '- Auto Mode ' + (d.control.autoMode ? 'aktif' : 'nonaktif') + ', LED ' + d.applied.ledIntensity + '%, aerasi ' + d.applied.aeration + '%',
+      '- Dampak hari ini: CO₂ terserap ' + d.impact.co2Today + ' g, O₂ ' + d.impact.o2Today + ' L',
+      d.culture.recommendations && d.culture.recommendations.length ? '- Catatan kultur: ' + d.culture.recommendations[0] : ''
+    ].join('\n');
+  }
+  function systemPrompt() {
+    var li = lang() === 'id' ? 'Tulis dalam Bahasa Indonesia.' : lang() === 'ja' ? 'Write in Japanese.' : 'Write in English.';
+    return 'Kamu ALCURA AI. Tulis "briefing harian" singkat & hangat (maks 3 kalimat) untuk pemilik fotobioreaktor Spirulina pemurni udara, seolah asisten yang menjaga sistem semalaman. Sebut 1-2 hal paling penting (tren udara/keamanan/kultur/panen) dengan angka konkret dari data, dan 1 saran ringkas bila perlu. Nada ramah, tidak kaku, tanpa salam pembuka berlebihan. ' + li + '\n\n' + context();
+  }
+
+  function generate(force) {
+    if (!window.ALCURA_AI || !ALCURA_AI.ready()) { setText(Tb('AI briefing unavailable (no key).', 'Briefing AI tidak tersedia (tanpa key).', 'AIブリーフィングは利用できません。')); return; }
+    setText('<i class="ph ph-spinner"></i> ' + Tb('Preparing your briefing…', 'Menyiapkan briefing Anda…', 'ブリーフィングを準備中…'));
+    ALCURA_AI.text('Buat briefing harian sekarang.', systemPrompt())
+      .then(function (txt) {
+        setText(fmt(txt));
+        try { localStorage.setItem(BKEY, JSON.stringify({ date: todayStr(), lang: lang(), text: txt })); } catch (e) {}
+      })
+      .catch(function (e) { setText('⚠ ' + (e.message || 'Gagal membuat briefing.')); });
+  }
+
+  function boot() {
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(BKEY) || 'null'); } catch (e) {}
+    if (cached && cached.date === todayStr() && cached.lang === lang() && cached.text) setText(fmt(cached.text));
+    else setTimeout(function () { generate(false); }, 600); // let the engine settle first
+    var rb = document.getElementById('briefRefresh');
+    if (rb) rb.addEventListener('click', function () { generate(true); });
+    document.addEventListener('alcura:lang', function () {
+      var c = null; try { c = JSON.parse(localStorage.getItem(BKEY) || 'null'); } catch (e) {}
+      if (!c || c.lang !== lang()) generate(true); // regenerate in the new language
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
 </script>
 
 <script>

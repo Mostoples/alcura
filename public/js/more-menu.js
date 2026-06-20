@@ -1,8 +1,8 @@
 /* ============================================================
    ALCURA — "More" bottom-nav popup.
    Turns the bottom-nav "More" item into a button that opens a
-   small menu: Kontrol (controls.html), Sensor (sensors.html),
-   Pengaturan (settings.html). Works on every page that has a
+   small menu: Kontrol (controls.html), Simulator (simulator.html),
+   Impact (impact.html), Pengaturan (settings.html). Works on every page that has a
    .bottom-nav; resolves relative paths automatically.
    ============================================================ */
 (function () {
@@ -21,9 +21,10 @@
     // Resolve base path: pages/* are siblings; app.html is one level up
     var base = (location.pathname.indexOf('/pages/') !== -1) ? '' : 'pages/';
     var links = [
-      { href: 'controls.html', icon: 'ph-sliders-horizontal', label: 'Kontrol' },
-      { href: 'sensors.html',  icon: 'ph-cpu',                 label: 'Sensor' },
-      { href: 'settings.html', icon: 'ph-gear',                label: 'Pengaturan' }
+      { href: 'controls.html',  icon: 'ph-sliders-horizontal', label: 'Kontrol' },
+      { href: 'simulator.html', icon: 'ph-flask',               label: 'Simulator' },
+      { href: 'impact.html',    icon: 'ph-leaf',                label: 'Impact' },
+      { href: 'settings.html',  icon: 'ph-gear',                label: 'Pengaturan' }
     ];
 
     var menu = document.createElement('div');

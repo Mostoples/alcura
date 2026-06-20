@@ -40,38 +40,82 @@
       </div>
     </div>
 
-    <h3 class="section-title">Culture Parameters</h3>
+    <!-- Raw liquid-culture sensors (pH · TDS · MLX90614 · HC-SR04) -->
+    <h3 class="section-title">Parameter Kultur Cairan <span class="count-chip">4</span></h3>
     <section class="grid-2">
+      <div class="card metric-card aura-violet" data-pattern="flask">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up" data-status>Optimal</span></div>
+        <p class="metric-label">pH Meter</p>
+        <div class="metric-value"><span data-sensor="ph" data-min="9.0" data-max="9.8" data-dec="1">9.4</span></div>
+        <div class="sensor-pins">Probe analog · ideal 9.0–10.2</div>
+      </div>
       <div class="card metric-card aura-blue" data-pattern="drop">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up">Nutrisi</span></div>
-        <p class="metric-label">TDS</p><div class="metric-value"><span data-bind="culture.tds">864</span><span class="metric-unit">ppm</span></div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up" data-status>Normal</span></div>
+        <p class="metric-label">TDS (nutrisi)</p>
+        <div class="metric-value"><span data-sensor="tds" data-min="780" data-max="980">864</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Total padatan terlarut</div>
       </div>
       <div class="card metric-card aura-amber" data-pattern="sun">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer"></i></div><span class="metric-trend up">Ideal</span></div>
-        <p class="metric-label">Temperature</p><div class="metric-value"><span data-bind="culture.temp" data-dec="1">27</span><span class="metric-unit">°C</span></div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer-hot"></i></div><span class="metric-trend up" data-status>Non-kontak</span></div>
+        <p class="metric-label">Suhu Kultur — MLX90614</p>
+        <div class="metric-value"><span data-sensor="mlx" data-min="26" data-max="29" data-dec="1">27.3</span><span class="metric-unit">°C</span></div>
+        <div class="sensor-pins">Infra-merah, tanpa sentuh permukaan</div>
       </div>
-      <div class="card metric-card aura-violet" data-pattern="flask">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Optimal</span></div>
-        <p class="metric-label">pH</p><div class="metric-value"><span data-bind="culture.ph" data-dec="1">9.4</span></div>
-      </div>
-      <div class="card metric-card aura-green" data-pattern="plant">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-plant"></i></div><span class="metric-trend up">Healthy</span></div>
-        <p class="metric-label">Chlorophyll</p><div class="metric-value"><span data-bind="culture.chl">92</span><span class="metric-unit">%</span></div>
+      <div class="card metric-card aura-green" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-waves"></i></div><span class="metric-trend up" data-status>Cukup</span></div>
+        <p class="metric-label">Level Air — HC-SR04</p>
+        <div class="metric-value"><span data-sensor="level" data-min="74" data-max="92">86</span><span class="metric-unit">%</span></div>
+        <div class="sub-value">Jarak <b data-sensor="dist" data-min="4" data-max="11" data-dec="1">5.8</b> cm</div>
       </div>
     </section>
 
-    <h3 class="section-title">Culture Photo</h3>
-    <div class="card aura-green no-pattern" style="text-align:center">
-      <div style="width:100%;height:150px;background:linear-gradient(135deg, rgba(var(--aura-leaf),.3), rgba(var(--aura-green),.3));border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:2.4rem;box-shadow:var(--shadow-inset)"><i class="ph ph-camera"></i></div>
-      <p class="bio" style="margin-top:.8rem;font-size:.78rem">Spirulina terlihat hijau pekat — indikator kesehatan optimal</p>
+    <!-- Ambient board (AHT21) + colour (TCS3200) -->
+    <h3 class="section-title">Lingkungan &amp; Warna <span class="count-chip">3</span></h3>
+    <section class="grid-2">
+      <div class="card metric-card aura-blue" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer-simple"></i></div><span class="metric-trend up" data-status>Presisi</span></div>
+        <p class="metric-label">Suhu Sekitar — AHT21</p>
+        <div class="metric-value"><span data-sensor="aht_t" data-min="25" data-max="28" data-dec="1">26.7</span><span class="metric-unit">°C</span></div>
+        <div class="sub-value">RH <b data-sensor="aht_h" data-min="48" data-max="60" data-dec="1">53.1</b>%</div>
+      </div>
+      <div class="card metric-card aura-green" data-pattern="leaf">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-plant"></i></div><span class="metric-trend up">Sehat</span></div>
+        <p class="metric-label">Chlorophyll (est.)</p>
+        <div class="metric-value"><span data-bind="culture.chl">92</span><span class="metric-unit">%</span></div>
+        <div class="sub-value">Densitas <b data-bind="culture.od" data-dec="2">1.32</b> OD680</div>
+      </div>
+      <div class="card metric-card aura-green" data-pattern="leaf">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-palette"></i></div><span class="metric-trend up" data-status>Hijau pekat</span></div>
+        <p class="metric-label">Warna Spirulina — TCS3200</p>
+        <div class="metric-value"><span data-sensor="green" data-min="180" data-max="230">208</span><span class="metric-unit">G-freq</span></div>
+        <div class="led-swatches" aria-hidden="true">
+          <span style="background:#7bd17b" title="R"></span>
+          <span style="background:#2e8b3d" title="G dominan"></span>
+          <span style="background:#5fa86b" title="B"></span>
+        </div>
+        <div class="sensor-pins">Dominasi hijau = klorofil sehat</div>
+      </div>
+    </section>
+
+    <!-- AI Vision Scan — phone camera becomes a culture-health instrument -->
+    <h3 class="section-title row-link"><span>AI Vision Scan</span><a href="simulator.html">Simulasi panen <i class="ph ph-arrow-right"></i></a></h3>
+    <div class="card aura-green no-pattern" id="scanCard">
+      <div id="scanPreviewWrap" style="width:100%;height:170px;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--accent);background:linear-gradient(135deg, rgba(var(--aura-leaf),.28), rgba(var(--aura-green),.28));box-shadow:var(--shadow-inset);overflow:hidden;position:relative">
+        <i class="ph ph-camera" style="font-size:2.4rem"></i>
+        <small style="color:var(--text-muted);font-size:.74rem;max-width:230px;text-align:center">Foto kultur Spirulina Anda — AI menilai warna, densitas &amp; tanda kontaminasi, lalu mencocokkannya dengan sensor.</small>
+      </div>
+      <input type="file" id="scanInput" accept="image/*" capture="environment" style="display:none">
+      <button class="btn btn-primary btn-block" id="scanBtn" style="margin-top:.8rem" onclick="document.getElementById('scanInput').click()"><i class="ph ph-camera"></i> Scan kultur dengan AI</button>
+      <div id="scanResult" class="card no-pattern aura-green" style="display:none;margin-top:.8rem;box-shadow:var(--shadow-inset)">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem"><i class="ph-fill ph-sparkle" style="color:var(--accent)"></i><b style="font-size:.9rem">Analisis AI</b></div>
+        <div id="scanText" style="font-size:.83rem;line-height:1.5;color:var(--text)"></div>
+      </div>
     </div>
 
-    <h3 class="section-title">Growth Curve (30 hari)</h3>
+    <h3 class="section-title">Growth Curve (OD680)</h3>
     <div class="card aura-green no-pattern">
-      <div class="chart-mock" style="height:160px">
-        <div class="bar" style="height:15%"></div><div class="bar" style="height:18%"></div><div class="bar" style="height:22%"></div><div class="bar" style="height:28%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:42%"></div><div class="bar" style="height:48%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:65%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:78%"></div><div class="bar" style="height:80%"></div><div class="bar active" style="height:82%"></div>
-      </div>
-      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Hari ke-25 dari 30 — Fase pertumbuhan eksponensial</div>
+      <div class="chart-mock" style="height:160px" id="growthChart"></div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Kurva densitas menuju target panen <b>1.6 OD</b> — <span data-bind="harvest.days">5</span> hari lagi</div>
     </div>
 
     <h3 class="section-title">Diagnosa &amp; Rekomendasi</h3>
@@ -100,10 +144,69 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/history.js"></script>
+<script src="../js/ai-secret.js" onerror="void 0"></script>
+<script src="../js/ai-core.js"></script>
 <script>
 requireAuthPage();
 function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+
+/* ===== Real growth curve (synthesized from current OD toward target) ===== */
+function paintGrowth() {
+  if (!window.ALCURA_HISTORY) return;
+  var od = ALCURA.snapshot().culture.od;
+  ALCURA_HISTORY.renderBars('#growthChart', 'od', { vals: ALCURA_HISTORY.growthCurve(od, 30), activeLast: true });
+}
+
+/* ===== AI Vision Scan ===== */
+(function () {
+  var input = document.getElementById('scanInput');
+  var btn = document.getElementById('scanBtn');
+  var wrap = document.getElementById('scanPreviewWrap');
+  var resBox = document.getElementById('scanResult');
+  var resText = document.getElementById('scanText');
+  if (!input) return;
+
+  function fmt(s) {
+    s = s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
+    s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|\n)\s*[\*\-]\s+/g, '$1• ');
+    return s.trim().replace(/\n/g, '<br>');
+  }
+  function show(html, cls) {
+    resBox.style.display = '';
+    resBox.classList.remove('aura-green', 'aura-coral'); resBox.classList.add(cls || 'aura-green');
+    resText.innerHTML = html;
+  }
+
+  input.addEventListener('change', function () {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    if (!window.ALCURA_AI || !ALCURA_AI.ready()) { show(T('AI key not available.', 'API key AI belum tersedia.', 'AIキーが利用できません。'), 'aura-coral'); return; }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var dataUrl = e.target.result;
+      var base64 = dataUrl.split(',')[1];
+      var mime = (dataUrl.match(/^data:(.*?);/) || [])[1] || 'image/jpeg';
+      // Preview
+      wrap.innerHTML = '<img src="' + dataUrl + '" alt="" style="width:100%;height:100%;object-fit:cover">';
+      btn.disabled = true; btn.innerHTML = '<i class="ph ph-spinner"></i> ' + T('Analyzing…', 'Menganalisis…', '解析中…');
+      show('<i class="ph ph-spinner"></i> ' + T('AI is reading the culture…', 'AI sedang membaca kultur…', 'AIが培養を読み取っています…'));
+
+      var d = ALCURA.snapshot();
+      var ctx = 'Data sensor saat ini untuk dicocokkan: warna TCS3200 G-freq ' + d.s.green + ' (klorofil est. ' + d.culture.chl + '%), pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status + '.';
+      var sys = 'Kamu ahli budidaya mikroalga Spirulina. Analisis FOTO kultur dalam fotobioreaktor. Nilai secara singkat: (1) warna & kepekatan hijau (sehat = hijau pekat merata), (2) estimasi densitas/kesehatan, (3) tanda masalah (menguning/pemutihan/bleaching, gumpalan, busa, kontaminasi, pengendapan). Bandingkan dengan data sensor — sebutkan bila cocok atau ada ketidaksesuaian. Akhiri dengan 1 rekomendasi tindakan. Maksimal 5 kalimat, gunakan poin bila perlu. ' + (function () { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? 'Jawab dalam Bahasa Indonesia.' : l === 'ja' ? 'Reply in Japanese.' : 'Reply in English.'; })();
+
+      ALCURA_AI.vision(ctx, { mime: mime, data: base64 }, sys)
+        .then(function (txt) { show(fmt(txt)); })
+        .catch(function (err) { show('⚠ ' + (err.message || T('Scan failed.', 'Scan gagal.', 'スキャン失敗。')), 'aura-coral'); })
+        .finally(function () { btn.disabled = false; btn.innerHTML = '<i class="ph ph-camera"></i> ' + T('Scan again', 'Scan ulang', '再スキャン'); });
+    };
+    reader.readAsDataURL(file);
+  });
+})();
+
 ALCURA.on(function (d) {
+  paintGrowth();
   var c = d.culture;
   var label = c.status === 'optimal' ? T('Optimal', 'Optimal', '最適') : c.status === 'attention' ? T('Needs attention', 'Perlu Perhatian', '要注意') : T('Critical', 'Kritis', '危機');
   document.getElementById('diagStatus').textContent = T('Culture status: ', 'Status kultur: ', '培養の状態: ') + label;

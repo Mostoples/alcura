@@ -862,6 +862,8 @@ footer .brand{justify-content:center;margin-bottom:1rem}
   .metric-scroll{ display:grid; grid-template-columns:repeat(3,1fr); overflow:visible; }
   .qa-grid, .action-grid{ grid-template-columns:repeat(3,1fr); }
   .spectrum-grid{ grid-template-columns:repeat(5,1fr); }
+  /* Pattern icon scales with the card (≈half its width), capped so it stays tidy */
+  .metric-card::after{ width:clamp(70px, 46%, 120px); height:auto; aspect-ratio:1/1; right:-4%; bottom:-6%; opacity:.085; }
 }
 
 @media (min-width:1024px){
@@ -880,6 +882,14 @@ footer .brand{justify-content:center;margin-bottom:1rem}
   .qa-grid, .action-grid{ grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); }
   .feat-grid{ grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
   .spectrum-grid{ grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); }
+
+  /* Pattern icon scales with the card (≈half its width), capped so very wide
+     cards don't get a giant blob. */
+  .metric-card::after{ width:clamp(80px, 48%, 150px); height:auto; aspect-ratio:1/1; right:-4%; bottom:-6%; opacity:.085; }
+
+  /* Same proportional, capped treatment for the dashboard's wide feature cards
+     (harvest / impact / 24h trend) so their background icon stays balanced. */
+  .app-scroll.dash .card::after{ width:clamp(96px, 46%, 200px); height:auto; aspect-ratio:1/1; right:-4%; bottom:-6%; opacity:.085; }
 
   /* Larger hero treatment on desktop */
   .hero-card{ padding:30px 40px; gap:32px; }
@@ -1062,3 +1072,31 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 .btn-icon.lang-toggle span{ font-size:.78rem; letter-spacing:.4px; }
 @media (hover:hover){ .btn-icon.lang-toggle:hover{ color:var(--accent); } }
 .btn-icon.lang-toggle:active{ transform:scale(.92); }
+
+/* ============================================================
+   Sensor card helpers — used by air-quality / culture-health /
+   safety pages now that raw sensors live on their context pages.
+   ============================================================ */
+.sensor-meta{font-size:10px;color:var(--text-muted);font-weight:600;letter-spacing:.3px;margin-top:2px}
+.sensor-pins{font-size:9.5px;color:var(--text-muted);opacity:.8;font-weight:500;margin-top:6px;line-height:1.4}
+.sub-value{font-size:12px;color:var(--text-muted);font-weight:600;margin-top:2px}
+.led-swatches{display:flex;gap:5px;margin-top:8px}
+.led-swatches span{width:14px;height:14px;border-radius:4px;box-shadow:var(--shadow-inset)}
+.count-chip{font-size:10px;font-weight:700;color:var(--accent);background:rgba(var(--aura-green),.14);padding:2px 8px;border-radius:var(--radius-pill);margin-left:6px}
+.metric-trend.off{color:var(--text-muted)}
+
+/* Safety triangulation list (Keamanan section in air-quality.html) */
+.tri-list{display:flex;flex-direction:column;gap:.6rem}
+.tri-row{display:flex;align-items:center;gap:.8rem;background:var(--bg);border-radius:var(--radius);padding:.7rem .85rem;box-shadow:var(--shadow-inset)}
+.tri-rank{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:800;flex-shrink:0;background:rgba(var(--aura-green),.16);color:var(--accent)}
+.tri-row.is-warn .tri-rank{background:rgba(var(--aura-amber),.2);color:#9a6b00}
+.tri-row.is-danger .tri-rank{background:rgba(var(--aura-coral),.2);color:rgb(var(--aura-coral))}
+.tri-main{flex:1;min-width:0}
+.tri-loc{font-size:.85rem;font-weight:700;color:var(--text)}
+.tri-sub{font-size:.7rem;color:var(--text-muted);font-weight:500;margin-top:1px}
+.tri-val{font-size:1rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+.tri-val small{font-size:.62rem;color:var(--text-muted);font-weight:600}
+.tri-bar{height:5px;border-radius:var(--radius-pill);background:var(--bg-soft);margin-top:.45rem;overflow:hidden}
+.tri-bar i{display:block;height:100%;border-radius:inherit;background:rgb(var(--aura-green));transition:width .6s ease,background .4s}
+.tri-row.is-warn .tri-bar i{background:rgb(var(--aura-amber))}
+.tri-row.is-danger .tri-bar i{background:rgb(var(--aura-coral))}

@@ -38,12 +38,10 @@
       <div class="row"><span><i class="ph-fill ph-tree" style="margin-right:.5rem;color:var(--accent)"></i>Tree Equivalent</span><b><span data-bind="impact.treeEq" data-dec="2">0.23</span> pohon</b></div>
     </div>
 
-    <h3 class="section-title">Trend Bulanan</h3>
+    <h3 class="section-title">CO₂ Terserap — 24 Jam</h3>
     <div class="card aura-green no-pattern">
-      <div class="chart-mock" style="height:160px">
-        <div class="bar" style="height:20%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:48%"></div><div class="bar" style="height:62%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:85%"></div><div class="bar active" style="height:95%"></div><div class="bar" style="height:100%"></div>
-      </div>
-      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">CO₂ removal meningkat konsisten setiap minggu</div>
+      <div class="chart-mock" style="height:160px" id="impactChart"></div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Akumulasi CO₂ yang diserap kultur sepanjang hari ini</div>
     </div>
 
     <button class="btn btn-primary btn-block" onclick="shareImpact()"><i class="ph ph-share-network"></i> Bagikan Dampak Saya</button>
@@ -75,8 +73,12 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/history.js"></script>
 <script>
 requireAuthPage();
+ALCURA.on(function () {
+  if (window.ALCURA_HISTORY) ALCURA_HISTORY.renderBars('#impactChart', 'co2Today', { n: 24, activeLast: true });
+});
 function shareImpact() {
   const co2 = ALCURA.snapshot().impact.co2Month;
   const text = 'Bulan ini ALCURA membantu saya menghapus ' + co2 + ' g CO₂ — udara lebih bersih untuk ruang hidup. 🌱';

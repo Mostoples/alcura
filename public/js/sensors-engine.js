@@ -168,6 +168,44 @@
     return { days: days, readiness: readiness, yieldG: yieldG, od: c.od };
   }
 
+  // ---- What-if growth projection (powers the Simulator page) ----
+  function simulate(p) {
+    p = p || {};
+    var led = clamp(p.ledIntensity != null ? +p.ledIntensity : control.ledIntensity, 0, 100);
+    var aer = clamp(p.aeration != null ? +p.aeration : control.aeration, 0, 100);
+    var co2 = p.co2Injection != null ? !!p.co2Injection : control.co2Injection;
+    var temp = p.temp != null ? +p.temp : S.mlx;
+    var odNow = computeCulture().od;
+
+    // Light response: climbs to a plateau near 78%, then mild photo-inhibition.
+    var fLight = led <= 78 ? (0.25 + 0.75 * (led / 78)) : (1 - (led - 78) / 22 * 0.18);
+    fLight = clamp(fLight, 0.2, 1);
+    var fAer = clamp(0.55 + 0.45 * (aer / 80), 0.45, 1.1);    // mixing & CO₂ transfer
+    var fCo2 = co2 ? 1.12 : 0.94;
+    var fTemp = clamp(1 - Math.abs(temp - 29) * 0.06, 0.45, 1); // optimal ≈ 29°C
+    var base = 0.045;
+    var g = base * fLight * fAer * fCo2 * fTemp;               // OD gained per day
+
+    var target = 1.6;
+    var days = g > 0 ? Math.max(0, Math.ceil((target - odNow) / g)) : 99;
+    var readiness = Math.round(clamp(odNow / target * 100, 5, 99));
+    var yieldG = Math.round(target * 210);
+
+    // Energy: 8 LED modules ≈ 42 W peak + aeration pump ≈ 6 W at full.
+    var energyDay = +(((led / 100 * 42) + (aer / 100 * 6)) * 24 / 1000).toFixed(2); // kWh/day
+    var energyToHarvest = +(energyDay * days).toFixed(1);
+
+    var curve = [], v = odNow, n = Math.min(Math.max(days, 6), 30);
+    for (var i = 0; i < n; i++) { curve.push(+Math.min(target, v).toFixed(2)); v += g; }
+
+    return {
+      ledIntensity: led, aeration: aer, co2Injection: co2,
+      growthPerDay: +g.toFixed(4), days: days, readiness: readiness, yieldG: yieldG,
+      energyDay: energyDay, energyToHarvest: energyToHarvest, odNow: +odNow.toFixed(2), target: target,
+      curve: curve, factors: { light: +fLight.toFixed(2), aeration: +fAer.toFixed(2), co2: +fCo2.toFixed(2), temp: +fTemp.toFixed(2) }
+    };
+  }
+
   function startOfDay() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
 
   function computeImpact(c, applied) {
@@ -374,6 +412,7 @@
       emit();
     },
     renderAlerts: renderAlerts,
+    simulate: simulate,
     refresh: emit
   };
 

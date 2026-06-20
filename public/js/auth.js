@@ -2,7 +2,6 @@
 class AlcuraAuth {
   constructor() {
     this.auth = null;
-    this.db = null;
     this.currentUser = null;
     this.initialized = false;
     this.initAuth();
@@ -22,16 +21,9 @@ class AlcuraAuth {
 
     this.auth = firebase.auth();
 
-    // Firestore is optional — only wire it up if the SDK is present
-    if (typeof firebase.firestore === 'function') {
-      try {
-        this.db = firebase.firestore();
-      } catch (e) {
-        console.warn('Firestore not available:', e.message);
-      }
-    } else {
-      console.warn('Firestore SDK not loaded — user data will not be saved to Firestore.');
-    }
+    // The app intentionally does NOT persist user/activity data to Firestore.
+    // Profile info (name/avatar) comes from Firebase Auth + localStorage only,
+    // so no login-activity documents are ever written.
 
     this.setupAuthListener();
     this.initialized = true;
@@ -57,44 +49,6 @@ class AlcuraAuth {
     });
   }
 
-  // Create / merge the user's profile document in Firestore.
-  // Never blocks the auth flow: resolves even if Firestore is unavailable or denied.
-  saveUserToFirestore(user, extra = {}) {
-    if (!this.db || !user) return Promise.resolve(null);
-
-    const ref = this.db.collection('users').doc(user.uid);
-    const providerId = (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password';
-
-    const ts = firebase.firestore.FieldValue.serverTimestamp();
-    const data = {
-      uid: user.uid,
-      email: user.email || '',
-      displayName: extra.displayName || user.displayName || '',
-      photoURL: user.photoURL || '',
-      provider: extra.provider || providerId,
-      lastLoginAt: ts,
-      updatedAt: ts
-    };
-
-    const writeNew = () => ref.set(Object.assign({ createdAt: ts, role: 'user' }, data), { merge: true });
-    const writeExisting = () => ref.set(data, { merge: true });
-
-    // Decide create-vs-update from the existing doc; if the read is blocked or
-    // offline, still write the document (treating it as new) so data is saved.
-    return ref.get()
-      .then((snap) => (snap.exists ? writeExisting() : writeNew()))
-      .catch(() => writeNew())
-      .then(() => {
-        console.log('✓ User saved to Firestore:', user.uid);
-        return user;
-      })
-      .catch((error) => {
-        // Don't break login if the write itself is denied/offline — log it.
-        console.warn('Could not save user to Firestore:', error.code || error.message);
-        return user;
-      });
-  }
-
   // Sign in with Google
   signInWithGoogle() {
     if (!this.auth) return Promise.reject(new Error('Auth not initialized'));
@@ -106,8 +60,7 @@ class AlcuraAuth {
     return this.auth.signInWithPopup(provider)
       .then((result) => {
         console.log('Google sign-in successful:', result.user.email);
-        return this.saveUserToFirestore(result.user, { provider: 'google.com' })
-          .then(() => result.user);
+        return result.user;
       })
       .catch((error) => {
         console.error('Google sign-in error:', error.message);
@@ -122,8 +75,7 @@ class AlcuraAuth {
     return this.auth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         console.log('Email sign-in successful:', result.user.email);
-        return this.saveUserToFirestore(result.user, { provider: 'password' })
-          .then(() => result.user);
+        return result.user;
       })
       .catch((error) => {
         console.error('Email sign-in error:', error.message);
@@ -137,9 +89,8 @@ class AlcuraAuth {
 
     return this.auth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        // Update Firebase Auth profile, then persist to Firestore
+        // Update the Firebase Auth profile only (no Firestore persistence)
         return result.user.updateProfile({ displayName })
-          .then(() => this.saveUserToFirestore(result.user, { displayName, provider: 'password' }))
           .then(() => result.user);
       })
       .catch((error) => {

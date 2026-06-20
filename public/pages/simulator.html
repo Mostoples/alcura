@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Simulator Panen — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    .sim-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem}
+    .sim-stat{background:var(--bg);border-radius:var(--radius-lg);padding:.9rem 1rem;box-shadow:var(--shadow-raised-sm)}
+    .sim-stat .v{font-size:1.5rem;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+    .sim-stat .v small{font-size:.7rem;color:var(--text-muted);font-weight:600;letter-spacing:0}
+    .sim-stat .l{font-size:.72rem;color:var(--text-muted);font-weight:600;margin-top:.15rem}
+    .sim-stat .d{font-size:.68rem;font-weight:700;margin-top:.3rem}
+    .sim-stat .d.up{color:var(--accent)} .sim-stat .d.down{color:rgb(var(--aura-coral))}
+    .factor-row{display:flex;align-items:center;gap:.6rem;margin-top:.55rem}
+    .factor-row span{font-size:.76rem;color:var(--text);width:64px;flex-shrink:0}
+    .factor-bar{flex:1;height:7px;border-radius:var(--radius-pill);background:var(--bg-soft);overflow:hidden}
+    .factor-bar i{display:block;height:100%;border-radius:inherit;background:rgb(var(--aura-green));transition:width .5s}
+    .factor-row b{font-size:.74rem;width:36px;text-align:right;color:var(--text-muted);font-variant-numeric:tabular-nums}
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Simulator Panen</h2><p>Uji skenario tanpa menyentuh perangkat</p></div>
+    <div class="top-bar-actions">
+      <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
+    </div>
+  </header>
+
+  <div class="app-scroll">
+
+    <div class="card hero-card aura-green" data-pattern="plant">
+      <div class="hero-left">
+        <p class="hero-label">Estimasi panen</p>
+        <div class="hero-value"><span class="hero-num" id="simDays">5</span><span class="hero-unit">hari lagi</span></div>
+        <p class="hero-desc">Dari OD <b id="simOdNow">1.32</b> menuju target <b>1.6</b> · <span id="simDelta">—</span></p>
+        <div class="progress-bar"><div class="progress-fill" id="simReadinessBar" style="width:80%"></div></div>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" id="simRing" style="stroke-dasharray:314;stroke-dashoffset:63"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num"><tspan id="simReadiness">80</tspan>%</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">SIAP</text>
+        </svg>
+      </div>
+    </div>
+
+    <h3 class="section-title">Skenario Pengaturan</h3>
+    <div class="slider-group">
+      <label><span>Intensitas LED</span><span id="simLedVal">72%</span></label>
+      <input type="range" min="0" max="100" value="72" id="simLed" oninput="onSim()">
+    </div>
+    <div class="slider-group">
+      <label><span>Laju Aerasi</span><span id="simAerVal">60%</span></label>
+      <input type="range" min="0" max="100" value="60" id="simAer" oninput="onSim()">
+    </div>
+    <div class="card no-pattern aura-green">
+      <div class="checkbox" style="border:0;padding:.4rem 0"><input type="checkbox" id="simCo2" checked onchange="onSim()"><label for="simCo2">Injeksi CO₂ (mempercepat pertumbuhan)</label></div>
+    </div>
+
+    <h3 class="section-title">Hasil Proyeksi</h3>
+    <div class="sim-stats">
+      <div class="sim-stat"><div class="v"><span id="simYield">336</span><small> g</small></div><div class="l">Estimasi yield panen</div></div>
+      <div class="sim-stat"><div class="v"><span id="simGrowth">0.045</span><small> OD/hari</small></div><div class="l">Laju pertumbuhan</div></div>
+      <div class="sim-stat"><div class="v"><span id="simEnergyDay">0.74</span><small> kWh/hari</small></div><div class="l">Konsumsi energi</div></div>
+      <div class="sim-stat"><div class="v"><span id="simEnergyTotal">3.7</span><small> kWh</small></div><div class="l">Energi sampai panen</div></div>
+    </div>
+
+    <h3 class="section-title">Faktor Pertumbuhan</h3>
+    <div class="card no-pattern aura-green">
+      <div class="factor-row"><span>Cahaya</span><div class="factor-bar"><i id="fLight" style="width:80%"></i></div><b id="fLightV">1.0</b></div>
+      <div class="factor-row"><span>Aerasi</span><div class="factor-bar"><i id="fAer" style="width:80%"></i></div><b id="fAerV">1.0</b></div>
+      <div class="factor-row"><span>CO₂</span><div class="factor-bar"><i id="fCo2" style="width:80%"></i></div><b id="fCo2V">1.1</b></div>
+      <div class="factor-row"><span>Suhu</span><div class="factor-bar"><i id="fTemp" style="width:80%"></i></div><b id="fTempV">1.0</b></div>
+    </div>
+
+    <h3 class="section-title">Kurva Proyeksi</h3>
+    <div class="card aura-green no-pattern">
+      <div class="chart-mock" style="height:150px" id="simChart"></div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Proyeksi OD680 di bawah skenario ini hingga target panen</div>
+    </div>
+
+    <button class="btn btn-primary btn-block" onclick="applySim()"><i class="ph ph-check"></i> Terapkan ke Kontrol</button>
+    <button class="btn btn-secondary btn-block" onclick="resetSim()" style="margin-top:.6rem"><i class="ph ph-arrow-counter-clockwise"></i> Reset ke pengaturan saat ini</button>
+  </div>
+
+  <div class="spacer-bottom"></div>
+  <nav class="bottom-nav">
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
+  </nav>
+</div>
+
+<script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
+<script src="../js/sensors-engine.js"></script>
+<script src="../js/history.js"></script>
+<script>
+requireAuthPage();
+function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+var led = document.getElementById('simLed'), aer = document.getElementById('simAer'), co2 = document.getElementById('simCo2');
+
+function resetSim() {
+  var c = ALCURA.control;
+  led.value = c.ledIntensity; aer.value = c.aeration; co2.checked = !!c.co2Injection;
+  onSim();
+}
+function pctFactor(v) { return Math.round(Math.min(1.12, Math.max(0.2, v)) / 1.12 * 100); }
+
+function onSim() {
+  document.getElementById('simLedVal').textContent = led.value + '%';
+  document.getElementById('simAerVal').textContent = aer.value + '%';
+  var r = ALCURA.simulate({ ledIntensity: +led.value, aeration: +aer.value, co2Injection: co2.checked });
+
+  document.getElementById('simDays').textContent = r.days;
+  document.getElementById('simOdNow').textContent = r.odNow.toFixed(2);
+  document.getElementById('simReadiness').textContent = r.readiness;
+  document.getElementById('simReadinessBar').style.width = r.readiness + '%';
+  document.getElementById('simRing').style.strokeDashoffset = (314 - 314 * r.readiness / 100).toFixed(0);
+  document.getElementById('simYield').textContent = r.yieldG;
+  document.getElementById('simGrowth').textContent = r.growthPerDay.toFixed(3);
+  document.getElementById('simEnergyDay').textContent = r.energyDay.toFixed(2);
+  document.getElementById('simEnergyTotal').textContent = r.energyToHarvest.toFixed(1);
+
+  // compare vs current real setpoints
+  var base = ALCURA.simulate({});
+  var diff = base.days - r.days;
+  var dEl = document.getElementById('simDelta');
+  dEl.textContent = diff === 0 ? T('same as now', 'sama seperti sekarang', '現状と同じ')
+    : diff > 0 ? '⚡ ' + diff + ' ' + T('days faster', 'hari lebih cepat', '日早い')
+    : '🐢 ' + (-diff) + ' ' + T('days slower', 'hari lebih lambat', '日遅い');
+
+  document.getElementById('fLight').style.width = pctFactor(r.factors.light) + '%';
+  document.getElementById('fAer').style.width = pctFactor(r.factors.aeration) + '%';
+  document.getElementById('fCo2').style.width = pctFactor(r.factors.co2) + '%';
+  document.getElementById('fTemp').style.width = pctFactor(r.factors.temp) + '%';
+  document.getElementById('fLightV').textContent = r.factors.light.toFixed(2);
+  document.getElementById('fAerV').textContent = r.factors.aeration.toFixed(2);
+  document.getElementById('fCo2V').textContent = r.factors.co2.toFixed(2);
+  document.getElementById('fTempV').textContent = r.factors.temp.toFixed(2);
+
+  if (window.ALCURA_HISTORY) ALCURA_HISTORY.renderBars('#simChart', 'od', { vals: r.curve, activeLast: true });
+}
+
+function applySim() {
+  ALCURA.setControl('autoMode', false);
+  ALCURA.setControl('ledIntensity', +led.value);
+  ALCURA.setControl('aeration', +aer.value);
+  ALCURA.setControl('co2Injection', co2.checked);
+  toast(T('Scenario applied to controls ✓', 'Skenario diterapkan ke kontrol ✓', 'シナリオを適用しました ✓'));
+}
+
+resetSim();
+document.addEventListener('alcura:lang', onSim);
+</script>
+</body>
+</html>

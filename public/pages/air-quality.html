@@ -40,46 +40,87 @@
       </div>
     </div>
 
-    <h3 class="section-title row-link"><span>Metrik Udara Lainnya</span><a href="sensors.html">Semua sensor <i class="ph ph-arrow-right"></i></a></h3>
+    <!-- ===== Keamanan — Asap & Gas (triangulasi 3× MQ-2) ===== -->
+    <h3 class="section-title">Keamanan — Asap &amp; Gas</h3>
+    <div class="alert" data-bind-aura="safety.aura" id="safetyCard"><i class="ph-fill ph-shield-check" id="safetyIcon"></i><div class="alert-content"><h4 id="safetyTitle">Memuat…</h4><small data-bind="safety.message">—</small></div></div>
+
+    <div class="card no-pattern aura-amber">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+        <b style="font-size:.85rem">Triangulasi 3× MQ-2</b>
+        <span style="font-size:.7rem;color:var(--text-muted)">Zona berisiko: <b id="safWorst" style="color:var(--text)">—</b></span>
+      </div>
+      <div class="tri-list" id="triList"></div>
+      <div style="margin-top:.85rem;font-size:.72rem;color:var(--text-muted);line-height:1.5">
+        <i class="ph ph-info" style="color:var(--accent);margin-right:.3rem"></i>Tiga sensor MQ-2 dibandingkan untuk menemukan sumber asap/gas. Ambang: <b>&lt;300</b> aman · <b>300–600</b> waspada · <b>&gt;600</b> bahaya (ppm).
+      </div>
+    </div>
+
+    <!-- Emergency guidance — shown only when there is a real risk -->
+    <div class="card no-pattern aura-coral" id="emCard" style="display:none">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem"><i class="ph-fill ph-warning" style="color:rgb(var(--aura-coral))"></i><b style="font-size:.88rem">Langkah darurat</b></div>
+      <ul class="rec-list" id="emList"></ul>
+    </div>
+
+    <!-- Real gas & VOC sensors (ENS160 · MG811 · MQ-2 · UV) -->
+    <h3 class="section-title">Sensor Gas &amp; VOC <span class="count-chip">6</span></h3>
     <section class="grid-2">
-      <div class="card metric-card aura-green" data-pattern="drop">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop"></i></div><span class="metric-trend up">Optimal</span></div>
-        <p class="metric-label">O₂</p><div class="metric-value"><span>21</span><span class="metric-unit">%</span></div>
-      </div>
       <div class="card metric-card aura-violet" data-pattern="cloud">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-cloud"></i></div><span class="metric-trend up">Baik</span></div>
-        <p class="metric-label">PM2.5</p><div class="metric-value"><span>8</span><span class="metric-unit">μg/m³</span></div>
-      </div>
-      <div class="card metric-card aura-blue" data-pattern="wind">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-wind"></i></div><span class="metric-trend up">Baik</span></div>
-        <p class="metric-label">PM10</p><div class="metric-value"><span>25</span><span class="metric-unit">μg/m³</span></div>
-      </div>
-      <div class="card metric-card aura-amber" data-pattern="flask">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Aman</span></div>
-        <p class="metric-label">HCHO</p><div class="metric-value"><span>0.03</span><span class="metric-unit">ppm</span></div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-cloud"></i></div><span class="metric-trend up" data-status data-ok="Optimal">Optimal</span></div>
+        <p class="metric-label">CO₂ — MG811</p>
+        <div class="metric-value"><span data-sensor="mg811" data-warn="900" data-danger="1200">486</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Karbon dioksida indoor</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="leaf">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-atom"></i></div><span class="metric-trend up">Baik</span></div>
-        <p class="metric-label">VOC</p><div class="metric-value"><span data-bind="air.tvoc">45</span><span class="metric-unit">ppb</span></div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-atom"></i></div><span class="metric-trend up" data-status>Baik</span></div>
+        <p class="metric-label">TVOC — ENS160</p>
+        <div class="metric-value"><span data-sensor="tvoc" data-min="30" data-max="120">58</span><span class="metric-unit">ppb</span></div>
+        <div class="sub-value">eCO₂ <b data-sensor="eco2" data-min="400" data-max="600">452</b> ppm · AQI 1</div>
       </div>
-      <div class="card metric-card aura-blue" data-pattern="drop">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop-half"></i></div><span class="metric-trend up">Ideal</span></div>
-        <p class="metric-label">Humidity</p><div class="metric-value"><span data-bind="air.rh">52</span><span class="metric-unit">%</span></div>
+      <div class="card metric-card aura-amber" data-pattern="cloud">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
+        <p class="metric-label">Asap / Gas — MQ-2 <span style="opacity:.6">#1</span></p>
+        <div class="metric-value"><span data-sensor="mq2_1" data-warn="300" data-danger="600">214</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Dapur · triangulasi kebocoran gas</div>
+      </div>
+      <div class="card metric-card aura-amber" data-pattern="cloud">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
+        <p class="metric-label">Asap / Gas — MQ-2 <span style="opacity:.6">#2</span></p>
+        <div class="metric-value"><span data-sensor="mq2_2" data-warn="300" data-danger="600">198</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Ruang tamu · triangulasi kebocoran gas</div>
+      </div>
+      <div class="card metric-card aura-amber" data-pattern="cloud">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
+        <p class="metric-label">Asap / Gas — MQ-2 <span style="opacity:.6">#3</span></p>
+        <div class="metric-value"><span data-sensor="mq2_3" data-warn="300" data-danger="600">226</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Area reaktor · triangulasi kebocoran gas</div>
+      </div>
+      <div class="card metric-card aura-violet" data-pattern="sun">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-sun-dim"></i></div><span class="metric-trend up" data-status>Rendah</span></div>
+        <p class="metric-label">Ultraviolet</p>
+        <div class="metric-value"><span data-sensor="uv" data-min="1" data-max="6" data-dec="1">2.4</span><span class="metric-unit">index</span></div>
+        <div class="sensor-pins">Indeks paparan UV ruang</div>
       </div>
     </section>
 
-    <h3 class="section-title">Tren 24 Jam</h3>
-    <div class="card aura-green no-pattern">
-      <div class="chart-mock">
-        <div class="bar" style="height:45%"></div>
-        <div class="bar active" style="height:65%"></div>
-        <div class="bar" style="height:55%"></div>
-        <div class="bar" style="height:48%"></div>
-        <div class="bar" style="height:52%"></div>
-        <div class="bar" style="height:60%"></div>
-        <div class="bar active" style="height:70%"></div>
+    <!-- Room climate (DHT-11) -->
+    <h3 class="section-title">Suhu &amp; Kelembapan Ruang <span class="count-chip">2</span></h3>
+    <section class="grid-2">
+      <div class="card metric-card aura-blue" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer"></i></div><span class="metric-trend up" data-status>Ideal</span></div>
+        <p class="metric-label">Suhu Ruang — DHT-11</p>
+        <div class="metric-value"><span data-sensor="dht_t" data-min="24" data-max="29">26</span><span class="metric-unit">°C</span></div>
       </div>
-      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Rata-rata CO₂ turun 23% dibanding kemarin</div>
+      <div class="card metric-card aura-blue" data-pattern="drop">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop-half"></i></div><span class="metric-trend up" data-status>Ideal</span></div>
+        <p class="metric-label">Kelembapan — DHT-11</p>
+        <div class="metric-value"><span data-sensor="dht_h" data-min="45" data-max="65">52</span><span class="metric-unit">%</span></div>
+      </div>
+    </section>
+
+    <h3 class="section-title">Tren CO₂ 24 Jam</h3>
+    <div class="card aura-green no-pattern">
+      <div class="chart-mock" id="co2Chart"></div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)" id="co2TrendNote">Memuat tren…</div>
     </div>
 
     <h3 class="section-title">Comparison</h3>
@@ -106,6 +147,72 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
-<script>requireAuthPage();</script>
+<script src="../js/history.js"></script>
+<script>
+requireAuthPage();
+function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+function paintCo2() {
+  if (!window.ALCURA_HISTORY) return;
+  ALCURA_HISTORY.renderBars('#co2Chart', 'co2', { n: 24, activeLast: true });
+  var s = ALCURA_HISTORY.stat('co2', 24 * 3600 * 1000);
+  var note = document.getElementById('co2TrendNote');
+  if (note) {
+    var d = Math.round(s.deltaPct);
+    note.innerHTML = T('Avg CO₂ ', 'Rata-rata CO₂ ', '平均CO₂ ') + Math.round(s.avg) + ' ppm · ' +
+      (d <= 0 ? '<b style="color:var(--accent)">' + Math.abs(d) + '% ' + T('cleaner than 24h ago', 'lebih bersih dari 24 jam lalu', '24時間前より改善') + '</b>'
+              : '<b>' + d + '% ' + T('higher than 24h ago', 'lebih tinggi dari 24 jam lalu', '24時間前より上昇') + '</b>');
+  }
+}
+function pct(v) { return Math.max(4, Math.min(100, Math.round(v / 800 * 100))); }
+
+ALCURA.on(function (d) {
+  paintCo2();
+  var saf = d.safety;
+
+  // Banner icon + title
+  var icon = document.getElementById('safetyIcon');
+  var title = document.getElementById('safetyTitle');
+  if (icon) icon.className = 'ph-fill ' + (saf.level === 'danger' ? 'ph-fire' : saf.level === 'warn' ? 'ph-warning' : 'ph-shield-check');
+  if (title) title.textContent = saf.level === 'danger' ? T('Danger detected', 'Bahaya terdeteksi', '危険を検知') : saf.level === 'warn' ? T('Needs attention', 'Perlu diperhatikan', '要注意') : T('Environment safe', 'Lingkungan aman', '環境は安全');
+
+  // Worst-zone label
+  var worst = document.getElementById('safWorst');
+  if (worst) worst.textContent = T(saf.sensors[0].loc.en, saf.sensors[0].loc.id, saf.sensors[0].loc.ja) + ' · ' + Math.round(saf.value) + ' ppm';
+
+  // Triangulation list (engine sorts worst-first)
+  var host = document.getElementById('triList');
+  if (host) {
+    host.innerHTML = saf.sensors.map(function (s, i) {
+      var lvl = s.v > 600 ? 'danger' : s.v > 300 ? 'warn' : 'ok';
+      var cls = lvl === 'danger' ? 'is-danger' : lvl === 'warn' ? 'is-warn' : '';
+      var loc = T(s.loc.en, s.loc.id, s.loc.ja);
+      var tag = lvl === 'danger' ? T('leak source', 'sumber bocor', '漏れ源') : lvl === 'warn' ? T('rising', 'meningkat', '上昇中') : T('normal', 'normal', '正常');
+      return '<div class="tri-row ' + cls + '">' +
+        '<div class="tri-rank">' + (i + 1) + '</div>' +
+        '<div class="tri-main"><div class="tri-loc">' + loc + ' <span style="opacity:.5;font-weight:600">' + s.id + '</span></div>' +
+        '<div class="tri-sub">' + tag + '</div>' +
+        '<div class="tri-bar"><i style="width:' + pct(s.v) + '%"></i></div></div>' +
+        '<div class="tri-val">' + Math.round(s.v) + ' <small>ppm</small></div></div>';
+    }).join('');
+  }
+
+  // Emergency guidance — only when there's a real risk
+  var emCard = document.getElementById('emCard');
+  var em = document.getElementById('emList');
+  if (emCard && em) {
+    if (saf.level === 'ok') { emCard.style.display = 'none'; }
+    else {
+      emCard.style.display = '';
+      var steps = [
+        T('Open windows & doors immediately for ventilation.', 'Segera buka jendela & pintu untuk ventilasi.', '直ちに窓やドアを開けて換気してください。'),
+        T('Turn off open flames, stoves & ignition sources.', 'Matikan api terbuka, kompor & sumber percikan.', '火気・コンロ・着火源を消してください。'),
+        T('Do not switch electrical devices on or off.', 'Jangan nyalakan/matikan perangkat listrik.', '電気機器のオン/オフを操作しないでください。'),
+        T('Evacuate if smell is strong, then call emergency services.', 'Evakuasi jika bau menyengat, lalu hubungi layanan darurat.', '臭いが強ければ避難し、緊急サービスに連絡してください。')
+      ];
+      em.innerHTML = steps.map(function (s) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + s + '</span></li>'; }).join('');
+    }
+  }
+});
+</script>
 </body>
 </html>

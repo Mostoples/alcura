@@ -881,14 +881,16 @@ body{font-family:var(--font-helios)}
 /* ============================================================
    3D floating phone — tilts in perspective + bobs up and down
    ============================================================ */
-.phone-wrap{perspective:1500px}
-.phone{transform-style:preserve-3d;will-change:transform;animation:phone3d 7.5s ease-in-out infinite}
-@keyframes phone3d{
-  0%,100%{transform:translateY(0) rotateX(5deg) rotateY(-10deg)}
-  50%{transform:translateY(-22px) rotateX(2deg) rotateY(-6deg)}
+/* Floating 3D tilt — perspective is baked INTO the transform (flat context,
+   NO transform-style:preserve-3d) so the phone tilts in 3D yet its buttons
+   stay clickable (preserve-3d is what desyncs pointer hit-testing). */
+.phone{will-change:transform;animation:phoneFloat3d 8s ease-in-out infinite;backface-visibility:hidden}
+@keyframes phoneFloat3d{
+  0%,100%{transform:perspective(1400px) translateY(0) rotateX(5deg) rotateY(-11deg)}
+  50%{transform:perspective(1400px) translateY(-18px) rotateX(2deg) rotateY(-5deg)}
 }
-.phone:hover{animation-play-state:paused}   /* hold still while interacting */
-@media(prefers-reduced-motion:reduce){.phone{animation:none}}
+.phone:hover{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.phone{animation:none;transform:perspective(1400px) rotateX(4deg) rotateY(-9deg)}}
 
 /* ============================================================
    Storyline background — a roaming accent wash that recolours +

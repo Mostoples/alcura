@@ -569,6 +569,17 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
 :root[data-theme="light"] .theme-toggle .tt.sun{color:var(--accent)}
 :root[data-theme="dark"] .theme-toggle .tt.moon{color:var(--accent)}
 
+/* Icon-only theme controls used by app and auth pages. */
+.btn-icon.theme-toggle{
+  width:44px;height:44px;padding:0;gap:0;border-radius:14px;
+  box-shadow:var(--shadow-raised-sm);
+}
+.btn-icon.theme-toggle.auth-toggle-corner{
+  position:fixed;
+  top:max(16px, env(safe-area-inset-top));
+  right:max(16px, env(safe-area-inset-right));
+}
+
 /* =========================================================
    TOAST
    ========================================================= */

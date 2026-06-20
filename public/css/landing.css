@@ -1098,3 +1098,109 @@ body{font-family:var(--font-helios)}
   box-shadow:inset 0 0 0 1px rgba(22,39,28,.06);
 }
 
+/* ============================================================
+   Phone mock — force a LIGHT (white) UI inside the screen so it
+   pops against the dark page, plus subtle 3D / raised cards.
+   (Scoped to .phone-screen; the device frame stays dark.)
+   ============================================================ */
+.phone-screen{
+  --bg:#f3f8f2;--bg-2:#eef6ee;--surface:#ffffff;--surface-2:#f7faf5;
+  --ink:#16271c;--ink-soft:#4d6354;--ink-mute:#8aa094;--line:#e6efe8;
+  --mint-bg:#eef9f1;--mint-bg-2:#def4e5;
+  --leaf-500:#2e9e5e;--leaf-400:#5cc185;--forest-600:#1f7a48;--forest-700:#155f38;
+  --mint-300:#9fe0b5;--spirulina:#1f9d57;--amber:#e8a13c;--blue:#4d8ff0;--violet:#8d6df0;
+  --ph-card:rgba(255,255,255,.66);--ph-line:rgba(22,39,28,.08);
+  background:linear-gradient(180deg,#eef9f1,#ffffff);
+}
+/* keep the gauge track greenish even though the PAGE is in dark mode */
+:root[data-theme="dark"] .phone-screen .ph-gauge .trk{stroke:rgba(46,158,94,.18)}
+
+/* Subtle 3D: raised cards with soft elevation + inner top highlight */
+.phone-screen .ph-card,
+.phone-screen .ph-row,
+.phone-screen .ph-toggle,
+.phone-screen .ph-mode,
+.phone-screen .ph-harvest,
+.phone-screen .ph-alert,
+.phone-screen .ph-acct,
+.phone-screen .ph-spark{
+  background:linear-gradient(180deg,#ffffff,#f2f7f2);
+  box-shadow:0 5px 12px -5px rgba(16,40,28,.18),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.phone-screen .ph-hero,
+.phone-screen .ph-airhero{
+  box-shadow:0 12px 26px -12px rgba(16,40,28,.26),inset 0 1px 0 rgba(255,255,255,.85);
+}
+/* icon chips pop off the cards */
+.phone-screen .ph-card .ic,
+.phone-screen .ph-toggle .ic,
+.phone-screen .ph-mode .ic,
+.phone-screen .ph-row .ic,
+.phone-screen .ph-alert .ic{box-shadow:0 3px 8px -3px rgba(16,40,28,.32)}
+.phone-screen .ph-tabs{background:linear-gradient(180deg,#fbfdfb,#eef5ef);box-shadow:0 -4px 14px -8px rgba(16,40,28,.16)}
+.phone-screen .ph-card:hover{transform:translateY(-2px);box-shadow:0 10px 20px -7px rgba(16,40,28,.26),inset 0 1px 0 rgba(255,255,255,.9)}
+
+/* ============================================================
+   Dual-function — colour-coded side-by-side comparison
+   (one device, two living systems: Air Purifier + Photobioreactor)
+   ============================================================ */
+.dual-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:0;position:relative}
+.dual-card{--c:46,158,94;position:relative;overflow:hidden;padding:2rem 1.9rem;
+  background:var(--g-fill);backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);border-radius:var(--r-lg);
+  border-top:3px solid rgba(var(--c),.85);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.dual-card:hover{transform:translateY(-5px);box-shadow:var(--g-shadow-hover),0 0 36px -8px rgba(var(--c),.4)}
+.dual-card.air{--c:16,176,176;border-top-right-radius:8px;border-bottom-right-radius:8px}
+.dual-card.bio{--c:46,158,94;border-top-left-radius:8px;border-bottom-left-radius:8px}
+.dual-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.1rem}
+.dual-fn{font-family:var(--font-mono);font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(var(--c),1)}
+.dual-ic{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;flex-shrink:0;
+  background:rgba(var(--c),.14);border:1px solid rgba(var(--c),.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.dual-ic img{width:38px;height:38px;display:block}
+.dual-card h3{font-family:var(--font-helios);font-weight:800;font-size:1.5rem;letter-spacing:-.02em}
+.dual-lead{color:var(--ink-soft);font-size:.96rem;margin:.5rem 0 1.3rem;line-height:1.55}
+.dual-rows{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
+.dual-rows>div{padding-left:.95rem;border-left:2px solid rgba(var(--c),.45)}
+.dual-rows dt{font-family:var(--font-mono);font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.25rem}
+.dual-rows dd{color:var(--ink-soft);font-size:.92rem;line-height:1.5}
+.dual-stat{display:flex;align-items:baseline;gap:.6rem;padding-top:1.1rem;border-top:1px solid var(--g-stroke-soft)}
+.dual-stat b{font-family:var(--font-helios);font-weight:800;font-size:2rem;color:rgba(var(--c),1);letter-spacing:-.02em;line-height:1}
+.dual-stat span{font-size:.82rem;color:var(--ink-soft)}
+/* centre connector — the single device that does both */
+.dual-core{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;padding:0 1.3rem;z-index:3;position:relative}
+.dual-core::before{content:"";position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(16,176,176,.5),rgba(46,158,94,.5));z-index:-1}
+.dual-core-ic{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:1.55rem;
+  background:linear-gradient(145deg,#13b1b0,#2e9e5e);box-shadow:0 10px 26px -8px rgba(46,158,94,.6),inset 0 1px 0 rgba(255,255,255,.35)}
+.dual-core-plus{font-family:var(--font-helios);font-weight:800;font-size:1.3rem;color:var(--ink);line-height:.6}
+.dual-core small{font-family:var(--font-mono);font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
+@media(max-width:860px){
+  .dual-grid{grid-template-columns:1fr;gap:1.2rem}
+  .dual-card.air,.dual-card.bio{border-radius:var(--r-lg)}
+  .dual-core{flex-direction:row;gap:.7rem;padding:.2rem 0}
+  .dual-core::before{display:none}
+}
+
+/* ============================================================
+   Brand comparison — clearer framework, dominant ALCURA column
+   ============================================================ */
+.compare th:not(:first-child),.compare td:not(:first-child){text-align:center;vertical-align:middle}
+.compare td .ph-check,.compare td .ph-x,.compare td .ph-minus{font-size:1.12rem;vertical-align:middle}
+.compare td.txt{color:var(--ink-soft);font-weight:500;font-size:.86rem}
+.compare td.us.txt,.compare td.us.good{color:var(--ink);font-weight:700;font-size:.9rem}
+.compare td.us.good{color:#1f7a48}
+:root[data-theme="dark"] .compare td.us.good{color:#5ad79a}
+.compare td.us .ph-check{color:#2e9e5e}
+:root[data-theme="dark"] .compare td.us .ph-check{color:#46d189}
+/* ALCURA column: tinted, bordered, dominant */
+.compare .us-col,.compare th.us,.compare td.us{background:linear-gradient(180deg,rgba(46,158,94,.18),rgba(46,158,94,.05))}
+.compare th.us,.compare td.us{box-shadow:inset 1px 0 0 rgba(46,158,94,.32),inset -1px 0 0 rgba(46,158,94,.32)}
+.compare thead th.us{padding:.55rem .6rem}
+.compare tbody tr:last-child td.us{box-shadow:inset 1px 0 0 rgba(46,158,94,.32),inset -1px 0 0 rgba(46,158,94,.32),inset 0 -1px 0 rgba(46,158,94,.32)}
+.us-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--font-helios);font-weight:800;font-size:.95rem;letter-spacing:0;text-transform:none;color:#fff;
+  background:linear-gradient(135deg,var(--leaf-400),var(--forest-700));padding:.42rem .85rem;border-radius:100px;box-shadow:0 8px 18px -6px rgba(46,158,94,.6),inset 0 1px 0 rgba(255,255,255,.35)}
+.compare tbody tr{transition:background .2s}
+.compare tbody tr:hover td.us{background:linear-gradient(180deg,rgba(46,158,94,.26),rgba(46,158,94,.09))}
+.cmp-takeaway{max-width:740px;margin:1.6rem auto 0;text-align:center;color:var(--ink-soft);font-size:1rem;display:flex;align-items:center;justify-content:center;gap:.55rem;line-height:1.5}
+.cmp-takeaway i{color:var(--leaf-500);font-size:1.35rem;flex-shrink:0}
+:root[data-theme="dark"] .cmp-takeaway i{color:var(--mint-300)}
+

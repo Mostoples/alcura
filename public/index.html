@@ -298,34 +298,40 @@
     <h2 data-i18n="innov.title">Dua dunia dalam <em>satu</em> alat</h2>
     <p data-i18n="innov.sub">Manfaat nyata untuk kualitas udara dalam ruangan dan budi daya mikroalga.</p>
   </div>
-  <div class="innov-grid">
-    <div class="innov-card glass fn-air reveal">
-      <div class="card-art art-air"></div>
-      <span class="innov-fn" data-i18n="innov.fn1">Fungsi 01</span>
-      <div class="innov-ic"><i class="ph-fill ph-wind"></i></div>
-      <h3 data-i18n="innov.a.title">Kualitas Udara Dalam Ruangan</h3>
-      <p data-i18n="innov.a.desc">ALCURA mengurangi CO₂ dan memproduksi O₂ beserta udara segar, berperan sebagai air purifier:</p>
-      <ul>
-        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.a.li1">Menyerap CO₂ dan melepas oksigen segar</span></li>
-        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.a.li2">Menghilangkan VOC, asap, dan formaldehida</span></li>
-        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.a.li3">Mengurangi ketergantungan filter HVAC</span></li>
-      </ul>
-      <span class="tag-pill"><i class="ph-fill ph-wind"></i> <span data-i18n="innov.a.pill">Air Purifier</span></span>
+  <div class="dual-grid reveal">
+    <article class="dual-card air">
+      <div class="dual-top">
+        <span class="dual-fn" data-i18n="innov.fn1">Fungsi 01</span>
+        <span class="dual-ic"><img src="img/art/air.svg" alt="" width="38" height="38"></span>
+      </div>
+      <h3 data-i18n="dual.air.title">Pemurni Udara</h3>
+      <p class="dual-lead" data-i18n="dual.air.lead">Mikroalga hidup membersihkan udara ruangan secara biologis — bukan sekadar menyaring.</p>
+      <dl class="dual-rows">
+        <div><dt data-i18n="dual.row.how">Cara kerja</dt><dd data-i18n="dual.air.how">Menyerap CO₂, VOC, dan partikel halus; melepas oksigen segar.</dd></div>
+        <div><dt data-i18n="dual.row.get">Manfaat</dt><dd data-i18n="dual.air.get">Udara lebih sehat tanpa filter habis pakai.</dd></div>
+      </dl>
+      <div class="dual-stat"><b>55–90%</b><span data-i18n="dual.air.statlabel">CO₂ dalam ruangan diserap</span></div>
+    </article>
+
+    <div class="dual-core" aria-hidden="true">
+      <span class="dual-core-ic"><i class="ph-fill ph-leaf"></i></span>
+      <span class="dual-core-plus">+</span>
+      <small data-i18n="dual.core">1 alat</small>
     </div>
-    <div class="innov-vs">+</div>
-    <div class="innov-card glass fn-cult reveal">
-      <div class="card-art art-algae"></div>
-      <span class="innov-fn" data-i18n="innov.fn2">Fungsi 02</span>
-      <div class="innov-ic"><i class="ph-fill ph-plant"></i></div>
-      <h3 data-i18n="innov.b.title">Budi Daya Mikroalga</h3>
-      <p data-i18n="innov.b.desc">ALCURA membudidayakan dan mendukung produksi biomassa Spirulina yang kaya manfaat kesehatan:</p>
-      <ul>
-        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.b.li1">Produksi Spirulina bergizi tinggi</span></li>
-        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.b.li2">Panen berkelanjutan tiap siklus</span></li>
-        <li><i class="ph-fill ph-check-circle"></i> <span data-i18n="innov.b.li3">Dioptimalkan AI untuk hasil maksimal</span></li>
-      </ul>
-      <span class="tag-pill"><i class="ph-fill ph-leaf"></i> <span data-i18n="innov.b.pill">Photobioreactor</span></span>
-    </div>
+
+    <article class="dual-card bio">
+      <div class="dual-top">
+        <span class="dual-fn" data-i18n="innov.fn2">Fungsi 02</span>
+        <span class="dual-ic"><img src="img/art/algae.svg" alt="" width="38" height="38"></span>
+      </div>
+      <h3 data-i18n="dual.bio.title">Photobioreactor</h3>
+      <p class="dual-lead" data-i18n="dual.bio.lead">Alat yang sama membudidayakan Spirulina bergizi tinggi di rumah Anda.</p>
+      <dl class="dual-rows">
+        <div><dt data-i18n="dual.row.how">Cara kerja</dt><dd data-i18n="dual.bio.how">Fotosintesis di bawah LED tunable menumbuhkan biomassa Spirulina.</dd></div>
+        <div><dt data-i18n="dual.row.get">Manfaat</dt><dd data-i18n="dual.bio.get">Panen bergizi tiap siklus, dioptimalkan AI.</dd></div>
+      </dl>
+      <div class="dual-stat"><b>+76%</b><span data-i18n="dual.bio.statlabel">produktivitas budi daya</span></div>
+    </article>
   </div>
 </section>
 
@@ -341,21 +347,58 @@
       <colgroup><col><col><col><col class="us-col"></colgroup>
       <thead><tr>
         <th data-i18n="cmp.feature">Fitur</th>
-        <th data-i18n="cmp.purifier">Air Purifier Biasa</th>
+        <th data-i18n="cmp.purifier">Air Purifier HEPA</th>
         <th data-i18n="cmp.lamp">Lampu Pintar</th>
-        <th class="us">ALCURA</th>
+        <th class="us"><span class="us-badge"><i class="ph-fill ph-leaf"></i> ALCURA</span></th>
       </tr></thead>
       <tbody>
-        <tr><td data-i18n="cmp.r1">Memurnikan udara</td><td class="yes"><i class="ph-bold ph-check"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
-        <tr><td data-i18n="cmp.r2">Memproduksi oksigen</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
-        <tr><td data-i18n="cmp.r3">Budi daya Spirulina</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
-        <tr><td data-i18n="cmp.r4">Pencahayaan ambient</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="yes"><i class="ph-bold ph-check"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
-        <tr><td data-i18n="cmp.r5">Monitoring AI real-time</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="no"><i class="ph-bold ph-x"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
-        <tr><td data-i18n="cmp.r6">Tanpa filter habis pakai</td><td class="no"><i class="ph-bold ph-x"></i></td><td class="yes"><i class="ph-bold ph-check"></i></td><td class="us yes"><i class="ph-bold ph-check"></i></td></tr>
+        <tr>
+          <td data-i18n="cmp.r1">Metode pemurnian</td>
+          <td class="txt" data-i18n="cmp.r1.p">Filter HEPA (mekanis)</td>
+          <td class="no"><i class="ph-bold ph-minus"></i></td>
+          <td class="us txt good" data-i18n="cmp.r1.u">Mikroalga hidup (biologis)</td>
+        </tr>
+        <tr>
+          <td data-i18n="cmp.r2">Produksi oksigen</td>
+          <td class="no"><i class="ph-bold ph-x"></i></td>
+          <td class="no"><i class="ph-bold ph-x"></i></td>
+          <td class="us yes"><i class="ph-bold ph-check"></i> <span data-i18n="cmp.r2.u">~240 L/bln</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="cmp.r3">Filter habis pakai</td>
+          <td class="txt" data-i18n="cmp.r3.p">Ganti tiap 3–6 bln</td>
+          <td class="txt" data-i18n="cmp.r3.l">Tidak ada</td>
+          <td class="us txt good" data-i18n="cmp.r3.u">Tidak ada — terbarukan</td>
+        </tr>
+        <tr>
+          <td data-i18n="cmp.r4">Biaya berjalan</td>
+          <td class="txt" data-i18n="cmp.r4.p">Filter + listrik</td>
+          <td class="txt" data-i18n="cmp.r4.l">Listrik</td>
+          <td class="us txt good" data-i18n="cmp.r4.u">Listrik saja</td>
+        </tr>
+        <tr>
+          <td data-i18n="cmp.r5">Pencahayaan ambient</td>
+          <td class="no"><i class="ph-bold ph-x"></i></td>
+          <td class="yes"><i class="ph-bold ph-check"></i></td>
+          <td class="us yes"><i class="ph-bold ph-check"></i> <span data-i18n="cmp.r5.u">Spektrum tunable</span></td>
+        </tr>
+        <tr>
+          <td data-i18n="cmp.r6">Monitoring AI real-time</td>
+          <td class="no"><i class="ph-bold ph-x"></i></td>
+          <td class="txt" data-i18n="cmp.r6.l">Dasar</td>
+          <td class="us yes"><i class="ph-bold ph-check"></i></td>
+        </tr>
+        <tr>
+          <td data-i18n="cmp.r7">Keberlanjutan</td>
+          <td class="txt" data-i18n="cmp.r7.p">Limbah filter</td>
+          <td class="txt" data-i18n="cmp.r7.l">Dampak rendah</td>
+          <td class="us txt good" data-i18n="cmp.r7.u">Karbon-negatif + panen</td>
+        </tr>
       </tbody>
     </table>
   </div>
-  <p style="text-align:center;margin-top:1.6rem"><span class="soon"><i class="ph ph-clock"></i> <span data-i18n="common.soon">Data menyusul</span> · harga & merk</span></p>
+  <p class="cmp-takeaway reveal"><i class="ph-fill ph-seal-check"></i> <span data-i18n="cmp.takeaway">ALCURA menyatukan pemurnian udara, produksi oksigen, dan budi daya — dalam satu alat berkelanjutan.</span></p>
+  <p style="text-align:center;margin-top:.7rem"><span class="soon"><i class="ph ph-clock"></i> <span data-i18n="cmp.note">Perbandingan harga & merk spesifik menyusul.</span></span></p>
 </section>
 
 <!-- ============ SLIDE 7 — SUBSCRIPTION ============ -->

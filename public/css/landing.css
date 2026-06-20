@@ -983,6 +983,48 @@ body{font-family:var(--font-helios)}
 }
 
 /* ============================================================
+   Mobile menu — 3D extruded tiles (LIGHT mode only) so it isn't
+   flat/monotonous; every control stays fully clickable.
+   ============================================================ */
+@media(max-width:920px){
+  /* keep all interactive nav elements above any decorative layer */
+  .lg-nav .lg-links,
+  .lg-nav .lg-links a,
+  .lg-nav .lg-mobile-cta,
+  .lg-nav .lg-mobile-cta .btn,
+  .lg-nav-actions,
+  .lg-nav-actions > *,
+  .lg-nav .burger{position:relative;z-index:2;pointer-events:auto}
+
+  /* 3D pop-out, light theme only */
+  :root[data-theme="light"] .lg-links.mobile-open{
+    perspective:900px;transform-style:preserve-3d;
+    transform:translateY(0) rotateX(6deg);transform-origin:top center;
+  }
+  :root[data-theme="light"] .lg-links.mobile-open a,
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn{
+    background:linear-gradient(180deg,#ffffff,#e9f1ea);
+    border:1px solid rgba(255,255,255,.92);
+    box-shadow:0 7px 16px -4px rgba(13,40,26,.28),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 5px rgba(13,40,26,.07);
+    color:#26412f;transform:translateZ(18px);
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn-primary{
+    background:linear-gradient(180deg,var(--leaf-400),var(--forest-700));color:#fff;
+    box-shadow:0 9px 18px -5px rgba(31,122,72,.55),inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  :root[data-theme="light"] .lg-links.mobile-open a:active,
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn:active{
+    transform:translateZ(5px);box-shadow:0 3px 8px -3px rgba(13,40,26,.3);
+  }
+}
+@media(max-width:920px) and (prefers-reduced-motion:reduce){
+  :root[data-theme="light"] .lg-links.mobile-open{transform:translateY(0);perspective:none}
+  :root[data-theme="light"] .lg-links.mobile-open a,
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn{transform:none}
+}
+
+/* ============================================================
    AUTH PAGES (login / register) — landing glass aesthetic
    ============================================================ */
 .auth-page{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:clamp(1.2rem,5vw,2rem);position:relative;z-index:1}

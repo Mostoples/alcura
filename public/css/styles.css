@@ -569,6 +569,17 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
 :root[data-theme="light"] .theme-toggle .tt.sun{color:var(--accent)}
 :root[data-theme="dark"] .theme-toggle .tt.moon{color:var(--accent)}
 
+/* Icon-only theme controls used by app and auth pages. */
+.btn-icon.theme-toggle{
+  width:44px;height:44px;padding:0;gap:0;border-radius:14px;
+  box-shadow:var(--shadow-raised-sm);
+}
+.btn-icon.theme-toggle.auth-toggle-corner{
+  position:fixed;
+  top:max(16px, env(safe-area-inset-top));
+  right:max(16px, env(safe-area-inset-right));
+}
+
 /* =========================================================
    TOAST
    ========================================================= */
@@ -920,3 +931,145 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 .btn.btn-secondary, .btn-ghost{ background:var(--bg); color:var(--text); box-shadow:var(--shadow-raised); }
 .btn-block.google{ background:#fff; color:#1f1f1f; }
 .btn-block.google:hover{ color:#1f1f1f; }
+
+/* ---- Live status badges (sensors-engine) ---- */
+.metric-trend.warn{color:#9a6b00;background:rgba(var(--aura-amber),.18)}
+.metric-trend.danger{color:rgb(var(--aura-coral));background:rgba(var(--aura-coral),.16)}
+:root[data-theme="dark"] .metric-trend.warn{color:#ffd27a}
+.rec-list{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.rec-list li{display:flex;gap:.6rem;align-items:flex-start;font-size:.82rem;color:var(--text);line-height:1.45}
+.rec-list li i{color:var(--accent);font-size:1rem;margin-top:.1rem;flex-shrink:0}
+.auto-banner{display:flex;align-items:center;gap:.7rem;font-size:.8rem;color:var(--text-muted);background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.7rem .9rem;margin-bottom:1rem}
+.auto-banner.on i{color:var(--accent)}
+
+/* ---- Floating AI assistant button (dashboard) ---- */
+.ai-fab{
+  position:fixed;z-index:55;
+  bottom:100px;right:max(16px, calc(50% - 208px));
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.6rem 1rem .6rem .7rem;border-radius:var(--radius-pill);
+  text-decoration:none;color:var(--accent-ink);font-weight:700;font-size:.82rem;letter-spacing:.2px;
+  background:linear-gradient(135deg, var(--accent), rgba(var(--aura-leaf),1));
+  box-shadow:0 0 22px rgba(var(--aura-green),.5), 0 10px 22px -6px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.35);
+  animation:fabEntrance .8s cubic-bezier(.34,1.56,.64,1) .35s backwards;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+}
+.ai-fab i{font-size:1.4rem;filter:drop-shadow(0 0 6px rgba(255,255,255,.5))}
+.ai-fab-label{white-space:nowrap}
+.ai-fab .ai-fab-glow{
+  position:absolute;inset:0;border-radius:inherit;z-index:-1;
+  background:linear-gradient(135deg, var(--accent), rgba(var(--aura-leaf),1));
+  animation:aiFabPulse 2.4s ease-in-out infinite;
+}
+@keyframes aiFabPulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--aura-green),.45)}50%{box-shadow:0 0 0 12px rgba(var(--aura-green),0)}}
+@media (hover:hover){.ai-fab:hover{transform:translateY(-3px) scale(1.04)}}
+.ai-fab:active{transform:scale(.94)}
+
+/* ---- Elegant time-based greeting (dashboard) ---- */
+#greeting{
+  font-family:'Space Grotesk', var(--font);
+  font-style:italic;font-weight:500;font-size:14px;letter-spacing:.2px;
+  background:linear-gradient(100deg, var(--accent), var(--text) 85%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:var(--accent);
+  display:inline-block;
+  animation:greetFade .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes greetFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* =========================================================
+   DASHBOARD (app.html) — desktop tidy grid.
+   Mobile/tablet stay EXACTLY as before: .dash-block is
+   display:contents so the wrappers are invisible to layout.
+   From 1024px up, blocks arrange into a centered 2-col grid.
+   ========================================================= */
+.dash-block{ display:contents; }
+
+@media (min-width:1024px){
+  /* Dashboard fills the whole screen on desktop */
+  .app-container.dash-shell{
+    max-width:none;
+    padding-left:clamp(22px,3vw,64px);
+    padding-right:clamp(22px,3vw,64px);
+  }
+  .app-scroll.dash{
+    display:grid;
+    grid-template-columns:repeat(12, minmax(0, 1fr));
+    gap:22px;
+    align-items:start;
+    width:100%;
+    max-width:none;
+  }
+  .app-scroll.dash .dash-block{ display:flex; flex-direction:column; gap:14px; min-width:0; }
+
+  /* Full-width rows (corner to corner) */
+  .app-scroll.dash .span-2,
+  .app-scroll.dash .dash-pbr{ grid-column:1 / -1; }
+  /* Three cards sejajar horizontal di bawah PBR (4+4+4 = 12) — tinggi sama */
+  .app-scroll.dash .dash-harvest,
+  .app-scroll.dash .dash-impact,
+  .app-scroll.dash .dash-tren{ grid-column:span 4; align-self:stretch; }
+  .app-scroll.dash .dash-harvest > .card,
+  .app-scroll.dash .dash-impact > .card,
+  .app-scroll.dash .dash-tren > .card{ flex:1; }
+
+  /* Visual order (DOM & mobile order stay intact):
+     hero → metrik → PBR (full) → harvest | impact | tren → quick actions */
+  .app-scroll.dash .dash-hero{ order:1; }
+  .app-scroll.dash .dash-metrik{ order:2; }
+  .app-scroll.dash .dash-pbr{ order:3; }
+  .app-scroll.dash .dash-harvest{ order:4; }
+  .app-scroll.dash .dash-impact{ order:5; }
+  .app-scroll.dash .dash-tren{ order:6; }
+  .app-scroll.dash .dash-qa{ order:7; }
+
+  /* Hero: gauge di tengah; Air Quality kiri, O₂ kanan, Day/growth di bawah */
+  .app-scroll.dash .hero-status .gauge-wrap{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    grid-template-areas:
+      "left gauge right"
+      ".    below .";
+    align-items:center;
+    column-gap:2.4rem;
+    row-gap:1.1rem;
+  }
+  .app-scroll.dash .hero-status .meta{ display:contents; }
+  .app-scroll.dash .hero-status .gauge-wrap > .gauge{ grid-area:gauge; }
+  .app-scroll.dash .hero-status .m-air{ grid-area:left; justify-self:end; }
+  .app-scroll.dash .hero-status .m-o2{ grid-area:right; justify-self:start; }
+  .app-scroll.dash .hero-status .m-grow{ grid-area:below; justify-self:center; }
+  .app-scroll.dash .hero-status .meta .m{ margin-bottom:0; }
+}
+
+/* ---- "More" bottom-nav popup menu ---- */
+.more-menu{
+  position:fixed; z-index:65; min-width:184px; right:16px; bottom:92px;
+  display:flex; flex-direction:column; gap:2px;
+  background:var(--bg); border-radius:18px; padding:8px;
+  box-shadow:var(--shadow-raised), 0 0 0 1px rgba(var(--aura-green),.14), 0 16px 40px -12px rgba(var(--aura-green),.35);
+  opacity:0; transform:translateY(10px) scale(.96); transform-origin:bottom right;
+  pointer-events:none; transition:opacity .18s ease, transform .22s cubic-bezier(.34,1.56,.64,1);
+}
+.more-menu.open{ opacity:1; transform:none; pointer-events:auto; }
+.more-menu a{
+  display:flex; align-items:center; gap:.7rem; padding:.72rem .9rem; border-radius:12px;
+  color:var(--text); text-decoration:none; font-size:.88rem; font-weight:600; white-space:nowrap;
+}
+@media (hover:hover){ .more-menu a:hover{ background:rgba(var(--aura-green),.10); color:var(--accent); } }
+.more-menu a:active{ background:rgba(var(--aura-green),.16); }
+.more-menu a i{ font-size:1.25rem; color:var(--accent); width:22px; text-align:center; }
+.bottom-nav .nav-item.more-open{ color:var(--accent); }
+.bottom-nav .nav-item.more-open i{ transform:scale(1.1); filter:drop-shadow(0 0 8px rgba(var(--aura-green),.6)); }
+
+/* ---- Language toggle button (next to theme toggle) ---- */
+.btn-icon.lang-toggle{
+  width:auto; min-width:44px; height:44px; padding:0 12px; border-radius:14px;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  background:var(--bg); box-shadow:var(--shadow-raised-sm); color:var(--text-muted);
+  font-weight:700; cursor:pointer; transition:transform .15s, box-shadow .2s, color .2s;
+}
+.btn-icon.lang-toggle i{ font-size:1.15rem; }
+.btn-icon.lang-toggle span{ font-size:.78rem; letter-spacing:.4px; }
+@media (hover:hover){ .btn-icon.lang-toggle:hover{ color:var(--accent); } }
+.btn-icon.lang-toggle:active{ transform:scale(.92); }

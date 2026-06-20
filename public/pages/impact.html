@@ -25,17 +25,17 @@
   <div class="app-scroll">
     <h3 class="section-title">Impact Bulan Ini</h3>
     <div class="big-number">
-      <div class="value">1,240 g</div>
+      <div class="value"><span data-bind="impact.co2Month">1,240</span> g</div>
       <div class="label">CO₂ dihapus</div>
-      <div class="equiv"><i class="ph-fill ph-car"></i> Setara 6.2 km berkendara mobil</div>
+      <div class="equiv"><i class="ph-fill ph-car"></i> Setara <span data-bind="impact.kmEq" data-dec="1">6.2</span> km berkendara mobil</div>
     </div>
 
     <h3 class="section-title">Key Metrics</h3>
     <div class="card aura-green no-pattern">
-      <div class="row"><span><i class="ph-fill ph-drop" style="margin-right:.5rem;color:var(--accent)"></i>O₂ Diproduksi</span><b>240 L</b></div>
-      <div class="row"><span><i class="ph-fill ph-atom" style="margin-right:.5rem;color:var(--accent)"></i>VOC Dihapus</span><b>12.5 g</b></div>
-      <div class="row"><span><i class="ph-fill ph-lightning" style="margin-right:.5rem;color:var(--accent)"></i>Energy Saved</span><b>8.4 kWh</b></div>
-      <div class="row"><span><i class="ph-fill ph-tree" style="margin-right:.5rem;color:var(--accent)"></i>Tree Equivalent</span><b>0.23 pohon</b></div>
+      <div class="row"><span><i class="ph-fill ph-drop" style="margin-right:.5rem;color:var(--accent)"></i>O₂ Diproduksi</span><b><span data-bind="impact.o2Month">240</span> L</b></div>
+      <div class="row"><span><i class="ph-fill ph-atom" style="margin-right:.5rem;color:var(--accent)"></i>VOC Dihapus</span><b><span data-bind="impact.vocMonth" data-dec="1">12.5</span> g</b></div>
+      <div class="row"><span><i class="ph-fill ph-lightning" style="margin-right:.5rem;color:var(--accent)"></i>Energy Saved</span><b><span data-bind="impact.energyMonth" data-dec="1">8.4</span> kWh</b></div>
+      <div class="row"><span><i class="ph-fill ph-tree" style="margin-right:.5rem;color:var(--accent)"></i>Tree Equivalent</span><b><span data-bind="impact.treeEq" data-dec="2">0.23</span> pohon</b></div>
     </div>
 
     <h3 class="section-title">Trend Bulanan</h3>
@@ -72,10 +72,14 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
+<script src="../js/sensors-engine.js"></script>
 <script>
 requireAuthPage();
 function shareImpact() {
-  const text = 'Bulan ini ALCURA membantu saya menghapus 1.240 g CO₂ — udara lebih bersih untuk ruang hidup. 🌱';
+  const co2 = ALCURA.snapshot().impact.co2Month;
+  const text = 'Bulan ini ALCURA membantu saya menghapus ' + co2 + ' g CO₂ — udara lebih bersih untuk ruang hidup. 🌱';
   if (navigator.share) { navigator.share({ title: 'Dampak ALCURA Saya', text }).catch(() => {}); }
   else { toast('Dampak Anda siap dibagikan 🌱'); }
 }

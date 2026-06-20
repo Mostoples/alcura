@@ -26,21 +26,21 @@
     <div class="card hero-card aura-blue" data-pattern="cloud">
       <div class="hero-left">
         <p class="hero-label">CO₂ Level</p>
-        <div class="hero-value"><span class="hero-num">480</span><span class="hero-unit">ppm</span></div>
-        <p class="hero-desc">Baik — dalam rentang optimal</p>
-        <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+        <div class="hero-value"><span class="hero-num" data-bind="air.co2">480</span><span class="hero-unit">ppm</span></div>
+        <p class="hero-desc">Skor udara <b data-bind="air.score">94</b>/100 — <span data-bind="air.label">Baik</span></p>
+        <div class="progress-bar"><div class="progress-fill" style="width:94%" data-bind-w="air.score"></div></div>
       </div>
       <div class="hero-right">
         <svg viewBox="0 0 120 120" class="ring">
           <circle cx="60" cy="60" r="50" class="ring-track"/>
           <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:188"/>
-          <text x="60" y="58" text-anchor="middle" class="ring-num">480</text>
+          <text x="60" y="58" text-anchor="middle" class="ring-num" data-bind="air.co2">480</text>
           <text x="60" y="78" text-anchor="middle" class="ring-sub">PPM</text>
         </svg>
       </div>
     </div>
 
-    <h3 class="section-title">Metrik Udara Lainnya</h3>
+    <h3 class="section-title row-link"><span>Metrik Udara Lainnya</span><a href="sensors.html">Semua sensor <i class="ph ph-arrow-right"></i></a></h3>
     <section class="grid-2">
       <div class="card metric-card aura-green" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop"></i></div><span class="metric-trend up">Optimal</span></div>
@@ -60,11 +60,11 @@
       </div>
       <div class="card metric-card aura-green" data-pattern="leaf">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-atom"></i></div><span class="metric-trend up">Baik</span></div>
-        <p class="metric-label">VOC</p><div class="metric-value"><span>45</span><span class="metric-unit">ppb</span></div>
+        <p class="metric-label">VOC</p><div class="metric-value"><span data-bind="air.tvoc">45</span><span class="metric-unit">ppb</span></div>
       </div>
       <div class="card metric-card aura-blue" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-drop-half"></i></div><span class="metric-trend up">Ideal</span></div>
-        <p class="metric-label">Humidity</p><div class="metric-value"><span>52</span><span class="metric-unit">%</span></div>
+        <p class="metric-label">Humidity</p><div class="metric-value"><span data-bind="air.rh">52</span><span class="metric-unit">%</span></div>
       </div>
     </section>
 
@@ -103,6 +103,9 @@
 </div>
 
 <script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js"></script>
+<script src="../js/sensors-engine.js"></script>
 <script>requireAuthPage();</script>
 </body>
 </html>

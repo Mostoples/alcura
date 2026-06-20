@@ -481,11 +481,22 @@
 .team-card{flex:0 1 calc((100% - 3.6rem)/4);max-width:300px;padding:1.6rem;text-align:center;transition:.3s}
 .team-card:hover{transform:translateY(-6px);box-shadow:var(--g-shadow-hover)}
 .team-photo{width:96px;height:96px;border-radius:28px;margin:0 auto 1rem;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:2rem;color:#fff;background:linear-gradient(145deg,var(--leaf-400),var(--forest-700));position:relative;overflow:hidden}
+.team-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;border-radius:inherit}
 .team-card.b .team-photo{background:linear-gradient(145deg,#5aa7f0,var(--blue))}
 .team-card.c .team-photo{background:linear-gradient(145deg,var(--amber),#d98828)}
 .team-card.d .team-photo{background:linear-gradient(145deg,var(--violet),#6d4ed0)}
 .team-card h4{font-family:var(--font-display);font-weight:700;font-size:1.1rem;letter-spacing:-.02em}
-.team-card .role{color:var(--leaf-500);font-family:var(--font-mono);font-size:.78rem;font-weight:600;margin-top:.2rem}
+/* Role bubble — a coloured pill, one accent per role */
+.team-card .role{display:inline-block;margin-top:.55rem;padding:.3rem .85rem;border-radius:100px;font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--leaf-500);background:rgba(46,158,94,.15);border:1px solid rgba(46,158,94,.3)}
+.team-card.b .role{color:var(--blue);background:rgba(77,143,240,.16);border-color:rgba(77,143,240,.32)}
+.team-card.c .role{color:var(--amber);background:rgba(232,161,60,.18);border-color:rgba(232,161,60,.34)}
+.team-card.d .role{color:var(--violet);background:rgba(141,109,240,.16);border-color:rgba(141,109,240,.32)}
+.team-card.e .role{color:#c08a12;background:rgba(245,184,51,.2);border-color:rgba(245,184,51,.4)}
+.team-card.f .role{color:#0f9f84;background:rgba(18,169,140,.16);border-color:rgba(18,169,140,.34)}
+.team-card.g .role{color:#dd5a37;background:rgba(240,138,93,.18);border-color:rgba(240,138,93,.36)}
+:root[data-theme="dark"] .team-card.e .role{color:var(--sun)}
+:root[data-theme="dark"] .team-card.f .role{color:#3fd3b6}
+:root[data-theme="dark"] .team-card.g .role{color:var(--coral)}
 .team-card .socials{display:flex;justify-content:center;gap:.6rem;margin-top:.9rem;color:var(--ink-mute);font-size:1.2rem}
 .team-card .socials a:hover{color:var(--leaf-500)}
 
@@ -701,9 +712,13 @@ body{font-family:var(--font-helios)}
    bleeding off the bottom-right corner like the reference.
    ============================================================ */
 .card-art{
-  position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-repeat:no-repeat;background-position:right -6% center;background-size:auto 88%;
-  opacity:.2;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);
+  position:absolute;right:-8%;bottom:-8%;left:auto;top:auto;width:55%;aspect-ratio:1/1;height:auto;
+  z-index:0;pointer-events:none;
+  background-repeat:no-repeat;background-position:center;background-size:contain;
+  opacity:.1;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+  /* soft radial fade so any edge that bleeds off the card dissolves smoothly */
+  -webkit-mask-image:radial-gradient(closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
+  mask-image:radial-gradient(closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
 }
 /* Paths are relative to THIS stylesheet (css/), like the colony accent */
 .art-flask{background-image:url(../img/art/flask.svg)}
@@ -716,13 +731,13 @@ body{font-family:var(--font-helios)}
 .art-co2{background-image:url(../img/art/co2.svg)}
 .art-energy{background-image:url(../img/art/energy.svg)}
 .art-temp{background-image:url(../img/art/temp.svg)}
-.feat-card .card-art{background-position:right -8% center;background-size:auto 86%;opacity:.22}
-.innov-card .card-art{background-position:right -6% bottom -8%;background-size:auto 78%;opacity:.16}
-.val-metric .card-art{background-position:right -8% bottom -8%;background-size:auto 74%;opacity:.18}
-.feat-card:hover .card-art,.innov-card:hover .card-art,.val-metric:hover .card-art{opacity:.34;transform:scale(1.04)}
-:root[data-theme="dark"] .card-art{opacity:.26}
-:root[data-theme="dark"] .feat-card .card-art{opacity:.3}
-:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art,:root[data-theme="dark"] .val-metric:hover .card-art{opacity:.42}
+.feat-card .card-art{width:52%;opacity:.11}
+.innov-card .card-art{width:46%;opacity:.1}
+.val-metric .card-art{width:54%;opacity:.1}
+.feat-card:hover .card-art,.innov-card:hover .card-art,.val-metric:hover .card-art{opacity:.18;transform:scale(1.05)}
+:root[data-theme="dark"] .card-art{opacity:.13}
+:root[data-theme="dark"] .feat-card .card-art{opacity:.15}
+:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art,:root[data-theme="dark"] .val-metric:hover .card-art{opacity:.24}
 @media(prefers-reduced-motion:reduce){.card-art{transition:none}}
 
 /* ============================================================
@@ -837,35 +852,26 @@ body{font-family:var(--font-helios)}
 /* ============================================================
    Footer — multi-column nebula
    ============================================================ */
-.site-footer{position:relative;z-index:1;margin-top:4rem;overflow:hidden;color:#cfe3d6;
+/* Footer — white liquid glass, matching the top nav (dark contents) */
+.site-footer{position:relative;z-index:1;width:100%;max-width:none;margin:4rem 0 0;overflow:hidden;text-align:left;font-size:14px;color:#33513f;
   padding:clamp(3rem,6vw,5rem) clamp(1.2rem,5vw,3rem) 2rem;
-  background:
-    radial-gradient(900px 520px at 18% 0%,rgba(46,158,94,.20),transparent 60%),
-    radial-gradient(820px 520px at 86% 26%,rgba(12,159,181,.18),transparent 60%),
-    radial-gradient(700px 500px at 60% 100%,rgba(141,110,224,.12),transparent 60%),
-    linear-gradient(180deg,#0a1410,#0a160f)}
-.site-footer::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:
-    radial-gradient(circle,rgba(255,255,255,.7) 0,transparent 1.4px),
-    radial-gradient(circle,rgba(255,255,255,.55) 0,transparent 1.4px),
-    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
-  background-size:180px 200px,260px 300px,46px 46px,46px 46px;
-  background-position:30px 40px,140px 120px,0 0,0 0}
+  background:linear-gradient(180deg,rgba(255,255,255,.64),rgba(255,255,255,.46));
+  -webkit-backdrop-filter:blur(24px) saturate(185%);backdrop-filter:blur(24px) saturate(185%);
+  border-top:1px solid rgba(255,255,255,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.95)}
 .footer-grid{max-width:1240px;margin:0 auto;position:relative;z-index:1;
   display:grid;grid-template-columns:1.7fr 1fr 1.25fr 1fr;gap:2.5rem}
-.footer-brand .brand{color:#fff;font-size:1.4rem}
-.footer-brand .brand .mark{background:linear-gradient(145deg,var(--leaf-400),var(--forest-700))}
-.footer-brand p{color:rgba(207,227,214,.68);max-width:36ch;margin-top:1rem;font-size:.95rem;line-height:1.6}
+.site-footer .brand{justify-content:flex-start;margin-bottom:0}
+.footer-brand .brand{color:#15291d;font-size:1.4rem}
+.footer-brand p{color:#4d6354;max-width:36ch;margin-top:1rem;font-size:.95rem;line-height:1.6}
 .footer-socials{display:flex;gap:.7rem;margin-top:1.5rem}
-.footer-socials a{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:1.25rem;color:#cfe3d6;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);transition:.25s}
-.footer-socials a:hover{transform:translateY(-3px);color:#fff;border-color:rgba(86,185,124,.5);box-shadow:0 0 26px -4px rgba(86,185,124,.65)}
-.footer-col h5{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#8fb7a3;margin-bottom:1.2rem;font-weight:700}
-.footer-col a{display:block;width:fit-content;color:rgba(207,227,214,.78);padding:.42rem 0;font-size:.95rem;transition:.22s}
-.footer-col a:hover{color:#fff;transform:translateX(3px);text-shadow:0 0 14px rgba(86,185,124,.7)}
+.footer-socials a{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:1.25rem;color:#1f4a35;
+  background:rgba(21,41,29,.05);border:1px solid rgba(21,41,29,.14);transition:.25s}
+.footer-socials a:hover{transform:translateY(-3px);color:#1f7a48;border-color:rgba(31,122,72,.45);box-shadow:0 0 22px -4px rgba(31,122,72,.4)}
+.footer-col h5{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#5a7a68;margin-bottom:1.2rem;font-weight:700}
+.footer-col a{display:block;width:fit-content;color:#33513f;padding:.42rem 0;font-size:.95rem;transition:.22s}
+.footer-col a:hover{color:#1f7a48;transform:translateX(3px)}
 .footer-bottom{max-width:1240px;margin:2.6rem auto 0;padding-top:1.5rem;position:relative;z-index:1;text-align:center;
-  border-top:1px solid rgba(255,255,255,.08);color:rgba(207,227,214,.5);font-family:var(--font-mono);font-size:.85rem}
+  border-top:1px solid rgba(21,41,29,.1);color:rgba(21,41,29,.45);font-family:var(--font-mono);font-size:.85rem}
 @media(max-width:860px){.footer-grid{grid-template-columns:1fr 1fr}.footer-brand{grid-column:1 / -1}}
 @media(max-width:520px){.footer-grid{grid-template-columns:1fr}}
 
@@ -881,14 +887,16 @@ body{font-family:var(--font-helios)}
 /* ============================================================
    3D floating phone — tilts in perspective + bobs up and down
    ============================================================ */
-.phone-wrap{perspective:1500px}
-.phone{transform-style:preserve-3d;will-change:transform;animation:phone3d 7.5s ease-in-out infinite}
-@keyframes phone3d{
-  0%,100%{transform:translateY(0) rotateX(5deg) rotateY(-10deg)}
-  50%{transform:translateY(-22px) rotateX(2deg) rotateY(-6deg)}
+/* Floating 3D tilt — perspective is baked INTO the transform (flat context,
+   NO transform-style:preserve-3d) so the phone tilts in 3D yet its buttons
+   stay clickable (preserve-3d is what desyncs pointer hit-testing). */
+.phone{will-change:transform;animation:phoneFloat3d 8s ease-in-out infinite;backface-visibility:hidden}
+@keyframes phoneFloat3d{
+  0%,100%{transform:perspective(1400px) translateY(0) rotateX(5deg) rotateY(-11deg)}
+  50%{transform:perspective(1400px) translateY(-18px) rotateX(2deg) rotateY(-5deg)}
 }
-.phone:hover{animation-play-state:paused}   /* hold still while interacting */
-@media(prefers-reduced-motion:reduce){.phone{animation:none}}
+.phone:hover{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.phone{animation:none;transform:perspective(1400px) rotateX(4deg) rotateY(-9deg)}}
 
 /* ============================================================
    Storyline background — a roaming accent wash that recolours +
@@ -981,3 +989,233 @@ body{font-family:var(--font-helios)}
   .lg-links a:hover{background:rgba(31,122,72,.1)}
   .lg-mobile-cta{border-top-color:rgba(21,41,29,.12)}
 }
+
+/* ============================================================
+   Mobile menu — 3D extruded tiles (LIGHT mode only) so it isn't
+   flat/monotonous; every control stays fully clickable.
+   ============================================================ */
+@media(max-width:920px){
+  /* keep all interactive nav elements above any decorative layer */
+  .lg-nav .lg-links,
+  .lg-nav .lg-links a,
+  .lg-nav .lg-mobile-cta,
+  .lg-nav .lg-mobile-cta .btn,
+  .lg-nav-actions,
+  .lg-nav-actions > *,
+  .lg-nav .burger{position:relative;z-index:2;pointer-events:auto}
+
+  /* 3D pop-out, light theme only */
+  :root[data-theme="light"] .lg-links.mobile-open{
+    perspective:900px;transform-style:preserve-3d;
+    transform:translateY(0) rotateX(6deg);transform-origin:top center;
+  }
+  :root[data-theme="light"] .lg-links.mobile-open a,
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn{
+    background:linear-gradient(180deg,#ffffff,#e9f1ea);
+    border:1px solid rgba(255,255,255,.92);
+    box-shadow:0 7px 16px -4px rgba(13,40,26,.28),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 5px rgba(13,40,26,.07);
+    color:#26412f;transform:translateZ(18px);
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn-primary{
+    background:linear-gradient(180deg,var(--leaf-400),var(--forest-700));color:#fff;
+    box-shadow:0 9px 18px -5px rgba(31,122,72,.55),inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  :root[data-theme="light"] .lg-links.mobile-open a:active,
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn:active{
+    transform:translateZ(5px);box-shadow:0 3px 8px -3px rgba(13,40,26,.3);
+  }
+}
+@media(max-width:920px) and (prefers-reduced-motion:reduce){
+  :root[data-theme="light"] .lg-links.mobile-open{transform:translateY(0);perspective:none}
+  :root[data-theme="light"] .lg-links.mobile-open a,
+  :root[data-theme="light"] .lg-links.mobile-open .lg-mobile-cta .btn{transform:none}
+}
+
+/* ============================================================
+   AUTH PAGES (login / register) — landing glass aesthetic
+   ============================================================ */
+.auth-page{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:clamp(1.2rem,5vw,2rem);position:relative;z-index:1}
+.auth-card{width:100%;max-width:436px;padding:clamp(1.6rem,4.5vw,2.5rem);border-radius:var(--r-xl)}
+.auth-logo{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--font-helios);font-weight:700;font-size:1.25rem;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.4rem}
+.auth-logo .mark-algae{width:34px;height:34px;display:inline-block}
+.auth-card h1{font-family:var(--font-helios);font-weight:800;font-size:clamp(1.7rem,5vw,2rem);letter-spacing:-.03em;line-height:1.05}
+.auth-card .auth-sub{color:var(--ink-soft);margin:.45rem 0 1.4rem;font-size:.96rem}
+.afield{margin-bottom:1rem}
+.afield label{display:block;font-size:.85rem;font-weight:600;color:var(--ink-soft);margin-bottom:.45rem}
+.ainput{display:flex;align-items:center;gap:.6rem;padding:.82rem 1rem;border-radius:14px;background:var(--g-fill-2);border:1px solid var(--g-stroke);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s}
+.ainput:focus-within{border-color:rgba(var(--accent-rgb,46,158,94),.6);box-shadow:0 0 0 4px rgba(var(--accent-rgb,46,158,94),.14)}
+.ainput i{color:var(--ink-mute);font-size:1.2rem}
+.ainput input{flex:1;min-width:0;border:none;outline:none;background:none;color:var(--ink);font-size:.98rem;font-family:inherit}
+.ainput input::placeholder{color:var(--ink-mute)}
+.ainput .eye{cursor:pointer;margin-left:auto}
+.arow{display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.88rem;margin:.2rem 0 1.3rem;flex-wrap:wrap}
+.arow label{display:flex;align-items:center;gap:.45rem;color:var(--ink-soft);cursor:pointer}
+.arow a{color:var(--leaf-500);font-weight:600}
+.adiv{display:flex;align-items:center;gap:1rem;margin:1.3rem 0;color:var(--ink-mute);font-family:var(--font-mono);font-size:.82rem}
+.adiv::before,.adiv::after{content:"";flex:1;height:1px;background:var(--g-stroke-soft)}
+.btn-google{background:rgba(255,255,255,.92);color:#15291d;border:1px solid var(--g-stroke);box-shadow:var(--g-shadow)}
+.btn-google:hover{background:#fff;color:#15291d;transform:translateY(-2px)}
+.btn-google .g-logo{width:18px;height:18px;flex-shrink:0}
+.auth-foot{text-align:center;margin-top:1.5rem;color:var(--ink-soft);font-size:.92rem}
+.auth-foot a{color:var(--leaf-500);font-weight:700}
+.auth-theme{position:fixed;top:1.1rem;right:1.1rem;z-index:5;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.3rem;color:var(--ink)}
+
+/* ============================================================
+   APP USER PAGE — reskin existing components to landing glass
+   (scoped to .app-container so other pages are untouched)
+   ============================================================ */
+.app-container{background:transparent!important}
+.app-container .top-bar,.app-container .app-scroll{background:transparent}
+.app-container .card:not(.hero-status):not(.impact),
+.app-container .metric,
+.app-container .qa{
+  background:var(--g-fill);backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);
+}
+.app-container .bottom-nav{
+  background:var(--g-fill);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+  border-top:1px solid var(--g-stroke);
+}
+.app-container .btn-icon{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
+.app-container h2,.app-container h3,.app-container h4{font-family:var(--font-helios)}
+
+/* Team photos on a clean white background (transparent cutouts pop) */
+.team-card .team-photo,
+.team-card.b .team-photo,.team-card.c .team-photo,.team-card.d .team-photo,
+.team-card.e .team-photo,.team-card.f .team-photo,.team-card.g .team-photo{
+  background:#fff;
+  box-shadow:inset 0 0 0 1px rgba(22,39,28,.06);
+}
+
+/* ============================================================
+   Phone mock — force a LIGHT (white) UI inside the screen so it
+   pops against the dark page, plus subtle 3D / raised cards.
+   (Scoped to .phone-screen; the device frame stays dark.)
+   ============================================================ */
+.phone-screen{
+  --bg:#f3f8f2;--bg-2:#eef6ee;--surface:#ffffff;--surface-2:#f7faf5;
+  --ink:#16271c;--ink-soft:#4d6354;--ink-mute:#8aa094;--line:#e6efe8;
+  --mint-bg:#eef9f1;--mint-bg-2:#def4e5;
+  --leaf-500:#2e9e5e;--leaf-400:#5cc185;--forest-600:#1f7a48;--forest-700:#155f38;
+  --mint-300:#9fe0b5;--spirulina:#1f9d57;--amber:#e8a13c;--blue:#4d8ff0;--violet:#8d6df0;
+  --ph-card:rgba(255,255,255,.66);--ph-line:rgba(22,39,28,.08);
+  background:linear-gradient(180deg,#eef9f1,#ffffff);
+}
+/* keep the gauge track greenish even though the PAGE is in dark mode */
+:root[data-theme="dark"] .phone-screen .ph-gauge .trk{stroke:rgba(46,158,94,.18)}
+
+/* Subtle 3D: raised cards with soft elevation + inner top highlight */
+.phone-screen .ph-card,
+.phone-screen .ph-row,
+.phone-screen .ph-toggle,
+.phone-screen .ph-mode,
+.phone-screen .ph-harvest,
+.phone-screen .ph-alert,
+.phone-screen .ph-acct,
+.phone-screen .ph-spark{
+  background:linear-gradient(180deg,#ffffff,#f2f7f2);
+  box-shadow:0 5px 12px -5px rgba(16,40,28,.18),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.phone-screen .ph-hero,
+.phone-screen .ph-airhero{
+  box-shadow:0 12px 26px -12px rgba(16,40,28,.26),inset 0 1px 0 rgba(255,255,255,.85);
+}
+/* icon chips pop off the cards */
+.phone-screen .ph-card .ic,
+.phone-screen .ph-toggle .ic,
+.phone-screen .ph-mode .ic,
+.phone-screen .ph-row .ic,
+.phone-screen .ph-alert .ic{box-shadow:0 3px 8px -3px rgba(16,40,28,.32)}
+.phone-screen .ph-tabs{background:linear-gradient(180deg,#fbfdfb,#eef5ef);box-shadow:0 -4px 14px -8px rgba(16,40,28,.16)}
+.phone-screen .ph-card:hover{transform:translateY(-2px);box-shadow:0 10px 20px -7px rgba(16,40,28,.26),inset 0 1px 0 rgba(255,255,255,.9)}
+
+/* ============================================================
+   Dual-function — colour-coded side-by-side comparison
+   (one device, two living systems: Air Purifier + Photobioreactor)
+   ============================================================ */
+.dual-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:0;position:relative}
+.dual-card{--c:46,158,94;position:relative;overflow:hidden;padding:2rem 1.9rem;
+  background:var(--g-fill);backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);border-radius:var(--r-lg);
+  border-top:3px solid rgba(var(--c),.85);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.dual-card:hover{transform:translateY(-5px);box-shadow:var(--g-shadow-hover),0 0 36px -8px rgba(var(--c),.4)}
+.dual-card.air{--c:16,176,176;border-top-right-radius:8px;border-bottom-right-radius:8px}
+.dual-card.bio{--c:46,158,94;border-top-left-radius:8px;border-bottom-left-radius:8px}
+.dual-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.1rem}
+.dual-fn{font-family:var(--font-mono);font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(var(--c),1)}
+.dual-ic{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;flex-shrink:0;
+  background:rgba(var(--c),.14);border:1px solid rgba(var(--c),.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.dual-ic img{width:38px;height:38px;display:block}
+.dual-card h3{font-family:var(--font-helios);font-weight:800;font-size:1.5rem;letter-spacing:-.02em}
+.dual-lead{color:var(--ink-soft);font-size:.96rem;margin:.5rem 0 1.3rem;line-height:1.55}
+.dual-rows{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
+.dual-rows>div{padding-left:.95rem;border-left:2px solid rgba(var(--c),.45)}
+.dual-rows dt{font-family:var(--font-mono);font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.25rem}
+.dual-rows dd{color:var(--ink-soft);font-size:.92rem;line-height:1.5}
+.dual-stat{display:flex;align-items:baseline;gap:.6rem;padding-top:1.1rem;border-top:1px solid var(--g-stroke-soft)}
+.dual-stat b{font-family:var(--font-helios);font-weight:800;font-size:2rem;color:rgba(var(--c),1);letter-spacing:-.02em;line-height:1}
+.dual-stat span{font-size:.82rem;color:var(--ink-soft)}
+/* centre connector — the single device that does both */
+.dual-core{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;padding:0 1.3rem;z-index:3;position:relative}
+.dual-core::before{content:"";position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(16,176,176,.5),rgba(46,158,94,.5));z-index:-1}
+.dual-core-ic{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:1.55rem;
+  background:linear-gradient(145deg,#13b1b0,#2e9e5e);box-shadow:0 10px 26px -8px rgba(46,158,94,.6),inset 0 1px 0 rgba(255,255,255,.35)}
+.dual-core-plus{font-family:var(--font-helios);font-weight:800;font-size:1.3rem;color:var(--ink);line-height:.6}
+.dual-core small{font-family:var(--font-mono);font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute)}
+@media(max-width:860px){
+  .dual-grid{grid-template-columns:1fr;gap:1.2rem}
+  .dual-card.air,.dual-card.bio{border-radius:var(--r-lg)}
+  .dual-core{flex-direction:row;gap:.7rem;padding:.2rem 0}
+  .dual-core::before{display:none}
+}
+
+/* ============================================================
+   Brand comparison — clearer framework, dominant ALCURA column
+   ============================================================ */
+.compare th:not(:first-child),.compare td:not(:first-child){text-align:center;vertical-align:middle}
+.compare td .ph-check,.compare td .ph-x,.compare td .ph-minus{font-size:1.12rem;vertical-align:middle}
+.compare td.txt{color:var(--ink-soft);font-weight:500;font-size:.86rem}
+.compare td.us.txt,.compare td.us.good{color:var(--ink);font-weight:700;font-size:.9rem}
+.compare td.us.good{color:#1f7a48}
+:root[data-theme="dark"] .compare td.us.good{color:#5ad79a}
+.compare td.us .ph-check{color:#2e9e5e}
+:root[data-theme="dark"] .compare td.us .ph-check{color:#46d189}
+/* ALCURA column: refined frosted "spotlight" — elegant + on-theme */
+.compare .us-col,.compare th.us,.compare td.us{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(86,185,124,.06))}
+.compare th.us,.compare td.us{box-shadow:inset 1px 0 0 rgba(86,185,124,.22),inset -1px 0 0 rgba(86,185,124,.22)}
+.compare thead th.us{padding:.65rem .6rem;border-top-left-radius:16px;border-top-right-radius:16px;
+  box-shadow:inset 1px 0 0 rgba(86,185,124,.22),inset -1px 0 0 rgba(86,185,124,.22),inset 0 2px 0 rgba(86,185,124,.7)}
+.compare tbody tr:last-child td.us{border-bottom-left-radius:16px;border-bottom-right-radius:16px;
+  box-shadow:inset 1px 0 0 rgba(86,185,124,.22),inset -1px 0 0 rgba(86,185,124,.22),inset 0 -1px 0 rgba(86,185,124,.22)}
+.us-badge{display:inline-flex;align-items:center;gap:.42rem;font-family:var(--font-helios);font-weight:800;font-size:.95rem;letter-spacing:0;text-transform:none;
+  color:var(--leaf-500);background:rgba(86,185,124,.14);border:1px solid rgba(86,185,124,.4);padding:.4rem .85rem;border-radius:100px;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+:root[data-theme="dark"] .us-badge{color:var(--mint-300);background:rgba(86,185,124,.16)}
+.us-badge i{color:var(--leaf-500)}
+:root[data-theme="dark"] .us-badge i{color:var(--mint-300)}
+.compare tbody tr{transition:background .2s}
+.compare tbody tr:hover td.us{background:linear-gradient(180deg,rgba(86,185,124,.15),rgba(86,185,124,.07))}
+.cmp-takeaway{max-width:740px;margin:1.6rem auto 0;text-align:center;color:var(--ink-soft);font-size:1rem;display:flex;align-items:center;justify-content:center;gap:.55rem;line-height:1.5}
+.cmp-takeaway i{color:var(--leaf-500);font-size:1.35rem;flex-shrink:0}
+:root[data-theme="dark"] .cmp-takeaway i{color:var(--mint-300)}
+
+/* ============================================================
+   Floating glass data badges around the 3D phone
+   ============================================================ */
+.ph-float{position:absolute;z-index:4;display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;border-radius:16px;
+  background:var(--g-fill);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);white-space:nowrap}
+.ph-float .ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;font-size:1.1rem;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.ph-float .ic-air{background:linear-gradient(145deg,#5bc1bf,#2e9e5e)}
+.ph-float .ic-do{background:linear-gradient(145deg,#5aa7f0,var(--blue))}
+.ph-float .ic-bio{background:linear-gradient(145deg,var(--leaf-400),var(--forest-700))}
+.ph-float b{font-family:var(--font-helios);font-weight:800;font-size:1rem;color:var(--ink);display:block;line-height:1}
+.ph-float b small{font-size:.6rem;color:var(--ink-mute);font-weight:600}
+.ph-float span{font-size:.62rem;color:var(--ink-mute);font-family:var(--font-mono);display:block;margin-top:2px}
+.ph-float.pf-1{top:9%;left:-7%;animation:phfloat 5s ease-in-out infinite}
+.ph-float.pf-2{bottom:20%;right:-9%;animation:phfloat 5.6s ease-in-out infinite .6s}
+.ph-float.pf-3{bottom:7%;left:-3%;animation:phfloat 6.2s ease-in-out infinite 1.1s}
+@keyframes phfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@media(max-width:980px){.ph-float{display:none}}
+@media(prefers-reduced-motion:reduce){.ph-float{animation:none}}
+

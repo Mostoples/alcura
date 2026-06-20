@@ -712,9 +712,13 @@ body{font-family:var(--font-helios)}
    bleeding off the bottom-right corner like the reference.
    ============================================================ */
 .card-art{
-  position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-repeat:no-repeat;background-position:right -6% center;background-size:auto 88%;
-  opacity:.2;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1);
+  position:absolute;right:-8%;bottom:-8%;left:auto;top:auto;width:55%;aspect-ratio:1/1;height:auto;
+  z-index:0;pointer-events:none;
+  background-repeat:no-repeat;background-position:center;background-size:contain;
+  opacity:.1;transition:opacity .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+  /* soft radial fade so any edge that bleeds off the card dissolves smoothly */
+  -webkit-mask-image:radial-gradient(closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
+  mask-image:radial-gradient(closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
 }
 /* Paths are relative to THIS stylesheet (css/), like the colony accent */
 .art-flask{background-image:url(../img/art/flask.svg)}
@@ -727,13 +731,13 @@ body{font-family:var(--font-helios)}
 .art-co2{background-image:url(../img/art/co2.svg)}
 .art-energy{background-image:url(../img/art/energy.svg)}
 .art-temp{background-image:url(../img/art/temp.svg)}
-.feat-card .card-art{background-position:right -8% center;background-size:auto 86%;opacity:.22}
-.innov-card .card-art{background-position:right -6% bottom -8%;background-size:auto 78%;opacity:.16}
-.val-metric .card-art{background-position:right -8% bottom -8%;background-size:auto 74%;opacity:.18}
-.feat-card:hover .card-art,.innov-card:hover .card-art,.val-metric:hover .card-art{opacity:.34;transform:scale(1.04)}
-:root[data-theme="dark"] .card-art{opacity:.26}
-:root[data-theme="dark"] .feat-card .card-art{opacity:.3}
-:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art,:root[data-theme="dark"] .val-metric:hover .card-art{opacity:.42}
+.feat-card .card-art{width:52%;opacity:.11}
+.innov-card .card-art{width:46%;opacity:.1}
+.val-metric .card-art{width:54%;opacity:.1}
+.feat-card:hover .card-art,.innov-card:hover .card-art,.val-metric:hover .card-art{opacity:.18;transform:scale(1.05)}
+:root[data-theme="dark"] .card-art{opacity:.13}
+:root[data-theme="dark"] .feat-card .card-art{opacity:.15}
+:root[data-theme="dark"] .feat-card:hover .card-art,:root[data-theme="dark"] .innov-card:hover .card-art,:root[data-theme="dark"] .val-metric:hover .card-art{opacity:.24}
 @media(prefers-reduced-motion:reduce){.card-art{transition:none}}
 
 /* ============================================================

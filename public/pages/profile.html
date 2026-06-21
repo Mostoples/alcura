@@ -12,9 +12,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=5">
-  <link rel="stylesheet" href="../css/mobile.css?v=5">
-  <link rel="stylesheet" href="../css/landing.css?v=5">
+  <link rel="stylesheet" href="../css/styles.css?v=7">
+  <link rel="stylesheet" href="../css/mobile.css?v=7">
+  <link rel="stylesheet" href="../css/landing.css?v=7">
   <style>
     /* ---- Profile page (Liquid Glass) ---- */
     .profile-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.55rem;padding:2rem 1.4rem 1.6rem}
@@ -72,7 +72,7 @@
   <div class="app-scroll">
     <!-- Live preview hero -->
     <div class="card aura-green no-pattern profile-hero">
-      <img class="pf-ava" data-user-avatar id="pfAvatar" src="https://i.pravatar.cc/150?img=47" alt="Foto profil">
+      <img class="pf-ava" data-user-avatar id="pfAvatar" src="../img/avatars/leaf.svg" alt="Foto profil">
       <h2 data-user-name id="pfName">Pengguna ALCURA</h2>
       <span class="pf-mail" data-user-email id="pfMail">—</span>
       <span class="pf-badge"><i class="ph-fill ph-leaf"></i> Anggota ALCURA</span>
@@ -134,24 +134,24 @@
 
 <script src="../js/firebase-config.js"></script>
 <script src="../js/auth.js"></script>
-<script src="../js/app-shell.js"></script>
+<script src="../js/app-shell.js?v=7"></script>
 <script src="../js/more-menu.js"></script>
-<script src="../js/i18n.js?v=5"></script>
+<script src="../js/i18n.js?v=7"></script>
 <script>
 (function () {
   setTimeout(function () {
     if (typeof alcuraAuth !== 'undefined' && !alcuraAuth.isAuthenticated()) { window.location.href = '../login.html'; }
   }, 500);
 
+  // Brand-themed avatars (no people) — match the ALCURA visual language
   var PRESETS = [
-    '../img/profile/rizki.png', '../img/profile/kayla.png', '../img/profile/alea.png',
-    '../img/profile/asti.png', '../img/profile/flo.png', '../img/profile/raya.png',
-    '../img/profile/sofwan.png', 'https://i.pravatar.cc/150?img=47', 'https://i.pravatar.cc/150?img=32'
+    '../img/avatars/leaf.svg', '../img/avatars/spiral.svg', '../img/avatars/droplet.svg',
+    '../img/avatars/bubbles.svg', '../img/avatars/cell.svg', '../img/avatars/sun.svg'
   ];
 
   function cached() { try { return JSON.parse(localStorage.getItem('alcuraUser') || '{}') || {}; } catch (e) { return {}; } }
   var user = cached();
-  var selected = user.photoURL || PRESETS[7];
+  var selected = user.photoURL || PRESETS[0];
 
   var elName = document.getElementById('inpName');
   var elLang = document.getElementById('inpLang');

@@ -1170,6 +1170,49 @@ body{font-family:var(--font-helios)}
   background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft)!important;
   box-shadow:none!important;color:var(--leaf-500)}
 
+/* Alert cards -> frosted glass (were solid neumorphic) */
+.app-container .alert{
+  background:var(--g-fill)!important;backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  box-shadow:var(--g-shadow)!important;border:1px solid var(--g-stroke);
+}
+.app-container .alert > i{background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft);box-shadow:none!important}
+
+/* ".calm" pages (air-quality, alerts) — dial back glow for an elegant look */
+.app-container.calm .ring-fill{filter:none}
+.app-container.calm .hero-num{text-shadow:none}
+.app-container.calm .progress-fill,.app-container.calm .progress i{box-shadow:none}
+.app-container.calm .tab.active::after{box-shadow:none}
+.app-container.calm .metric-icon{box-shadow:var(--g-shadow)!important}
+.app-container.calm .card{box-shadow:0 6px 18px -12px rgba(16,40,28,.28)!important}
+:root[data-theme="dark"] .app-container.calm .card{box-shadow:0 8px 20px -12px rgba(0,0,0,.5)!important}
+
+/* ============================================================
+   Dashboard info frames follow the AERVINEX .card format:
+   the same soft green aura wash + faint corner leaf seen on the
+   logged-in pages' cards (kept subtle — no hard borders/bars).
+   ============================================================ */
+.feat-card,.val-card,.val-lead,.val-metric,.innov-card,
+.review-card,.price-card,.step-card,.team-card,.start-card,.faq-item{
+  background:
+    radial-gradient(circle at 18% 0%, rgba(52,196,118,.13) 0%, transparent 48%),
+    radial-gradient(circle at 100% 100%, rgba(52,196,118,.07) 0%, transparent 55%),
+    var(--g-fill);
+}
+:root[data-theme="dark"] .feat-card,:root[data-theme="dark"] .val-card,
+:root[data-theme="dark"] .val-lead,:root[data-theme="dark"] .val-metric,
+:root[data-theme="dark"] .innov-card,:root[data-theme="dark"] .review-card,
+:root[data-theme="dark"] .price-card,:root[data-theme="dark"] .step-card,
+:root[data-theme="dark"] .team-card,:root[data-theme="dark"] .start-card,
+:root[data-theme="dark"] .faq-item{
+  background:
+    radial-gradient(circle at 18% 0%, rgba(52,196,118,.17) 0%, transparent 48%),
+    radial-gradient(circle at 100% 100%, rgba(52,196,118,.09) 0%, transparent 55%),
+    var(--g-fill);
+}
+
+/* Phone-mock spark renders as a trendline (matches the app graph) */
+.ph-spark.trend,.phone-screen .ph-spark.trend{display:block;padding:6px}
+
 /* Team photos on a clean white background (transparent cutouts pop) */
 .team-card .team-photo,
 .team-card.b .team-photo,.team-card.c .team-photo,.team-card.d .team-photo,

@@ -5,6 +5,16 @@
    lightweight auth guard.
    ============================================================ */
 (function () {
+  // ---- Avatar path resolver: makes a stored avatar work on root + /pages ----
+  // Passes through data: / http(s) / root-absolute; re-roots local relative paths.
+  window.resolveAvatar = function (val) {
+    if (!val) return val;
+    if (/^(data:|https?:|\/)/.test(val)) return val;
+    var rel = val.replace(/^(\.\.\/|\.\/)+/, '');
+    var inPages = location.pathname.indexOf('/pages/') !== -1;
+    return (inPages ? '../' : '') + rel;
+  };
+
   // ---- Theme: apply saved preference as early as possible ----
   var savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
@@ -79,7 +89,7 @@
         var emailEl = document.querySelector('[data-user-email]');
         if (emailEl && user.email) emailEl.textContent = user.email;
         var avatarEl = document.querySelector('[data-user-avatar]');
-        if (avatarEl && user.photoURL) avatarEl.src = user.photoURL;
+        if (avatarEl && user.photoURL) avatarEl.src = window.resolveAvatar(user.photoURL);
       } catch (e) { /* ignore malformed cache */ }
     }
   }

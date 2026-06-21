@@ -397,6 +397,30 @@ function applyLang(lang){
 }
 function setLang(lang){applyLang(lang);}
 
+/* Render a simple research-style SVG trendline (same look as the app's
+   ALCURA_HISTORY trend; uses the .trend CSS classes from styles.css). */
+var __phTrendN=0;
+function phTrend(host,vals){
+  if(!host||!vals||!vals.length)return;
+  var W=100,H=100,padY=10;
+  var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals),span=(max-min)||1,n=vals.length;
+  var pts=vals.map(function(v,i){return [n>1?(i/(n-1))*W:W/2,(H-padY)-((v-min)/span)*(H-2*padY)];});
+  var line='M '+pts.map(function(p){return p[0].toFixed(2)+' '+p[1].toFixed(2);}).join(' L ');
+  var area=line+' L '+W+' '+H+' L 0 '+H+' Z';
+  var last=pts[n-1];
+  var grid=[25,50,75].map(function(gy){return '<line class="trend-grid" x1="0" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" vector-effect="non-scaling-stroke"/>';}).join('');
+  var gid='phTrend'+(++__phTrendN);
+  host.classList.add('trend');
+  host.innerHTML=
+    '<svg class="trend-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ts-0"/><stop offset="1" class="ts-1"/></linearGradient></defs>'+
+    grid+
+    '<path class="trend-area" d="'+area+'" fill="url(#'+gid+')"/>'+
+    '<path class="trend-line" d="'+line+'" vector-effect="non-scaling-stroke"/>'+
+    '</svg>'+
+    '<i class="trend-cap" style="left:'+last[0].toFixed(2)+'%;top:'+last[1].toFixed(2)+'%"></i>';
+}
+
 /* ---- Nav (mobile + scroll state) ---- */
 function toggleNav(){
   const n=document.getElementById('navLinks'),b=document.getElementById('burger');
@@ -422,9 +446,9 @@ function toggleFaq(el){
 document.addEventListener('DOMContentLoaded',()=>{
   applyLang(localStorage.getItem('lang')||'id');
 
-  // Sparkline bars in the phone mock
+  // Trendline in the phone mock (mirrors the app's CO₂ trendline)
   const spark=document.getElementById('phSpark');
-  if(spark){[42,48,55,60,52,46,40,44,50,58,62,57,49,45,53,59].forEach(v=>{const b=document.createElement('div');b.className='bar';b.style.height=v+'%';spark.appendChild(b);});}
+  if(spark)phTrend(spark,[42,48,55,60,52,46,40,44,50,58,62,57,49,45,53,59]);
 
   // Nav scroll state
   const nav=document.getElementById('lgNav');
@@ -677,9 +701,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(s.prg)s.prg.style.setProperty('--val',Math.round(v));
         s.el.classList.remove('pulse');void s.el.offsetWidth;s.el.classList.add('pulse');
       });
-      // animate the sparkline when Home is visible
+      // refresh the trendline when Home is visible
       if(spark&&phone.querySelector('.ph-view[data-view="home"]').classList.contains('active')){
-        [...spark.children].forEach(b=>{b.style.height=(38+Math.random()*30).toFixed(0)+'%';});
+        var d=[];for(var k=0;k<16;k++)d.push(38+Math.random()*30);phTrend(spark,d);
       }
     }
     let timer=null;

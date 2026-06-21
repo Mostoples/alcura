@@ -1069,7 +1069,10 @@ body{font-family:var(--font-helios)}
 .app-container .top-bar,.app-container .app-scroll{background:transparent}
 .app-container .card:not(.hero-status):not(.impact),
 .app-container .metric,
-.app-container .qa{
+.app-container .qa,
+.app-container .list-card,
+.app-container .settings-card,
+.app-container .mini-hero{
   background:var(--g-fill);backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
   border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);
 }
@@ -1078,7 +1081,53 @@ body{font-family:var(--font-helios)}
   border-top:1px solid var(--g-stroke);
 }
 .app-container .btn-icon{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
-.app-container h2,.app-container h3,.app-container h4{font-family:var(--font-helios)}
+.app-container h2,.app-container h3,.app-container h4,
+.app-container .section-title,.app-container .page-title-block h2{font-family:var(--font-helios);letter-spacing:-.02em}
+
+/* ---- Glassify the smaller app primitives across every /pages screen ---- */
+/* Section headings + page titles */
+.app-container .section-title{color:var(--ink-soft)}
+.app-container .page-title-block p{color:var(--ink-mute)}
+/* List rows / dividers */
+.app-container .list-card .row{border-bottom:1px solid var(--g-stroke-soft)}
+.app-container .divider{background:var(--g-stroke-soft);border:0}
+.app-container .setting-row .setting-icon{
+  background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);box-shadow:none;color:var(--leaf-500);
+}
+/* Native selects + text inputs -> frosted glass (kills inset neumorphism) */
+.app-container select,
+.app-container input[type="text"],
+.app-container input[type="email"],
+.app-container input[type="search"],
+.app-container input[type="number"],
+.app-container input[type="password"],
+.app-container textarea{
+  background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft)!important;
+  box-shadow:none!important;color:var(--ink)!important;border-radius:14px;
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+}
+/* Toggle switches -> glass track */
+.app-container .toggle-track{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);box-shadow:none}
+.app-container .toggle input:checked + .toggle-track{background:linear-gradient(135deg,var(--leaf-400),var(--forest-700));border-color:transparent}
+/* Gauge / ring tracks read against glass */
+.app-container .ring-track{stroke:var(--g-stroke-soft)}
+.app-container .gauge-wrap .gauge{box-shadow:var(--g-shadow)}
+.app-container .gauge-wrap .gauge::before{background:var(--g-fill-2);box-shadow:none}
+/* Quick-action / metric icon chips */
+.app-container .qa .ic,.app-container .metric .ic{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
+/* More-menu popup + toast share the glass language */
+.more-menu{
+  background:var(--g-fill)!important;backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  border:1px solid var(--g-stroke)!important;box-shadow:var(--g-shadow)!important;
+}
+.toast{
+  background:var(--g-fill)!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid var(--g-stroke)!important;color:var(--ink)!important;box-shadow:var(--g-shadow)!important;
+}
+/* Trendline accent inside glass cards */
+.app-container .trend .trend-line{stroke:var(--leaf-500);filter:drop-shadow(0 1px 6px rgba(46,158,94,.5))}
+.app-container .trend .ts-0{stop-color:var(--leaf-500)}
+.app-container .trend .ts-1{stop-color:var(--leaf-500)}
 
 /* Team photos on a clean white background (transparent cutouts pop) */
 .team-card .team-photo,

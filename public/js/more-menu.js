@@ -21,6 +21,7 @@
     // Resolve base path: pages/* are siblings; app.html is one level up
     var base = (location.pathname.indexOf('/pages/') !== -1) ? '' : 'pages/';
     var links = [
+      { href: 'profile.html',   icon: 'ph-user-circle',         label: 'Profil' },
       { href: 'controls.html',  icon: 'ph-sliders-horizontal', label: 'Kontrol' },
       { href: 'simulator.html', icon: 'ph-flask',               label: 'Simulator' },
       { href: 'impact.html',    icon: 'ph-leaf',                label: 'Impact' },

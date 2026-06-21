@@ -106,35 +106,68 @@
     return arr;
   }
 
-  /* ---- Chart renderers (build .bar children, reuse existing CSS) ---- */
+  /* ---- Chart renderers — smooth SVG line/area TRENDLINES ----
+     Replaces the old bar charts. Both renderBars()/renderSpark() keep
+     their signatures so existing call sites work unchanged; they now
+     paint a filled trendline (Catmull-Rom → cubic bézier) instead. */
   function el(target) { return typeof target === 'string' ? document.querySelector(target) : target; }
-  function bars(host, vals, activeLast) {
-    if (!host || !vals.length) return;
-    var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = (max - min) || 1;
-    host.innerHTML = vals.map(function (v, i) {
-      var h = Math.round(14 + (v - min) / span * 86);
-      var act = (activeLast && i === vals.length - 1) ? ' active' : '';
-      return '<div class="bar' + act + '" style="height:' + h + '%"></div>';
-    }).join('');
+  var gradUID = 0;
+
+  // Catmull-Rom spline through points -> smooth cubic-bézier path string.
+  function smoothPath(pts) {
+    if (!pts.length) return '';
+    if (pts.length < 2) return 'M ' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
+    var d = 'M ' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      var c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += ' C ' + c1x.toFixed(2) + ' ' + c1y.toFixed(2) + ' ' + c2x.toFixed(2) + ' ' + c2y.toFixed(2) +
+        ' ' + p2[0].toFixed(2) + ' ' + p2[1].toFixed(2);
+    }
+    return d;
   }
+
+  // Core trendline painter. vals = [number, …]; host fills its box.
+  function trend(host, vals, opts) {
+    opts = opts || {};
+    if (!host || !vals || !vals.length) return;
+    var W = 100, H = 100, padY = 8;
+    var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = (max - min) || 1;
+    var n = vals.length;
+    var pts = vals.map(function (v, i) {
+      var x = n > 1 ? (i / (n - 1)) * W : W / 2;
+      var y = (H - padY) - ((v - min) / span) * (H - padY * 2);
+      return [x, y];
+    });
+    var line = smoothPath(pts);
+    var area = line + ' L ' + W + ' ' + H + ' L 0 ' + H + ' Z';
+    var last = pts[n - 1];
+    var gid = 'alcTrend' + (++gradUID);
+    host.classList.add('trend');
+    host.innerHTML =
+      '<svg class="trend-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" class="ts-0"/><stop offset="1" class="ts-1"/></linearGradient></defs>' +
+      '<path class="trend-area" d="' + area + '" fill="url(#' + gid + ')"/>' +
+      '<path class="trend-line" d="' + line + '" vector-effect="non-scaling-stroke"/>' +
+      '</svg>' +
+      '<i class="trend-cap" style="left:' + last[0].toFixed(2) + '%;top:' + last[1].toFixed(2) + '%"></i>';
+  }
+
   function renderBars(target, field, opts) {
     opts = opts || {};
     var host = el(target); if (!host) return;
     var vals = opts.vals || values(field, opts.n || 24);
-    if (!vals.length) return;
-    bars(host, vals, opts.activeLast !== false);
+    trend(host, vals, opts);
   }
   function renderSpark(target, field, opts) {
     opts = opts || {};
     var host = el(target); if (!host) return;
-    var vals = values(field, opts.n || 24);
-    if (!vals.length) return;
-    var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = (max - min) || 1;
-    host.innerHTML = vals.map(function (v, i) {
-      var h = Math.round(30 + (v - min) / span * 70);
-      return '<div class="bar' + (i === vals.length - 1 ? ' active' : '') + '" style="height:' + h + '%;opacity:' + (0.55 + h / 320).toFixed(2) + '"></div>';
-    }).join('');
+    trend(host, values(field, opts.n || 24), opts);
   }
+  // Public alias for clarity at new call sites.
+  function renderTrend(target, field, opts) { renderSpark(target, field, opts); }
 
   /* ---- Boot: backfill once, then sample live ---- */
   function tick(d) {
@@ -142,7 +175,7 @@
     var now = Date.now();
     if (now - lastT >= SAMPLE_MS) { store.points.push(pointFrom(d, now)); lastT = now; save(); }
   }
-  window.ALCURA_HISTORY = { series: series, values: values, stat: stat, growthCurve: growthCurve, renderBars: renderBars, renderSpark: renderSpark };
+  window.ALCURA_HISTORY = { series: series, values: values, stat: stat, growthCurve: growthCurve, renderBars: renderBars, renderSpark: renderSpark, renderTrend: renderTrend };
 
   function boot() {
     if (typeof ALCURA === 'undefined') { return setTimeout(boot, 300); }

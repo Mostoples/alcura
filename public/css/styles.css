@@ -708,13 +708,31 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
 .qa span{font-size:.8rem;font-weight:600;display:block;color:var(--text)}
 .qa small{font-size:.66rem;color:var(--text-muted)}
 
-/* spark bars (dashboard #spark) */
-#spark{display:flex;align-items:flex-end;gap:5px;height:74px;margin-top:.4rem}
-#spark .bar{flex:1;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg, var(--accent), rgba(var(--aura-mint),1));opacity:.9}
-/* chart mock bars (pages) */
-.chart-mock{display:flex;align-items:flex-end;gap:6px;height:120px}
-.chart-mock .bar{flex:1;border-radius:6px 6px 3px 3px;background:var(--bg-soft);box-shadow:var(--shadow-inset)}
-.chart-mock .bar.active{background:linear-gradient(180deg, var(--accent), rgba(var(--aura-mint),1));box-shadow:0 0 8px rgba(var(--aura-green),.4)}
+/* spark / chart hosts (dashboard #spark + page .chart-mock) */
+#spark{height:74px;margin-top:.4rem}
+.chart-mock{height:120px}
+
+/* ---- Trendline chart (smooth SVG line + gradient area) ----
+   Painted by ALCURA_HISTORY.renderTrend/renderBars/renderSpark. */
+.trend{position:relative;display:block;width:100%;height:100%}
+#spark.trend,.chart-mock.trend{display:block}
+.trend .trend-svg{display:block;width:100%;height:100%;overflow:visible}
+.trend .trend-area{stroke:none}
+.trend .trend-line{
+  fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 1px 5px rgba(var(--aura-green),.45));
+}
+.trend .ts-0{stop-color:var(--accent);stop-opacity:.30}
+.trend .ts-1{stop-color:var(--accent);stop-opacity:0}
+.trend .trend-cap{
+  position:absolute;width:9px;height:9px;border-radius:50%;background:var(--accent);
+  transform:translate(-50%,-50%);pointer-events:none;
+  box-shadow:0 0 0 3px rgba(var(--aura-green),.20),0 0 12px rgba(var(--aura-green),.65);
+}
+@media(prefers-reduced-motion:no-preference){
+  .trend .trend-cap{animation:trendPulse 2.4s ease-in-out infinite}
+}
+@keyframes trendPulse{0%,100%{box-shadow:0 0 0 3px rgba(var(--aura-green),.18),0 0 10px rgba(var(--aura-green),.5)}50%{box-shadow:0 0 0 5px rgba(var(--aura-green),.10),0 0 16px rgba(var(--aura-green),.8)}}
 
 /* sky-100 legacy callout token */
 .sky-100,[style*="--sky-100"]{}

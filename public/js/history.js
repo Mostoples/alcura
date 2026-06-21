@@ -113,26 +113,18 @@
   function el(target) { return typeof target === 'string' ? document.querySelector(target) : target; }
   var gradUID = 0;
 
-  // Catmull-Rom spline through points -> smooth cubic-bézier path string.
-  function smoothPath(pts) {
+  // Straight polyline through the points — a plain research-style trace
+  // (no smoothing: segments connect actual samples, like a lab plot).
+  function linePath(pts) {
     if (!pts.length) return '';
-    if (pts.length < 2) return 'M ' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
-    var d = 'M ' + pts[0][0].toFixed(2) + ' ' + pts[0][1].toFixed(2);
-    for (var i = 0; i < pts.length - 1; i++) {
-      var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
-      var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
-      var c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
-      d += ' C ' + c1x.toFixed(2) + ' ' + c1y.toFixed(2) + ' ' + c2x.toFixed(2) + ' ' + c2y.toFixed(2) +
-        ' ' + p2[0].toFixed(2) + ' ' + p2[1].toFixed(2);
-    }
-    return d;
+    return 'M ' + pts.map(function (p) { return p[0].toFixed(2) + ' ' + p[1].toFixed(2); }).join(' L ');
   }
 
   // Core trendline painter. vals = [number, …]; host fills its box.
   function trend(host, vals, opts) {
     opts = opts || {};
     if (!host || !vals || !vals.length) return;
-    var W = 100, H = 100, padY = 8;
+    var W = 100, H = 100, padY = 10;
     var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = (max - min) || 1;
     var n = vals.length;
     var pts = vals.map(function (v, i) {
@@ -140,15 +132,20 @@
       var y = (H - padY) - ((v - min) / span) * (H - padY * 2);
       return [x, y];
     });
-    var line = smoothPath(pts);
+    var line = linePath(pts);
     var area = line + ' L ' + W + ' ' + H + ' L 0 ' + H + ' Z';
     var last = pts[n - 1];
     var gid = 'alcTrend' + (++gradUID);
+    // Faint horizontal gridlines for the "research graph" feel.
+    var grid = [25, 50, 75].map(function (gy) {
+      return '<line class="trend-grid" x1="0" y1="' + gy + '" x2="' + W + '" y2="' + gy + '" vector-effect="non-scaling-stroke"/>';
+    }).join('');
     host.classList.add('trend');
     host.innerHTML =
       '<svg class="trend-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
       '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
       '<stop offset="0" class="ts-0"/><stop offset="1" class="ts-1"/></linearGradient></defs>' +
+      grid +
       '<path class="trend-area" d="' + area + '" fill="url(#' + gid + ')"/>' +
       '<path class="trend-line" d="' + line + '" vector-effect="non-scaling-stroke"/>' +
       '</svg>' +

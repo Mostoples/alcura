@@ -39,9 +39,9 @@
   --font-mono:    'Space Grotesk', monospace;
 
   /* Neumorphic shadow recipes */
-  --shadow-raised:    -6px -6px 14px var(--shadow-light), 6px 6px 14px var(--shadow-dark);
-  --shadow-raised-sm: -3px -3px 7px var(--shadow-light), 3px 3px 7px var(--shadow-dark);
-  --shadow-inset:     inset -3px -3px 8px var(--shadow-light), inset 4px 4px 10px var(--shadow-dark);
+  --shadow-raised:    -3px -3px 8px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+  --shadow-raised-sm: -2px -2px 5px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+  --shadow-inset:     inset -2px -2px 5px var(--shadow-light), inset 3px 3px 7px var(--shadow-dark);
   --shadow-accent:    var(--accent-glow), -4px -4px 10px var(--shadow-light), 5px 5px 12px var(--shadow-dark);
 
   /* Aura color tokens (RGB triplets — used via rgba(var(--aura), x)) */
@@ -712,27 +712,24 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
 #spark{height:74px;margin-top:.4rem}
 .chart-mock{height:120px}
 
-/* ---- Trendline chart (smooth SVG line + gradient area) ----
-   Painted by ALCURA_HISTORY.renderTrend/renderBars/renderSpark. */
+/* ---- Trendline chart — plain research-style line plot ----
+   Painted by ALCURA_HISTORY.renderTrend/renderBars/renderSpark.
+   Thin trace + faint gridlines, no glow, no animation. */
 .trend{position:relative;display:block;width:100%;height:100%}
 #spark.trend,.chart-mock.trend{display:block}
-.trend .trend-svg{display:block;width:100%;height:100%;overflow:visible}
+.trend .trend-svg{display:block;width:100%;height:100%;overflow:visible;filter:none}
+.trend .trend-grid{stroke:var(--line);stroke-width:1}
 .trend .trend-area{stroke:none}
 .trend .trend-line{
-  fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
-  filter:drop-shadow(0 1px 5px rgba(var(--aura-green),.45));
+  fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
 }
-.trend .ts-0{stop-color:var(--accent);stop-opacity:.30}
+.trend .ts-0{stop-color:var(--accent);stop-opacity:.12}
 .trend .ts-1{stop-color:var(--accent);stop-opacity:0}
 .trend .trend-cap{
-  position:absolute;width:9px;height:9px;border-radius:50%;background:var(--accent);
+  position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent);
   transform:translate(-50%,-50%);pointer-events:none;
-  box-shadow:0 0 0 3px rgba(var(--aura-green),.20),0 0 12px rgba(var(--aura-green),.65);
+  box-shadow:0 0 0 2px var(--surface);
 }
-@media(prefers-reduced-motion:no-preference){
-  .trend .trend-cap{animation:trendPulse 2.4s ease-in-out infinite}
-}
-@keyframes trendPulse{0%,100%{box-shadow:0 0 0 3px rgba(var(--aura-green),.18),0 0 10px rgba(var(--aura-green),.5)}50%{box-shadow:0 0 0 5px rgba(var(--aura-green),.10),0 0 16px rgba(var(--aura-green),.8)}}
 
 /* sky-100 legacy callout token */
 .sky-100,[style*="--sky-100"]{}

@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=7">
-<link rel="stylesheet" href="css/landing.css?v=7">
+<link rel="stylesheet" href="css/styles.css?v=8">
+<link rel="stylesheet" href="css/landing.css?v=8">
 </head>
 <body>
 <div class="liquid-bg">
@@ -37,9 +37,9 @@
   <div class="app-scroll dash">
     <section class="dash-block dash-hero span-2">
       <div class="card hero-status aura-green no-pattern">
-        <div class="top"><span class="tag"><i class="ph-fill ph-leaf"></i> ALCURA · Living Room</span><span class="tag"><i class="ph-fill ph-wifi-high"></i> Online</span></div>
+        <div class="top"><span class="tag"><i class="ph-fill ph-circles-three"></i> ALCURA · Living Room</span><span class="tag"><i class="ph-fill ph-wifi-high"></i> Online</span></div>
         <div class="gauge-wrap"><div class="gauge" style="--gp:88%" data-bind-gp="air.score"><div class="val"><b data-bind="air.score">88</b><span>HEALTH</span></div></div>
-          <div class="meta"><div class="m m-air"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">Excellent</b><small>Air Quality <span data-bind="air.score">94</span></small></div></div><div class="m m-grow"><i class="ph-fill ph-plant"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m m-o2"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">8</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
+          <div class="meta"><div class="m m-air"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">Excellent</b><small>Air Quality <span data-bind="air.score">94</span></small></div></div><div class="m m-grow"><i class="ph-fill ph-circles-three"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m m-o2"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">8</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
         </div>
       </div>
 
@@ -79,7 +79,7 @@
     <section class="dash-block dash-harvest">
       <div class="sec-title"><h3>Panen Berikutnya</h3></div>
       <div class="card aura-green harvest" data-pattern="plant">
-        <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-plant"></i></div><div><h4>Spirulina siap dalam <span data-bind="harvest.days">5</span> hari</h4><span>Probabilitas kesiapan <span data-bind="harvest.readiness">85</span>%</span></div></div>
+        <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-circles-three"></i></div><div><h4>Spirulina siap dalam <span data-bind="harvest.days">5</span> hari</h4><span>Probabilitas kesiapan <span data-bind="harvest.readiness">85</span>%</span></div></div>
         <div class="progress"><i style="width:83%" data-bind-w="harvest.readiness"></i></div>
         <div class="stat-row"><span>Estimasi yield <b><span data-bind="harvest.yieldG">280</span> g</b></span><span>Densitas <b><span data-bind="harvest.od" data-dec="2">1.32</span> OD</b></span></div>
         <button class="btn btn-primary btn-block" onclick="window.location.href='pages/simulator.html'"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
@@ -124,7 +124,7 @@
   <nav class="bottom-nav" aria-label="Navigasi utama">
     <a href="app.html" class="nav-item active"><i class="ph-fill ph-house" data-icon="ph-house"></i><span>Home</span></a>
     <a href="pages/air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
-    <a href="pages/culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
+    <a href="pages/culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-circles-three"></i></a>
     <a href="pages/alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
     <a href="pages/settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
   </nav>
@@ -132,13 +132,13 @@
 
 <script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/app.js?v=7"></script>
+<script src="js/app.js?v=8"></script>
 <script src="js/sensors-engine.js"></script>
 <script src="js/history.js"></script>
 <script src="js/ai-secret.js" onerror="void 0"></script>
 <script src="js/ai-core.js"></script>
 <script src="js/more-menu.js"></script>
-<script src="js/i18n.js?v=7"></script>
+<script src="js/i18n.js?v=8"></script>
 <script>
 // Reflect active critical/warning alerts on the bell badge + draw the live spark
 ALCURA.on(function (d) {

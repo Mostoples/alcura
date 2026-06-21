@@ -1177,12 +1177,22 @@ body{font-family:var(--font-helios)}
 }
 .app-container .alert > i{background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft);box-shadow:none!important}
 
-/* ".calm" pages (air-quality, alerts) — dial back glow for an elegant look */
-.app-container.calm .ring-fill{filter:none}
-.app-container.calm .hero-num{text-shadow:none}
-.app-container.calm .progress-fill,.app-container.calm .progress i{box-shadow:none}
-.app-container.calm .tab.active::after{box-shadow:none}
-.app-container.calm .metric-icon{box-shadow:var(--g-shadow)!important}
+/* Reduce ALL glow on the user pages for an elegant, flat-glass look */
+.app-container .ring-fill{filter:none}
+.app-container .hero-num{text-shadow:none}
+.app-container .progress-fill,.app-container .progress i{box-shadow:none}
+.app-container .tab.active::after{box-shadow:none}
+.app-container .metric-icon{box-shadow:var(--g-shadow)!important}
+.app-container .big-number .value{text-shadow:none}
+.app-container .pbr-head .live .blink{box-shadow:none!important;animation:none}
+.app-container .gauge-wrap .gauge .val b{text-shadow:none}
+/* center FAB: keep depth, drop the green halo glow */
+.app-container .bottom-nav .nav-item.fab,.app-container .bottom-nav .bn-fab{
+  box-shadow:0 8px 16px -6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)!important;
+}
+.app-container .ai-fab,.app-container .ai-fab-glow{box-shadow:0 8px 18px -8px rgba(0,0,0,.3)!important}
+.app-container .ai-fab-glow{display:none}
+/* "calm" pages also soften the card elevation a touch more */
 .app-container.calm .card{box-shadow:0 6px 18px -12px rgba(16,40,28,.28)!important}
 :root[data-theme="dark"] .app-container.calm .card{box-shadow:0 8px 20px -12px rgba(0,0,0,.5)!important}
 

@@ -320,31 +320,47 @@
     observe();
   }
 
-  // ---- Language button (injected next to the theme toggle) ----
+  // ---- Segmented ID / EN / JA language toggle (matches the dashboard) ----
   var btn;
-  function syncBtn() { if (btn) btn.querySelector('span').textContent = LABEL[lang]; }
+  function syncBtn() {
+    if (!btn) return;
+    btn.classList.remove('id', 'en', 'ja');
+    btn.classList.add(lang);
+    btn.querySelectorAll('button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+  }
   function makeButton() {
     var toggle = document.querySelector('.theme-toggle');
     if (!toggle) return;
-    btn = document.createElement('button');
-    btn.className = 'btn-icon lang-toggle';
-    btn.setAttribute('aria-label', 'Language');
+    btn = document.createElement('div');
+    btn.className = 'lang-toggle';
+    btn.id = 'langToggle';
     btn.setAttribute('data-no-i18n', '');
-    btn.innerHTML = '<i class="ph ph-translate"></i><span>' + LABEL[lang] + '</span>';
-    btn.addEventListener('click', cycle);
-    toggle.parentNode.insertBefore(btn, toggle); // place to the LEFT of theme toggle (its "samping")
+    btn.innerHTML =
+      '<span class="lang-knob"></span>' +
+      '<button type="button" data-lang="id">ID</button>' +
+      '<button type="button" data-lang="en">EN</button>' +
+      '<button type="button" data-lang="ja">JA</button>';
+    btn.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
+    });
+    toggle.parentNode.insertBefore(btn, toggle); // sits to the LEFT of the theme toggle
   }
 
-  function cycle() {
-    lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
+  function setLang(l) {
+    if (LANGS.indexOf(l) < 0 || l === lang) { if (l === lang) syncBtn(); return; }
+    lang = l;
     localStorage.setItem('lang', lang);
     applyAll();
     document.dispatchEvent(new CustomEvent('alcura:lang', { detail: { lang: lang } }));
   }
 
-  // Public helper for other scripts (sensors-engine, greeting, chat)
+  // Public helpers for other scripts (sensors-engine, greeting, chat) + uniform global setLang
+  window.setLang = setLang;
   window.ALCURA_I18N = {
     get lang() { return lang; },
+    setLang: setLang,
     t: function (en, id, ja) { return ({ en: en, id: id, ja: ja })[lang]; },
     pick: function (obj) { return obj[lang] != null ? obj[lang] : obj.en; }
   };

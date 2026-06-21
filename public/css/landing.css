@@ -184,6 +184,7 @@
 .lang-toggle .lang-knob{position:absolute;top:var(--lang-toggle-pad);bottom:var(--lang-toggle-pad);left:var(--lang-toggle-pad);width:var(--lang-toggle-segment);border-radius:100px;background:var(--forest-700);box-shadow:var(--shadow-sm);transition:.28s cubic-bezier(.2,.8,.2,1)}
 :root[data-theme="dark"] .lang-toggle .lang-knob{background:var(--leaf-500)}
 .lang-toggle.en .lang-knob{transform:translateX(var(--lang-toggle-segment))}
+.lang-toggle.ja .lang-knob{transform:translateX(calc(var(--lang-toggle-segment) * 2))}
 
 .burger{display:none;font-size:1.6rem;color:var(--ink);width:42px;height:42px;border-radius:12px;align-items:center;justify-content:center}
 
@@ -1076,10 +1077,23 @@ body{font-family:var(--font-helios)}
   background:var(--g-fill);backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
   border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);
 }
+/* Bottom-nav = clean liquid glass pill (drop the neumorphic green halo) */
 .app-container .bottom-nav{
-  background:var(--g-fill);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
-  border-top:1px solid var(--g-stroke);
+  background:var(--g-fill);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid var(--g-stroke)!important;
+  box-shadow:var(--g-shadow)!important;
 }
+.app-container .bottom-nav .nav-item.active::before,
+.app-container .bottom-nav .bn.active::before{
+  background:linear-gradient(135deg,rgba(46,158,94,.18),rgba(159,224,181,.10));
+  border:1px solid rgba(46,158,94,.30);
+}
+:root[data-theme="dark"] .app-container .bottom-nav .nav-item.active::before{
+  background:linear-gradient(135deg,rgba(52,196,118,.20),rgba(159,224,181,.10));border-color:rgba(52,196,118,.34);
+}
+/* keep the active icon crisp, not glowing/pulsing (less neumorphic) */
+.app-container .bottom-nav .nav-item.active i,
+.app-container .bottom-nav .bn.active i{filter:none;animation:none}
 .app-container .btn-icon{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
 .app-container h2,.app-container h3,.app-container h4,
 .app-container .section-title,.app-container .page-title-block h2{font-family:var(--font-helios);letter-spacing:-.02em}
@@ -1203,7 +1217,21 @@ body{font-family:var(--font-helios)}
 .phone-screen .ph-mode .ic,
 .phone-screen .ph-row .ic,
 .phone-screen .ph-alert .ic{box-shadow:0 3px 8px -3px rgba(16,40,28,.32)}
-.phone-screen .ph-tabs{background:linear-gradient(180deg,#fbfdfb,#eef5ef);box-shadow:0 -4px 14px -8px rgba(16,40,28,.16)}
+/* Phone mock menu = floating glass pill with an active highlight,
+   mirroring the logged-in app's bottom-nav. */
+.phone-screen .ph-tabs{
+  margin:4px 10px 12px;padding:7px 6px;border-radius:22px;
+  background:linear-gradient(180deg,#ffffff,#f1f7f1);
+  border:1px solid rgba(16,40,28,.06);
+  box-shadow:0 8px 20px -10px rgba(16,40,28,.30),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.phone-screen .ph-tab{border-radius:14px;z-index:1}
+.phone-screen .ph-tab.active:not(.ph-fab){position:relative}
+.phone-screen .ph-tab.active:not(.ph-fab)::before{
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:14px;
+  background:linear-gradient(135deg,rgba(46,158,94,.16),rgba(159,224,181,.10));
+  border:1px solid rgba(46,158,94,.28);
+}
 .phone-screen .ph-card:hover{transform:translateY(-2px);box-shadow:0 10px 20px -7px rgba(16,40,28,.26),inset 0 1px 0 rgba(255,255,255,.9)}
 
 /* ============================================================

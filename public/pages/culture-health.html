@@ -12,6 +12,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    .dose-vol{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--text-muted);margin-bottom:.7rem}
+    .dose-vol input{width:70px;border:0;background:var(--bg-sunken,rgba(0,0,0,.05));border-radius:10px;padding:.4rem .55rem;font-family:var(--font);font-size:.85rem;color:var(--text);outline:none;box-shadow:inset 0 0 0 1px rgba(var(--aura-green),.16);text-align:center}
+    .dose-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+    .dose-item{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .8rem;border-radius:14px;background:rgba(var(--aura-green),.07)}
+    .dose-item.do{background:rgba(var(--aura-amber),.13)}
+    .dose-item.watch{background:rgba(var(--aura-green),.10)}
+    .dose-item.ok{background:rgba(var(--aura-green),.10)}
+    .dose-item i{font-size:1.25rem;flex-shrink:0;margin-top:.1rem}
+    .dose-item.do i{color:rgb(var(--aura-amber))}
+    .dose-item.watch i,.dose-item.ok i{color:var(--accent)}
+    .dose-item .d-t{font-size:.86rem;font-weight:700;color:var(--text)}
+    .dose-item .d-d{font-size:.77rem;color:var(--text-muted);line-height:1.5;margin-top:.15rem}
+    .dose-note{font-size:.68rem;color:var(--text-dim,var(--text-muted));text-align:center;margin-top:.7rem}
+  </style>
 </head>
 <body>
 <div class="app-container">
@@ -118,6 +133,13 @@
       <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Kurva densitas menuju target panen <b>1.6 OD</b> — <span data-bind="harvest.days">5</span> hari lagi</div>
     </div>
 
+    <h3 class="section-title">Asisten Perawatan</h3>
+    <div class="card no-pattern">
+      <div class="dose-vol"><i class="ph ph-flask" style="color:var(--accent)"></i> <span data-i18n-ignore>Volume kultur</span>: <input id="doseVol" type="number" min="0.5" step="0.5"> L</div>
+      <ul class="dose-list" id="doseList"></ul>
+      <div class="dose-note" id="doseNote">Perkiraan dosis — selalu ukur ulang setelah penambahan.</div>
+    </div>
+
     <h3 class="section-title">Diagnosa &amp; Rekomendasi</h3>
     <div class="card no-pattern" data-bind-aura="culture.aura" id="diagCard">
       <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
@@ -142,14 +164,36 @@
 
 <script src="../js/app-shell.js"></script>
 <script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/scheduler.js"></script>
 <script src="../js/history.js"></script>
+<script src="../js/dosing.js"></script>
 <script src="../js/ai-secret.js" onerror="void 0"></script>
 <script src="../js/ai-core.js"></script>
 <script>
 requireAuthPage();
 function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+
+/* ===== Maintenance / Dosing Assistant ===== */
+function pickLang(obj) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id'; return obj[l] != null ? obj[l] : obj.id; }
+function renderDosing() {
+  if (!window.ALCURA_DOSING) return;
+  var volEl = document.getElementById('doseVol');
+  if (volEl && document.activeElement !== volEl) volEl.value = ALCURA_DOSING.volume();
+  var res = ALCURA_DOSING.compute();
+  document.getElementById('doseList').innerHTML = res.items.map(function (it) {
+    return '<li class="dose-item ' + it.severity + '"><i class="ph-fill ' + it.icon + '"></i>' +
+      '<div><div class="d-t">' + pickLang(it.title) + '</div><div class="d-d">' + pickLang(it.detail) + '</div></div></li>';
+  }).join('');
+  document.getElementById('doseNote').textContent = T('Approximate doses — always re-measure after adding.', 'Perkiraan dosis — selalu ukur ulang setelah penambahan.', '目安の投与量 — 追加後は必ず再測定してください。');
+}
+(function () {
+  var volEl = document.getElementById('doseVol');
+  if (volEl) volEl.addEventListener('change', function () { ALCURA_DOSING.setVolume(volEl.value); renderDosing(); });
+})();
 
 /* ===== Real growth curve (synthesized from current OD toward target) ===== */
 function paintGrowth() {
@@ -216,7 +260,9 @@ ALCURA.on(function (d) {
   document.getElementById('cultureAlertIcon').className = 'ph-fill ' + (c.status === 'optimal' ? 'ph-check-circle' : c.status === 'attention' ? 'ph-warning' : 'ph-warning-octagon');
   document.getElementById('cultureAlertTitle').textContent = T('Culture Status: ', 'Status Kultur: ', '培養の状態: ') + label;
   document.getElementById('cultureAlertSub').textContent = c.recommendations[0];
+  renderDosing();
 });
+document.addEventListener('alcura:lang', renderDosing);
 </script>
 </body>
 </html>

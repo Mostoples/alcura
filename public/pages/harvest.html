@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Catatan Panen — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    .hv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-bottom:.4rem}
+    .hv-stat{background:var(--bg);border-radius:16px;padding:.9rem 1rem;box-shadow:var(--shadow-raised-sm)}
+    .hv-stat .v{font-family:var(--font-mono,inherit);font-size:1.45rem;font-weight:800;color:var(--text);line-height:1.1}
+    .hv-stat .v small{font-size:.8rem;font-weight:700;color:var(--text-muted)}
+    .hv-stat .k{font-size:.72rem;color:var(--text-muted);margin-top:.2rem}
+    .hv-stat i{color:var(--accent);font-size:1rem;margin-right:.3rem}
+    .hv-form label{display:block;font-size:.74rem;color:var(--text-muted);margin:.2rem 0 .3rem}
+    .hv-form input{width:100%;border:0;background:var(--bg-sunken,rgba(0,0,0,.04));border-radius:12px;padding:.7rem .85rem;font-family:var(--font);font-size:.92rem;color:var(--text);outline:none;box-shadow:inset 0 0 0 1px rgba(var(--aura-green),.14)}
+    .hv-form input:focus{box-shadow:inset 0 0 0 2px rgba(var(--aura-green),.5)}
+    .hv-hint{font-size:.76rem;color:var(--text-muted);margin-bottom:.7rem;line-height:1.5}
+    .hv-hint b{color:var(--accent)}
+    .hv-calib{font-size:.74rem;color:var(--text-muted);text-align:center;margin:.2rem 0 .9rem}
+    .hv-calib b{color:var(--text)}
+    .hv-item{display:flex;align-items:center;gap:.7rem;padding:.7rem .2rem;border-bottom:1px solid var(--line,rgba(0,0,0,.06))}
+    .hv-item:last-child{border-bottom:0}
+    .hv-when{flex:1;min-width:0}
+    .hv-when b{font-size:.86rem;color:var(--text);display:block}
+    .hv-when small{font-size:.72rem;color:var(--text-muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hv-amt{text-align:right}
+    .hv-amt b{font-size:1rem;color:var(--text);display:block}
+    .hv-diff{font-size:.66rem;font-weight:700;padding:.1rem .4rem;border-radius:8px;display:inline-block;margin-top:.15rem}
+    .hv-diff.pos{background:rgba(var(--aura-green),.16);color:var(--accent)}
+    .hv-diff.neg{background:rgba(var(--aura-coral),.16);color:rgb(var(--aura-coral))}
+    .hv-del{border:0;background:transparent;color:var(--text-muted);font-size:1.1rem;cursor:pointer;padding:.3rem;border-radius:10px;flex-shrink:0}
+    .hv-del:active{background:rgba(var(--aura-coral),.14);color:rgb(var(--aura-coral))}
+    .hv-empty{text-align:center;color:var(--text-muted);font-size:.82rem;padding:1.4rem 0}
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Catatan Panen</h2><p>Riwayat & kalibrasi hasil Spirulina</p></div>
+    <div class="top-bar-actions">
+      <button class="btn-icon theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema"><i class="ph ph-moon" data-theme-icon></i></button>
+    </div>
+  </header>
+
+  <div class="app-scroll">
+    <div class="hv-grid">
+      <div class="hv-stat"><div class="v"><i class="ph-fill ph-package"></i><span id="stCount">0</span></div><div class="k">Total panen</div></div>
+      <div class="hv-stat"><div class="v"><i class="ph-fill ph-scales"></i><span id="stTotal">0</span> <small>g</small></div><div class="k">Total biomassa</div></div>
+      <div class="hv-stat"><div class="v"><i class="ph-fill ph-chart-bar"></i><span id="stAvg">0</span> <small>g</small></div><div class="k">Rata-rata / panen</div></div>
+      <div class="hv-stat"><div class="v"><i class="ph-fill ph-target"></i><span id="stAcc">—</span></div><div class="k">Akurasi prediksi</div></div>
+    </div>
+
+    <h3 class="section-title">Catat Panen Baru</h3>
+    <div class="card no-pattern hv-form">
+      <p class="hv-hint">Prediksi model saat ini: <b><span id="hvPred">—</span> g</b> (OD <span id="hvOd">—</span>, kesiapan <span id="hvReady">—</span>%). Setelah memanen, catat berat aktual untuk mengkalibrasi prediksi berikutnya.</p>
+      <label>Berat panen (gram)</label>
+      <input id="hvGrams" type="number" inputmode="decimal" min="0" step="0.1" placeholder="mis. 320">
+      <label style="margin-top:.6rem">Catatan (opsional)</label>
+      <input id="hvNote" type="text" maxlength="200" placeholder="mis. warna pekat, dikeringkan">
+      <button class="btn btn-primary btn-block" style="margin-top:.9rem" onclick="saveHarvest()"><i class="ph ph-plus-circle"></i> Simpan Panen</button>
+    </div>
+    <div class="hv-calib"><i class="ph ph-scales" style="color:var(--accent)"></i> Model dikalibrasi: <b><span id="hvFactor">210</span> g / OD</b> dari <span id="hvCount2">0</span> panen</div>
+
+    <h3 class="section-title">Riwayat Panen</h3>
+    <div class="card no-pattern">
+      <div id="hvList"></div>
+    </div>
+  </div>
+
+  <div class="spacer-bottom"></div>
+  <nav class="bottom-nav">
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-plant"></i></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
+  </nav>
+</div>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app-shell.js"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
+<script src="../js/i18n.js"></script>
+<script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/scheduler.js"></script>
+<script src="../js/history.js"></script>
+<script src="../js/harvest-log.js"></script>
+<script>
+requireAuthPage();
+function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id'; return l === 'en' ? en : l === 'ja' ? ja : id; }
+function fmtDate(t) { try { return new Date(t).toLocaleDateString((window.ALCURA_I18N && ALCURA_I18N.lang) || 'id', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return new Date(t).toLocaleDateString(); } }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+function renderHint() {
+  var s = ALCURA.snapshot();
+  document.getElementById('hvPred').textContent = s.harvest.yieldG;
+  document.getElementById('hvOd').textContent = s.culture.od;
+  document.getElementById('hvReady').textContent = s.harvest.readiness;
+}
+
+function renderAll() {
+  var st = ALCURA_HARVEST.stats();
+  document.getElementById('stCount').textContent = st.count;
+  document.getElementById('stTotal').textContent = st.totalG;
+  document.getElementById('stAvg').textContent = st.avgG;
+  document.getElementById('stAcc').textContent = st.accuracyPct == null ? '—' : st.accuracyPct + '%';
+  document.getElementById('hvFactor').textContent = st.gramsPerOD;
+  document.getElementById('hvCount2').textContent = st.count;
+
+  var list = ALCURA_HARVEST.list();
+  var host = document.getElementById('hvList');
+  if (!list.length) {
+    host.innerHTML = '<div class="hv-empty">' + T('No harvests logged yet — record your first harvest above.', 'Belum ada panen tercatat — catat panen pertamamu di atas.', 'まだ収穫記録がありません — 上で最初の収穫を記録してください。') + '</div>';
+  } else {
+    host.innerHTML = list.map(function (h) {
+      var diff = h.predictedG ? Math.round(h.grams - h.predictedG) : null;
+      var diffHtml = diff == null ? '' : '<span class="hv-diff ' + (diff >= 0 ? 'pos' : 'neg') + '">' + (diff >= 0 ? '+' : '') + diff + ' g ' + T('vs predicted', 'vs prediksi', '予測比') + '</span>';
+      return '<div class="hv-item"><div class="hv-when"><b>' + fmtDate(h.t) + '</b>' + (h.note ? '<small>' + escapeHtml(h.note) + '</small>' : '') + '</div>' +
+        '<div class="hv-amt"><b>' + h.grams + ' g</b>' + diffHtml + '</div>' +
+        '<button class="hv-del" data-id="' + h.id + '" aria-label="Hapus"><i class="ph ph-trash"></i></button></div>';
+    }).join('');
+  }
+  renderHint();
+}
+
+function saveHarvest() {
+  var g = document.getElementById('hvGrams').value;
+  var note = document.getElementById('hvNote').value;
+  var e = ALCURA_HARVEST.add({ grams: g, note: note });
+  if (!e) { toast(T('Enter a valid weight in grams.', 'Masukkan berat valid (gram).', '有効な重量(g)を入力してください。')); return; }
+  document.getElementById('hvGrams').value = '';
+  document.getElementById('hvNote').value = '';
+  toast(T('Harvest logged — model recalibrated ✓', 'Panen tercatat — model dikalibrasi ✓', '収穫を記録 — モデルを再較正 ✓'));
+  renderAll();
+}
+
+document.getElementById('hvList').addEventListener('click', function (e) {
+  var b = e.target.closest('.hv-del'); if (!b) return;
+  if (!confirm(T('Delete this harvest entry?', 'Hapus catatan panen ini?', 'この収穫記録を削除しますか？'))) return;
+  ALCURA_HARVEST.remove(b.getAttribute('data-id'));
+  renderAll();
+});
+
+ALCURA.on(function () { renderHint(); });
+document.addEventListener('alcura:lang', renderAll);
+renderAll();
+</script>
+</body>
+</html>

@@ -142,7 +142,8 @@
     var now = Date.now();
     if (now - lastT >= SAMPLE_MS) { store.points.push(pointFrom(d, now)); lastT = now; save(); }
   }
-  window.ALCURA_HISTORY = { series: series, values: values, stat: stat, growthCurve: growthCurve, renderBars: renderBars, renderSpark: renderSpark };
+  function dump() { return store.points.slice(); }   // raw points for CSV export
+  window.ALCURA_HISTORY = { series: series, values: values, stat: stat, growthCurve: growthCurve, renderBars: renderBars, renderSpark: renderSpark, dump: dump, fields: function () { return FIELDS.slice(); } };
 
   function boot() {
     if (typeof ALCURA === 'undefined') { return setTimeout(boot, 300); }

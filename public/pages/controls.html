@@ -12,6 +12,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    .sch-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.45rem 0;font-size:.84rem;color:var(--text)}
+    .sch-row .sch-in{display:flex;align-items:center;gap:.35rem;color:var(--text-muted);font-size:.78rem}
+    .sch-row input{border:0;background:var(--bg-sunken,rgba(0,0,0,.05));border-radius:10px;padding:.4rem .55rem;font-family:var(--font);font-size:.85rem;color:var(--text);outline:none;box-shadow:inset 0 0 0 1px rgba(var(--aura-green),.16);width:74px;text-align:center}
+    .sch-row input[type=time]{width:96px}
+    .sch-row input:focus{box-shadow:inset 0 0 0 2px rgba(var(--aura-green),.5)}
+    .sch-sep{height:1px;background:var(--line,rgba(0,0,0,.08));margin:.6rem 0}
+    .sch-status{margin-top:.7rem;padding:.6rem .75rem;border-radius:12px;background:rgba(var(--aura-green),.10);font-size:.76rem;color:var(--text-muted);line-height:1.5}
+    .sch-status b{color:var(--accent)}
+    .sch-status.warn{background:rgba(var(--aura-amber),.14)}
+    .sch-body[hidden]{display:none}
+  </style>
 </head>
 <body>
 <div class="app-container">
@@ -53,6 +65,25 @@
       <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.4rem;font-size:.8rem"><span style="color:var(--text-muted)">Status: <b style="color:var(--accent)" id="co2Status">Aktif</b></span></div>
     </div>
 
+    <h3 class="section-title">Jadwal Otomatis</h3>
+    <div class="card no-pattern aura-green">
+      <div class="checkbox" style="border:0;padding:.3rem 0"><input type="checkbox" id="schPhoto"><label for="schPhoto"><b>Fotoperiode LED</b> — siklus terang/gelap harian untuk ritme kultur.</label></div>
+      <div class="sch-body" id="schPhotoBody">
+        <div class="sch-row"><span><i class="ph ph-sun" style="color:var(--accent);margin-right:.3rem"></i>Nyala</span><span class="sch-in"><input type="time" id="schOn" step="3600"></span></div>
+        <div class="sch-row"><span><i class="ph ph-moon" style="color:var(--accent);margin-right:.3rem"></i>Mati</span><span class="sch-in"><input type="time" id="schOff" step="3600"></span></div>
+        <div class="sch-row"><span>LED siang</span><span class="sch-in"><input type="number" id="schDay" min="0" max="100">%</span></div>
+        <div class="sch-row"><span>LED malam</span><span class="sch-in"><input type="number" id="schNight" min="0" max="100">%</span></div>
+      </div>
+      <div class="sch-sep"></div>
+      <div class="checkbox" style="border:0;padding:.3rem 0"><input type="checkbox" id="schAer"><label for="schAer"><b>Siklus Aerasi</b> — pompa menyala berkala untuk pencampuran.</label></div>
+      <div class="sch-body" id="schAerBody">
+        <div class="sch-row"><span>Interval</span><span class="sch-in"><input type="number" id="schInt" min="5" max="240"> mnt</span></div>
+        <div class="sch-row"><span>Durasi nyala</span><span class="sch-in"><input type="number" id="schDur" min="1" max="120"> mnt</span></div>
+        <div class="sch-row"><span>Aerasi saat aktif</span><span class="sch-in"><input type="number" id="schLvl" min="0" max="100">%</span></div>
+      </div>
+      <div class="sch-status" id="schStatus"></div>
+    </div>
+
     <h3 class="section-title">Mode Preset</h3>
     <div class="btn-group">
       <button class="btn btn-secondary" data-mode="siang" onclick="setMode('siang', this)"><i class="ph-fill ph-sun"></i> Siang</button>
@@ -75,8 +106,11 @@
 
 <script src="../js/app-shell.js"></script>
 <script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/scheduler.js"></script>
 <script>
 requireAuthPage();
 
@@ -146,6 +180,53 @@ ALCURA.on(function (d) {
     ? d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('')
     : '<li><i class="ph-fill ph-hand"></i><span>' + T('Turn on Auto Mode so the system manages LED, aeration & CO₂ automatically.', 'Aktifkan Auto Mode agar sistem mengatur LED, aerasi & CO₂ otomatis.', 'オートモードを有効にすると、LED・エアレーション・CO₂を自動管理します。') + '</span></li>';
 });
+
+// ===== Scheduler (Jadwal Otomatis) UI =====
+(function () {
+  var S = window.ALCURA_SCHED; if (!S) return;
+  var e = {
+    photo: document.getElementById('schPhoto'), on: document.getElementById('schOn'), off: document.getElementById('schOff'),
+    day: document.getElementById('schDay'), night: document.getElementById('schNight'),
+    aer: document.getElementById('schAer'), int: document.getElementById('schInt'), dur: document.getElementById('schDur'), lvl: document.getElementById('schLvl'),
+    pBody: document.getElementById('schPhotoBody'), aBody: document.getElementById('schAerBody'), status: document.getElementById('schStatus')
+  };
+  function hh(h) { return (h < 10 ? '0' : '') + h + ':00'; }
+  function clampN(v, a, b, d) { var n = parseFloat(v); if (isNaN(n)) return d; return Math.max(a, Math.min(b, Math.round(n))); }
+  function parseHour(v) { var n = parseInt((v || '').split(':')[0], 10); return isNaN(n) ? 0 : Math.max(0, Math.min(23, n)); }
+  function fill() {
+    var c = S.get();
+    e.photo.checked = c.photoperiod.enabled;
+    e.on.value = hh(c.photoperiod.onHour); e.off.value = hh(c.photoperiod.offHour);
+    e.day.value = c.photoperiod.dayLevel; e.night.value = c.photoperiod.nightLevel;
+    e.aer.checked = c.aeration.enabled;
+    e.int.value = c.aeration.intervalMin; e.dur.value = c.aeration.durationMin; e.lvl.value = c.aeration.level;
+    e.pBody.hidden = !c.photoperiod.enabled; e.aBody.hidden = !c.aeration.enabled;
+  }
+  function commit() {
+    S.set({
+      photoperiod: { enabled: e.photo.checked, onHour: parseHour(e.on.value), offHour: parseHour(e.off.value), dayLevel: clampN(e.day.value, 0, 100, 75), nightLevel: clampN(e.night.value, 0, 100, 20) },
+      aeration: { enabled: e.aer.checked, intervalMin: clampN(e.int.value, 5, 240, 60), durationMin: clampN(e.dur.value, 1, 120, 20), level: clampN(e.lvl.value, 0, 100, 70) }
+    });
+    e.pBody.hidden = !e.photo.checked; e.aBody.hidden = !e.aer.checked;
+    renderStatus();
+  }
+  function renderStatus() {
+    var st = S.status();
+    if (!e.photo.checked && !e.aer.checked) { e.status.classList.remove('warn'); e.status.innerHTML = T('No schedule active.', 'Belum ada jadwal aktif.', 'スケジュールは未設定です。'); return; }
+    var parts = [];
+    if (e.photo.checked) parts.push('LED: <b>' + st.photoSummary + '</b> · ' + (st.ledOn ? T('now ON', 'sekarang NYALA', '現在 点灯') : T('now OFF', 'sekarang MATI', '現在 消灯')) + ' ' + (st.ledWant != null ? st.ledWant + '%' : ''));
+    if (e.aer.checked) parts.push(T('Aeration', 'Aerasi', 'エアレーション') + ': ' + (st.aerOn ? T('burst', 'semburan', '噴出') : T('idle', 'siaga', '待機')) + ' ' + (st.aerWant != null ? st.aerWant + '%' : ''));
+    var msg = parts.join('<br>');
+    if (!st.governed) { e.status.classList.add('warn'); msg += '<br>⚠ ' + T('Schedule applies only when Auto Mode is OFF.', 'Jadwal berlaku hanya saat Auto Mode nonaktif.', 'スケジュールはオートモード OFF の時のみ有効です。'); }
+    else e.status.classList.remove('warn');
+    e.status.innerHTML = msg;
+  }
+  [e.photo, e.aer].forEach(function (c) { c.addEventListener('change', commit); });
+  [e.on, e.off, e.day, e.night, e.int, e.dur, e.lvl].forEach(function (i) { i.addEventListener('change', commit); });
+  fill(); renderStatus();
+  ALCURA.on(renderStatus);
+  document.addEventListener('alcura:lang', renderStatus);
+})();
 </script>
 </body>
 </html>

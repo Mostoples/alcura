@@ -346,7 +346,13 @@
   window.ALCURA_I18N = {
     get lang() { return lang; },
     t: function (en, id, ja) { return ({ en: en, id: id, ja: ja })[lang]; },
-    pick: function (obj) { return obj[lang] != null ? obj[lang] : obj.en; }
+    pick: function (obj) { return obj[lang] != null ? obj[lang] : obj.en; },
+    cycle: function () { cycle(); },                       // advance en→id→ja→en
+    set: function (l) {                                    // jump straight to a language
+      if (LANGS.indexOf(l) < 0 || l === lang) return;
+      lang = l; localStorage.setItem('lang', lang); applyAll();
+      document.dispatchEvent(new CustomEvent('alcura:lang', { detail: { lang: lang } }));
+    }
   };
 
   function boot() {

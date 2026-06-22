@@ -86,6 +86,10 @@
   --ph-line:rgba(255,255,255,.1);
 }
 
+/* Guard against any horizontal scroll/rubber-band on the landing page
+   (decorative blobs/flow layers extend past the viewport by design). */
+html{overflow-x:hidden}
+
 /* ---------- Animated liquid background ---------- */
 .liquid-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 
@@ -995,8 +999,9 @@ body{font-family:var(--font-helios)}
    flat/monotonous; every control stays fully clickable.
    ============================================================ */
 @media(max-width:920px){
-  /* keep all interactive nav elements above any decorative layer */
-  .lg-nav .lg-links,
+  /* keep all interactive nav elements above any decorative layer.
+     NOTE: must NOT include .lg-links itself — that container stays
+     position:absolute so the hidden dropdown leaves the nav flow. */
   .lg-nav .lg-links a,
   .lg-nav .lg-mobile-cta,
   .lg-nav .lg-mobile-cta .btn,

@@ -44,7 +44,10 @@
       <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Akumulasi CO₂ yang diserap kultur sepanjang hari ini</div>
     </div>
 
-    <button class="btn btn-primary btn-block" onclick="shareImpact()"><i class="ph ph-share-network"></i> Bagikan Dampak Saya</button>
+    <div style="display:flex;gap:.6rem">
+      <button class="btn btn-primary" style="flex:1" onclick="shareImpact()"><i class="ph ph-share-network"></i> Bagikan Kartu</button>
+      <button class="btn btn-secondary" style="flex:1" onclick="exportCSV()"><i class="ph ph-download-simple"></i> Export CSV</button>
+    </div>
 
     <div class="card aura-mint no-pattern" style="text-align:center">
       <b style="display:block;margin-bottom:.4rem">🌱 Good for the Planet</b>
@@ -71,20 +74,20 @@
 
 <script src="../js/app-shell.js"></script>
 <script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/scheduler.js"></script>
 <script src="../js/history.js"></script>
+<script src="../js/report.js"></script>
 <script>
 requireAuthPage();
 ALCURA.on(function () {
   if (window.ALCURA_HISTORY) ALCURA_HISTORY.renderBars('#impactChart', 'co2Today', { n: 24, activeLast: true });
 });
-function shareImpact() {
-  const co2 = ALCURA.snapshot().impact.co2Month;
-  const text = 'Bulan ini ALCURA membantu saya menghapus ' + co2 + ' g CO₂ — udara lebih bersih untuk ruang hidup. 🌱';
-  if (navigator.share) { navigator.share({ title: 'Dampak ALCURA Saya', text }).catch(() => {}); }
-  else { toast('Dampak Anda siap dibagikan 🌱'); }
-}
+function shareImpact() { if (window.ALCURA_REPORT) ALCURA_REPORT.shareCard(); }
+function exportCSV() { if (window.ALCURA_REPORT) ALCURA_REPORT.downloadCSV(); }
 </script>
 </body>
 </html>

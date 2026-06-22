@@ -1,0 +1,24 @@
+{
+  "name": "ALCURA — Pemurni Udara Spirulina",
+  "short_name": "ALCURA",
+  "description": "Fotobioreaktor Spirulina pintar yang memurnikan udara dalam ruangan dengan menyerap CO₂ dan memproduksi O₂ — pantau kualitas udara, kesehatan kultur, dan jadwal panen.",
+  "start_url": "app.html",
+  "scope": "./",
+  "id": "alcura-app",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#56b97c",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": ["utilities", "health", "productivity"],
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "img/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Tanya AI", "short_name": "AI Chat", "url": "pages/ai-chat.html" },
+    { "name": "Peringatan", "short_name": "Alerts", "url": "pages/alerts.html" }
+  ]
+}

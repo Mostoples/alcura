@@ -19,6 +19,8 @@
     /* override .top-bar's space-between so header items sit tight & aligned */
     .chat-top{display:flex;align-items:center;justify-content:flex-start;gap:.6rem;padding-bottom:.6rem}
     .chat-top .back,.chat-top .btn-icon{width:40px;height:40px;margin:0;border-radius:13px;display:grid;place-items:center;background:var(--bg);box-shadow:var(--shadow-raised-sm);color:var(--text);text-decoration:none;flex-shrink:0;font-size:1.15rem;border:0;cursor:pointer}
+    .chat-top .btn-icon.lang-toggle{width:auto;display:inline-flex;align-items:center;gap:5px;padding:0 11px;font-size:1.05rem;font-weight:700;color:var(--text-muted)}
+    .chat-top .btn-icon.lang-toggle span{font-size:.74rem;letter-spacing:.4px}
     .chat-top>*{align-self:center}
     .chat-avatar{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.25rem;box-shadow:0 0 16px rgba(var(--aura-green),.45);flex-shrink:0}
     .chat-id{flex:1;min-width:0;line-height:1.2}
@@ -57,6 +59,7 @@
     .send-btn{width:42px;height:42px;border-radius:50%;border:0;flex-shrink:0;background:linear-gradient(135deg,var(--accent),rgba(var(--aura-leaf),1));color:var(--accent-ink);font-size:1.2rem;display:grid;place-items:center;cursor:pointer;transition:.2s;box-shadow:0 4px 12px -2px rgba(var(--aura-green),.5)}
     .send-btn:disabled{opacity:.45;cursor:not-allowed}
     .send-btn:not(:disabled):active{transform:scale(.9)}
+    .send-btn.is-stop{background:linear-gradient(135deg,#ff5a5a,#e23d3d);color:#fff;box-shadow:0 4px 12px -2px rgba(226,61,61,.5)}
 
     /* Desktop: keep the conversation in a comfortable, elegant reading column */
     @media (min-width:1024px){
@@ -81,6 +84,7 @@
       <small><span class="dot"></span><span class="st">Online · ditenagai Gemini</span></small>
     </div>
     <div class="top-bar-actions">
+      <button class="btn-icon lang-toggle" id="langBtn" onclick="cycleLang()" aria-label="Language" title="Bahasa" data-no-i18n><i class="ph ph-translate"></i><span id="langLabel">EN</span></button>
       <button class="btn-icon" onclick="clearChat()" aria-label="Chat baru" title="Chat baru"><i class="ph ph-trash"></i></button>
     </div>
   </header>
@@ -102,7 +106,7 @@
   <div class="chat-composer">
     <div class="composer-inner">
       <textarea id="input" rows="1" placeholder="Tulis pesan…" oninput="autosize(this);toggleSend()"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="send()" disabled aria-label="Kirim"><i class="ph-fill ph-paper-plane-right"></i></button>
+      <button class="send-btn" id="sendBtn" onclick="onSendClick()" disabled aria-label="Kirim"><i class="ph-fill ph-paper-plane-right"></i></button>
     </div>
   </div>
 </div>
@@ -110,8 +114,11 @@
 <script src="../js/firebase-config.js"></script>
 <script src="../js/app-shell.js"></script>
 <script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
 <script src="../js/i18n.js"></script>
 <script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/scheduler.js"></script>
 <script src="../js/ai-secret.js" onerror="void 0"></script>
 <script>
 requireAuthPage();
@@ -120,13 +127,18 @@ requireAuthPage();
    The Gemini keys live in js/ai-secret.js — a file that is gitignored (never
    pushed to GitHub) but IS deployed to Firebase Hosting. The chat calls Gemini
    directly from the browser and rotates to the next key when one hits its limit. */
-var GEMINI_DIRECT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+/* Primary model + a lighter fallback used when the primary is overloaded (503). */
+var GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+function geminiEndpoint(model) {
+  return 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent';
+}
 var DEV_KEYS = Array.isArray(window.ALCURA_AI_DEV_KEYS) ? window.ALCURA_AI_DEV_KEYS.filter(Boolean)
   : (typeof window.ALCURA_AI_DEV_KEY === 'string' && window.ALCURA_AI_DEV_KEY ? [window.ALCURA_AI_DEV_KEY] : []);
 var keyIdx = (function () { var n = parseInt(localStorage.getItem('alcuraKeyIdx') || '0', 10); return (n >= 0 && n < DEV_KEYS.length) ? n : 0; })();
 
 var chatHistory = [];           // [{role:'user'|'model', parts:[{text}]}]
 var sending = false;
+var abortCtrl = null;           // aborts the in-flight Gemini request when user taps "stop"
 var messagesEl = document.getElementById('messages');
 var inputEl = document.getElementById('input');
 var sendBtn = document.getElementById('sendBtn');
@@ -151,21 +163,55 @@ function liveContext() {
 function systemPrompt() {
   return 'Kamu adalah ALCURA AI, asisten cerdas di dalam aplikasi ALCURA — sebuah fotobioreaktor Spirulina pintar yang memurnikan udara dalam ruangan dengan menyerap CO₂ dan memproduksi O₂.\n' +
     'Perangkat memiliki sensor: 3× MQ-2 (asap/gas), MG811 (CO₂), ENS160+AHT21 (TVOC/eCO₂/suhu/kelembapan), DHT-11, MLX90614 (suhu kultur non-kontak), pH meter, TDS, HC-SR04 (level air), TCS3200 (warna/klorofil kultur), sensor UV, serta lampu grow LED WS2812B & strip.\n' +
-    'Tugasmu: bantu pengguna memahami kualitas udara, kesehatan kultur, jadwal panen, dan perawatan. Jawab ramah, ringkas, dan praktis (gunakan poin bila perlu). Jika ditanya kondisi terkini, gunakan DATA SENSOR di bawah. Jangan mengarang angka di luar data yang diberikan.\n' +
-    replyLangInstruction() + '\n\n' +
-    liveContext();
+    'Tugasmu: bantu pengguna memahami kualitas udara, kesehatan kultur, jadwal panen, dan perawatan. Jawab ramah, ringkas, dan praktis (gunakan poin bila perlu). Jika ditanya kondisi terkini, gunakan DATA SENSOR di bawah. Jangan mengarang angka di luar data yang diberikan.\n\n' +
+    liveContext() + '\n\n' +
+    replyLangInstruction();   // kept LAST so the response-language rule carries the most weight
 }
 
+function currentLang() { return (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; }
+
 function replyLangInstruction() {
-  var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en';
-  if (l === 'id') return 'PENTING: Jawab SELALU dalam Bahasa Indonesia.';
-  if (l === 'ja') return 'IMPORTANT: Always reply in Japanese (日本語).';
-  return 'IMPORTANT: Always reply in English.';
+  var l = currentLang();
+  if (l === 'id') return 'WAJIB & TANPA PENGECUALIAN: Tulis seluruh jawaban HANYA dalam Bahasa Indonesia, berapa pun bahasa pertanyaan pengguna.';
+  if (l === 'ja') return 'MANDATORY & WITHOUT EXCEPTION: Write the ENTIRE answer ONLY in Japanese (日本語), regardless of the language the user writes in.';
+  return 'MANDATORY & WITHOUT EXCEPTION: Write the ENTIRE answer ONLY in English, regardless of the language the user writes in.';
 }
+
+/* ===== Language toggle (header) — keeps AI replies in the chosen language ===== */
+function syncLangLabel() {
+  var el = document.getElementById('langLabel');
+  if (el) el.textContent = ({ en: 'EN', id: 'ID', ja: 'JA' })[currentLang()] || 'EN';
+}
+function cycleLang() {
+  if (window.ALCURA_I18N && ALCURA_I18N.cycle) ALCURA_I18N.cycle();
+  syncLangLabel();
+}
+document.addEventListener('alcura:lang', syncLangLabel);
+syncLangLabel();
 
 /* ===== UI helpers ===== */
 function autosize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-function toggleSend() { sendBtn.disabled = sending || !inputEl.value.trim(); }
+function toggleSend() {
+  if (sending) {
+    // While generating, the button becomes a "stop" control (always tappable)
+    sendBtn.disabled = false;
+    sendBtn.classList.add('is-stop');
+    sendBtn.setAttribute('aria-label', 'Hentikan');
+    sendBtn.innerHTML = '<i class="ph-fill ph-stop"></i>';
+  } else {
+    sendBtn.disabled = !inputEl.value.trim();
+    sendBtn.classList.remove('is-stop');
+    sendBtn.setAttribute('aria-label', 'Kirim');
+    sendBtn.innerHTML = '<i class="ph-fill ph-paper-plane-right"></i>';
+  }
+}
+
+/* Button routes to send or stop depending on state */
+function onSendClick() { if (sending) stopGeneration(); else send(); }
+
+function stopGeneration() {
+  if (abortCtrl) abortCtrl.abort();
+}
 function scrollDown() { requestAnimationFrame(function () { window.scrollTo(0, document.body.scrollHeight); messagesEl.scrollTop = messagesEl.scrollHeight; }); }
 
 function escapeHtml(s) { return s.replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -214,14 +260,21 @@ function extractDirect(j) {
 /* A key is considered exhausted/unusable for these statuses -> rotate to next */
 function isKeyLimit(status) { return status === 429 || status === 403 || status === 401 || status === 400; }
 
-/* LOCAL DEV: call Gemini directly, auto-rotating through DEV_KEYS on limit */
+/* A 503/overloaded/UNAVAILABLE is a transient server-side congestion, NOT a key issue */
+function isOverloaded(status) { return status === 503 || status === 500 || status === 504; }
+
+/* LOCAL DEV: call Gemini directly.
+   - key-limit (429/403/401/400) -> rotate to the next DEV_KEY
+   - overloaded (503/500/504)     -> exponential backoff, then fall back to a lighter model */
 function callDirectRotating() {
-  var attempts = 0, max = DEV_KEYS.length + 2;
+  var keyTries = 0, keyMax = DEV_KEYS.length + 2;   // budget for key rotation
+  var backoff = 0, backoffMax = 4;                  // budget for 503 retries on the current model
+  var modelIdx = 0;                                 // index into GEMINI_MODELS
   function once() {
-    attempts++;
     var key = DEV_KEYS[keyIdx];
-    return fetch(GEMINI_DIRECT, {
+    return fetch(geminiEndpoint(GEMINI_MODELS[modelIdx]), {
       method: 'POST',
+      signal: abortCtrl ? abortCtrl.signal : undefined,
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify({
         system_instruction: { parts: [{ text: systemPrompt() }] },
@@ -236,13 +289,25 @@ function callDirectRotating() {
           localStorage.setItem('alcuraKeyIdx', String(keyIdx)); // remember the working key
           return t;
         }
-        if (isKeyLimit(r.status) && attempts < max) {
+        if (isKeyLimit(r.status) && keyTries < keyMax) {
+          keyTries++;
           keyIdx = (keyIdx + 1) % DEV_KEYS.length;             // ⟳ next key
           localStorage.setItem('alcuraKeyIdx', String(keyIdx));
           return once();
         }
-        if (r.status === 503 && attempts < max) return sleep(1200).then(once); // transient
-        throw new Error((j.error && j.error.message) || ('Semua API key sedang limit (kode ' + r.status + '). Coba lagi nanti.'));
+        if (isOverloaded(r.status)) {
+          if (backoff < backoffMax) {                          // retry same model, backing off
+            var wait = Math.min(800 * Math.pow(2, backoff), 8000); // 0.8s,1.6s,3.2s,6.4s
+            backoff++;
+            return sleep(wait).then(once);
+          }
+          if (modelIdx < GEMINI_MODELS.length - 1) {           // primary still overloaded -> lighter model
+            modelIdx++; backoff = 0;
+            return sleep(600).then(once);
+          }
+          throw new Error('Server Gemini sedang sibuk (503 overloaded). Ini gangguan sementara di sisi Google — tunggu beberapa saat lalu coba lagi.');
+        }
+        throw new Error((j.error && j.error.message) || ('Permintaan gagal (kode ' + r.status + '). Coba lagi nanti.'));
       });
     });
   }
@@ -261,6 +326,7 @@ function send() {
   addMessage(text, 'user');
   chatHistory.push({ role: 'user', parts: [{ text: text }] });
   inputEl.value = ''; autosize(inputEl);
+  abortCtrl = new AbortController();
   sending = true; toggleSend();
   showTyping();
 
@@ -272,12 +338,17 @@ function send() {
     })
     .catch(function (err) {
       hideTyping();
+      // User tapped "stop" — quietly drop the unanswered turn, no error bubble
+      if (err && err.name === 'AbortError') {
+        if (chatHistory.length && chatHistory[chatHistory.length - 1].role === 'user') chatHistory.pop();
+        return;
+      }
       // Drop the failed user turn so retry doesn't duplicate it in chatHistory
       if (chatHistory.length && chatHistory[chatHistory.length - 1].role === 'user') chatHistory.pop();
       var el = addMessage('⚠ ' + (err.message || 'Terjadi kesalahan.') + '\nPeriksa koneksi internet Anda lalu coba lagi.', 'ai');
       el.classList.remove('ai'); el.classList.add('err');
     })
-    .finally(function () { sending = false; toggleSend(); });
+    .finally(function () { abortCtrl = null; sending = false; toggleSend(); });
 }
 
 /* Enter to send (Shift+Enter = newline) */

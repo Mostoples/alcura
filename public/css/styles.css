@@ -1069,6 +1069,9 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 @media (hover:hover){ .more-menu a:hover{ background:rgba(var(--aura-green),.10); color:var(--accent); } }
 .more-menu a:active{ background:rgba(var(--aura-green),.16); }
 .more-menu a i{ font-size:1.25rem; color:var(--accent); width:22px; text-align:center; }
+.more-menu a.more-install{ margin-top:4px; padding-top:.78rem; border-top:1px solid rgba(var(--aura-green),.16); }
+.pred-tag{ display:inline-flex; align-items:center; gap:3px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.3px; padding:.08rem .38rem; border-radius:7px; background:rgba(var(--aura-violet),.16); color:rgb(var(--aura-violet)); vertical-align:middle; margin-left:.35rem; }
+.pred-tag i{ font-size:.72rem; }
 .bottom-nav .nav-item.more-open{ color:var(--accent); }
 .bottom-nav .nav-item.more-open i{ transform:scale(1.1); filter:drop-shadow(0 0 8px rgba(var(--aura-green),.6)); }
 

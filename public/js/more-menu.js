@@ -21,19 +21,44 @@
     // Resolve base path: pages/* are siblings; app.html is one level up
     var base = (location.pathname.indexOf('/pages/') !== -1) ? '' : 'pages/';
     var links = [
+      { href: 'ai-chat.html',   icon: 'ph-sparkle',            label: 'AI Chat' },
+      { href: 'harvest.html',   icon: 'ph-basket',             label: i18n('Harvest', 'Panen', '収穫') },
       { href: 'controls.html',  icon: 'ph-sliders-horizontal', label: 'Kontrol' },
       { href: 'simulator.html', icon: 'ph-flask',               label: 'Simulator' },
       { href: 'impact.html',    icon: 'ph-leaf',                label: 'Impact' },
       { href: 'settings.html',  icon: 'ph-gear',                label: 'Pengaturan' }
     ];
 
+    function i18n(en, id, ja) {
+      var lng = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id';
+      return ({ en: en, id: id, ja: ja })[lng] || id;
+    }
+
     var menu = document.createElement('div');
     menu.className = 'more-menu';
     menu.setAttribute('role', 'menu');
     menu.innerHTML = links.map(function (l) {
       return '<a role="menuitem" href="' + base + l.href + '"><i class="ph ' + l.icon + '"></i><span>' + l.label + '</span></a>';
-    }).join('');
+    }).join('') +
+      // PWA install action — hidden automatically when already running as an installed app
+      '<a role="menuitem" href="#" class="more-install" data-action="install">' +
+        '<i class="ph ph-download-simple"></i><span>' +
+        i18n('Download App', 'Unduh Aplikasi', 'アプリをダウンロード') + '</span></a>';
     document.body.appendChild(menu);
+
+    // Wire the install item; hide it if the app is already installed
+    var installItem = menu.querySelector('.more-install');
+    function syncInstall() {
+      if (window.ALCURA_PWA && ALCURA_PWA.isInstalled()) installItem.style.display = 'none';
+      else installItem.style.display = '';
+    }
+    syncInstall();
+    document.addEventListener('alcura:pwa-installed', syncInstall);
+    installItem.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      close();
+      if (window.ALCURA_PWA) ALCURA_PWA.promptInstall();
+    });
 
     function position() {
       var r = moreItem.getBoundingClientRect();

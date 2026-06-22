@@ -14,6 +14,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    .th-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem}
+    .th-f label{display:block;font-size:.7rem;color:var(--text-muted);margin-bottom:.25rem}
+    .th-f input{width:100%;border:0;background:var(--bg-sunken,rgba(0,0,0,.05));border-radius:10px;padding:.5rem .6rem;font-family:var(--font);font-size:.88rem;color:var(--text);outline:none;box-shadow:inset 0 0 0 1px rgba(var(--aura-green),.16)}
+    .th-f input:focus{box-shadow:inset 0 0 0 2px rgba(var(--aura-green),.5)}
+    .th-hint{font-size:.72rem;color:var(--text-muted);margin-bottom:.7rem;line-height:1.5}
+  </style>
 </head>
 <body>
 <div class="app-container">
@@ -51,6 +58,26 @@
       <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-chart-line-up"></i></div><div><div class="setting-title">Weekly Impact Report</div></div></div><label class="toggle"><input type="checkbox" id="weekly"><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
     </div>
 
+    <h3 class="section-title">Ambang Peringatan</h3>
+    <div class="card no-pattern aura-green">
+      <p class="th-hint">Atur ambang yang memicu peringatan & notifikasi sesuai kondisi kultur Anda.</p>
+      <div class="th-grid">
+        <div class="th-f"><label>pH min</label><input id="thPhMin" type="number" step="0.1" inputmode="decimal"></div>
+        <div class="th-f"><label>pH max</label><input id="thPhMax" type="number" step="0.1" inputmode="decimal"></div>
+        <div class="th-f"><label>TDS rendah (ppm)</label><input id="thTdsLow" type="number" inputmode="numeric"></div>
+        <div class="th-f"><label>Level air rendah (%)</label><input id="thLevelLow" type="number" inputmode="numeric"></div>
+        <div class="th-f"><label>Suhu min (°C)</label><input id="thTempMin" type="number" step="0.5" inputmode="decimal"></div>
+        <div class="th-f"><label>Suhu max (°C)</label><input id="thTempMax" type="number" step="0.5" inputmode="decimal"></div>
+        <div class="th-f"><label>CO₂ perhatian (ppm)</label><input id="thCo2Warn" type="number" inputmode="numeric"></div>
+        <div class="th-f"><label>Gas waspada (ppm)</label><input id="thGasWarn" type="number" inputmode="numeric"></div>
+        <div class="th-f"><label>Gas bahaya (ppm)</label><input id="thGasDanger" type="number" inputmode="numeric"></div>
+      </div>
+      <div style="display:flex;gap:.6rem;margin-top:.9rem">
+        <button class="btn btn-primary" style="flex:1" id="thSave"><i class="ph ph-check"></i> Simpan Ambang</button>
+        <button class="btn btn-secondary" id="thReset" title="Reset"><i class="ph ph-arrow-counter-clockwise"></i></button>
+      </div>
+    </div>
+
     <h3 class="section-title">Display</h3>
     <div class="card no-pattern aura-green settings-card">
       <div class="setting-row"><div class="setting-info"><div class="setting-icon"><i class="ph ph-moon" data-theme-icon></i></div><div><div class="setting-title">Dark Mode</div><div class="setting-sub" id="themeLabel">Off</div></div></div><button class="btn btn-secondary" onclick="toggleTheme()" style="padding:.5rem 1rem;font-size:.78rem">Ganti</button></div>
@@ -86,6 +113,9 @@
 <script src="../js/auth.js"></script>
 <script src="../js/app-shell.js"></script>
 <script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
+<script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
 <script src="../js/i18n.js"></script>
 <script>
 setTimeout(() => {
@@ -99,6 +129,70 @@ function handleLogout() {
 function openProfileEditor() { toast('Editor profil akan segera tersedia'); }
 function openHelp() { toast('Bantuan & FAQ akan segera tersedia'); }
 function openAbout() { toast('ALCURA v1.0.0 — fotobioreaktor cerdas dengan AI'); }
+
+/* ---- Notification toggles: persist prefs + manage browser permission ---- */
+(function () {
+  var N = window.ALCURA_NOTIFY;
+  var notif = document.getElementById('notif');
+  var harvest = document.getElementById('harvest');
+  var weekly = document.getElementById('weekly');
+  if (!N || !notif) return;
+
+  if (!N.supported()) {                       // browser has no Notification API
+    [notif, harvest].forEach(function (el) { el.checked = false; el.disabled = true; });
+  } else {
+    var p = N.getPrefs();
+    notif.checked = p.alerts; harvest.checked = p.harvest; if (weekly) weekly.checked = p.weekly;
+    // Pre-checked toggles intend notifications but OS permission needs a gesture:
+    // request it once on the user's next interaction with the page.
+    if ((p.alerts || p.harvest) && N.permission() === 'default') {
+      var prime = function () {
+        document.removeEventListener('click', prime, true);
+        N.ensurePermission();
+      };
+      document.addEventListener('click', prime, true);
+    }
+  }
+
+  notif.addEventListener('change', function () {
+    N.setPref('alerts', notif.checked);
+    if (notif.checked) {
+      N.ensurePermission().then(function (perm) {
+        if (perm === 'granted') toast('Notifikasi peringatan aktif ✓');
+        else if (perm === 'denied') { notif.checked = false; N.setPref('alerts', false); toast('Notifikasi diblokir browser. Aktifkan lewat pengaturan situs.'); }
+      });
+    } else { toast('Notifikasi peringatan dimatikan'); }
+  });
+  harvest.addEventListener('change', function () {
+    N.setPref('harvest', harvest.checked);
+    if (harvest.checked && N.permission() === 'default') N.ensurePermission();
+    if (harvest.checked && N.permission() === 'denied') { harvest.checked = false; N.setPref('harvest', false); toast('Notifikasi diblokir browser.'); }
+  });
+  if (weekly) weekly.addEventListener('change', function () { N.setPref('weekly', weekly.checked); });
+})();
+
+/* ---- Custom alert thresholds ---- */
+(function () {
+  if (typeof window.ALCURA === 'undefined' || !ALCURA.setThresholds) return;
+  function Tt(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id'; return l === 'en' ? en : l === 'ja' ? ja : id; }
+  var map = { phMin: 'thPhMin', phMax: 'thPhMax', tdsLow: 'thTdsLow', levelLow: 'thLevelLow', tempMin: 'thTempMin', tempMax: 'thTempMax', co2Warn: 'thCo2Warn', gasWarn: 'thGasWarn', gasDanger: 'thGasDanger' };
+  function fill(th) { Object.keys(map).forEach(function (k) { var el = document.getElementById(map[k]); if (el) el.value = th[k]; }); }
+  fill(ALCURA.thresholds);
+  var saveBtn = document.getElementById('thSave'), resetBtn = document.getElementById('thReset');
+  if (saveBtn) saveBtn.addEventListener('click', function () {
+    var obj = {}; Object.keys(map).forEach(function (k) { obj[k] = document.getElementById(map[k]).value; });
+    // keep min < max sane
+    if (parseFloat(obj.phMin) >= parseFloat(obj.phMax)) { toast(Tt('pH min must be below pH max.', 'pH min harus lebih kecil dari pH max.', 'pH最小はpH最大より小さくしてください。')); return; }
+    if (parseFloat(obj.tempMin) >= parseFloat(obj.tempMax)) { toast(Tt('Temp min must be below temp max.', 'Suhu min harus lebih kecil dari suhu max.', '温度最小は最大より小さくしてください。')); return; }
+    if (parseFloat(obj.gasWarn) >= parseFloat(obj.gasDanger)) { toast(Tt('Gas caution must be below gas danger.', 'Gas waspada harus lebih kecil dari gas bahaya.', 'ガス注意は危険値より小さくしてください。')); return; }
+    fill(ALCURA.setThresholds(obj));
+    toast(Tt('Thresholds saved ✓', 'Ambang tersimpan ✓', 'しきい値を保存しました ✓'));
+  });
+  if (resetBtn) resetBtn.addEventListener('click', function () {
+    fill(ALCURA.resetThresholds());
+    toast(Tt('Reset to defaults', 'Dikembalikan ke default', '初期値に戻しました'));
+  });
+})();
 </script>
 </body>
 </html>

@@ -55,6 +55,29 @@
   var liveBound = false;
   var last = null;
 
+  // ---- User-configurable alert thresholds (editable in Settings) ----
+  var TH_DEFAULTS = {
+    phMin: 9.0, phMax: 10.2,   // ideal culture pH window
+    tdsLow: 800,               // nutrients-low alert (ppm)
+    tempMin: 25, tempMax: 30,  // ideal culture temp (°C)
+    levelLow: 40,              // water-level refill alert (%)
+    co2Warn: 800,              // indoor CO₂ attention (ppm)
+    gasWarn: 300, gasDanger: 600 // MQ-2 gas/smoke (ppm)
+  };
+  function loadThresholds() {
+    try { return Object.assign({}, TH_DEFAULTS, JSON.parse(localStorage.getItem('alcuraThresholds') || '{}')); }
+    catch (e) { return Object.assign({}, TH_DEFAULTS); }
+  }
+  var thresholds = loadThresholds();
+  function persistThresholds() { try { localStorage.setItem('alcuraThresholds', JSON.stringify(thresholds)); } catch (e) {} }
+
+  // ---- Harvest yield calibration: grams of dry biomass per unit OD ----
+  // harvest-log.js writes a calibrated factor from real logged harvests; fall back to 210.
+  function gramsPerOD() {
+    try { var f = parseFloat(localStorage.getItem('alcuraYieldFactor')); return (f >= 60 && f <= 600) ? f : 210; }
+    catch (e) { return 210; }
+  }
+
   function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
   function num(v) { var n = parseFloat(v); return isNaN(n) ? null : n; }
 
@@ -115,7 +138,7 @@
     var top = arr[0];
     var loc = L(top.loc.en, top.loc.id, top.loc.ja);
     var v = Math.round(top.v);
-    var level = top.v > 600 ? 'danger' : top.v > 300 ? 'warn' : 'ok';
+    var level = top.v > thresholds.gasDanger ? 'danger' : top.v > thresholds.gasWarn ? 'warn' : 'ok';
     var message = level === 'danger'
       ? L('High smoke/gas detected in ' + loc + ' (' + v + ' ppm). Check immediately & ensure ventilation!',
           'Asap/gas tinggi terdeteksi di ' + loc + ' (' + v + ' ppm). Periksa segera & pastikan ventilasi!',
@@ -133,16 +156,16 @@
 
   function computeCulture() {
     var ph = S.ph, tds = S.tds, temp = S.mlx, green = S.green;
-    var rec = [];
-    var phStat = (ph >= 9.0 && ph <= 10.2) ? 'ok' : (ph < 8.6 || ph > 10.6) ? 'bad' : 'warn';
-    if (phStat !== 'ok') rec.push(ph < 9
+    var TH = thresholds, rec = [];
+    var phStat = (ph >= TH.phMin && ph <= TH.phMax) ? 'ok' : (ph < TH.phMin - 0.4 || ph > TH.phMax + 0.4) ? 'bad' : 'warn';
+    if (phStat !== 'ok') rec.push(ph < TH.phMin
       ? L('pH low — add sodium bicarbonate to raise pH.', 'pH rendah — tambah sodium bikarbonat untuk menaikkan pH.', 'pHが低い — 重曹を加えてpHを上げてください。')
       : L('pH high — enable CO₂ injection to lower pH.', 'pH tinggi — aktifkan injeksi CO₂ untuk menurunkan pH.', 'pHが高い — CO₂注入を有効にしてpHを下げてください。'));
-    var tdsStat = (tds >= 800 && tds <= 1200) ? 'ok' : (tds < 600) ? 'bad' : 'warn';
-    if (tdsStat !== 'ok') rec.push(tds < 800
+    var tdsStat = (tds >= TH.tdsLow) ? 'ok' : (tds < TH.tdsLow - 200) ? 'bad' : 'warn';
+    if (tdsStat !== 'ok') rec.push(tds < TH.tdsLow
       ? L('Nutrients (TDS) running low — add nutrient solution.', 'Nutrisi (TDS) menipis — tambahkan larutan nutrisi.', '栄養（TDS）が不足 — 栄養液を追加してください。')
       : L('TDS too high — dilute with clean water.', 'TDS terlalu tinggi — encerkan dengan air bersih.', 'TDSが高すぎ — きれいな水で薄めてください。'));
-    var tStat = (temp >= 25 && temp <= 30) ? 'ok' : (temp > 34 || temp < 18) ? 'bad' : 'warn';
+    var tStat = (temp >= TH.tempMin && temp <= TH.tempMax) ? 'ok' : (temp > TH.tempMax + 4 || temp < TH.tempMin - 7) ? 'bad' : 'warn';
     if (tStat !== 'ok') rec.push(temp > 30
       ? L('Culture temperature high — reduce LED intensity.', 'Suhu kultur tinggi — kurangi intensitas LED.', '培養温度が高い — LED強度を下げてください。')
       : L('Culture temperature low — increase heating/LED.', 'Suhu kultur rendah — tingkatkan pemanasan/LED.', '培養温度が低い — 加熱/LEDを上げてください。'));
@@ -164,7 +187,7 @@
     var target = 1.6, growthPerDay = 0.045;
     var days = Math.max(0, Math.ceil((target - c.od) / growthPerDay));
     var readiness = Math.round(clamp(c.od / target * 100, 5, 99));
-    var yieldG = Math.round(c.od * 210);
+    var yieldG = Math.round(c.od * gramsPerOD());
     return { days: days, readiness: readiness, yieldG: yieldG, od: c.od };
   }
 
@@ -189,7 +212,7 @@
     var target = 1.6;
     var days = g > 0 ? Math.max(0, Math.ceil((target - odNow) / g)) : 99;
     var readiness = Math.round(clamp(odNow / target * 100, 5, 99));
-    var yieldG = Math.round(target * 210);
+    var yieldG = Math.round(target * gramsPerOD());
 
     // Energy: 8 LED modules ≈ 42 W peak + aeration pump ≈ 6 W at full.
     var energyDay = +(((led / 100 * 42) + (aer / 100 * 6)) * 24 / 1000).toFixed(2); // kWh/day
@@ -229,9 +252,9 @@
   }
 
   function computeReminders(c) {
-    var r = [];
-    if (S.level < 40) r.push({ level: 'warning', icon: 'ph-drop', title: L('Low water level', 'Level air rendah', '水位が低い'), sub: L('Culture water ' + Math.round(S.level) + '% — refill soon.', 'Air kultur ' + Math.round(S.level) + '% — isi ulang segera.', '培養水 ' + Math.round(S.level) + '% — 早めに補充してください。') });
-    if (c.tds < 800) r.push({ level: c.tds < 600 ? 'critical' : 'warning', icon: 'ph-flask', title: L('Nutrients running low', 'Nutrisi menipis', '栄養不足'), sub: L('TDS ' + c.tds + ' ppm — add nutrient solution.', 'TDS ' + c.tds + ' ppm — tambahkan larutan nutrisi.', 'TDS ' + c.tds + ' ppm — 栄養液を追加してください。') });
+    var TH = thresholds, r = [];
+    if (S.level < TH.levelLow) r.push({ level: 'warning', icon: 'ph-drop', title: L('Low water level', 'Level air rendah', '水位が低い'), sub: L('Culture water ' + Math.round(S.level) + '% — refill soon.', 'Air kultur ' + Math.round(S.level) + '% — isi ulang segera.', '培養水 ' + Math.round(S.level) + '% — 早めに補充してください。') });
+    if (c.tds < TH.tdsLow) r.push({ level: c.tds < TH.tdsLow - 200 ? 'critical' : 'warning', icon: 'ph-flask', title: L('Nutrients running low', 'Nutrisi menipis', '栄養不足'), sub: L('TDS ' + c.tds + ' ppm — add nutrient solution.', 'TDS ' + c.tds + ' ppm — tambahkan larutan nutrisi.', 'TDS ' + c.tds + ' ppm — 栄養液を追加してください。') });
     if (c.phStat !== 'ok') r.push({ level: c.phStat === 'bad' ? 'critical' : 'warning', icon: 'ph-test-tube', title: L('pH needs correction', 'pH perlu koreksi', 'pHの調整が必要'), sub: L('pH ' + c.ph + ' is outside the ideal range (9.0–10.2).', 'pH ' + c.ph + ' di luar rentang ideal (9.0–10.2).', 'pH ' + c.ph + ' は理想範囲(9.0–10.2)外です。') });
     if (c.tStat !== 'ok') r.push({ level: c.tStat === 'bad' ? 'critical' : 'warning', icon: 'ph-thermometer-hot', title: L('Culture temp not ideal', 'Suhu kultur tidak ideal', '培養温度が不適'), sub: L('Temp ' + c.temp + '°C — adjust LED/cooling.', 'Suhu ' + c.temp + '°C — sesuaikan LED/pendingin.', '温度 ' + c.temp + '°C — LED/冷却を調整してください。') });
     return r;
@@ -242,14 +265,61 @@
     var hour = new Date().getHours();
     var night = hour >= 22 || hour < 6;
     if (night) { led = 25; aer = 40; rec.push(L('Night mode (' + pad(hour) + ':00): LED lowered for culture rest phase.', 'Mode malam (' + pad(hour) + ':00): LED diturunkan untuk fase istirahat kultur.', '夜間モード (' + pad(hour) + ':00)：培養の休息のためLEDを下げました。')); }
-    if (air.co2 > 800) { led = Math.min(100, led + 15); aer = Math.min(100, aer + 20); rec.push(L('High CO₂ (' + air.co2 + ' ppm) — LED & aeration raised to speed up photosynthesis.', 'CO₂ tinggi (' + air.co2 + ' ppm) — LED & aerasi dinaikkan untuk percepat fotosintesis.', 'CO₂が高い (' + air.co2 + ' ppm) — 光合成促進のためLEDとエアレーションを上げました。')); }
-    if (c.temp > 30) { led = Math.max(15, led - 20); rec.push(L('Culture temp ' + c.temp + '°C — LED lowered to cool down.', 'Suhu kultur ' + c.temp + '°C — LED diturunkan untuk mendinginkan.', '培養温度 ' + c.temp + '°C — 冷却のためLEDを下げました。')); }
-    if (c.ph > 10.0) { co2inj = true; rec.push(L('pH ' + c.ph + ' high — CO₂ injection enabled to stabilize pH.', 'pH ' + c.ph + ' tinggi — injeksi CO₂ diaktifkan untuk menstabilkan pH.', 'pH ' + c.ph + ' が高い — pH安定化のためCO₂注入を有効化。')); }
+    if (air.co2 > thresholds.co2Warn) { led = Math.min(100, led + 15); aer = Math.min(100, aer + 20); rec.push(L('High CO₂ (' + air.co2 + ' ppm) — LED & aeration raised to speed up photosynthesis.', 'CO₂ tinggi (' + air.co2 + ' ppm) — LED & aerasi dinaikkan untuk percepat fotosintesis.', 'CO₂が高い (' + air.co2 + ' ppm) — 光合成促進のためLEDとエアレーションを上げました。')); }
+    if (c.temp > thresholds.tempMax) { led = Math.max(15, led - 20); rec.push(L('Culture temp ' + c.temp + '°C — LED lowered to cool down.', 'Suhu kultur ' + c.temp + '°C — LED diturunkan untuk mendinginkan.', '培養温度 ' + c.temp + '°C — 冷却のためLEDを下げました。')); }
+    if (c.ph > thresholds.phMax - 0.2) { co2inj = true; rec.push(L('pH ' + c.ph + ' high — CO₂ injection enabled to stabilize pH.', 'pH ' + c.ph + ' tinggi — injeksi CO₂ diaktifkan untuk menstabilkan pH.', 'pH ' + c.ph + ' が高い — pH安定化のためCO₂注入を有効化。')); }
     if (c.od >= 1.5) { rec.push(L('High density (OD ' + c.od + ') — culture nearing harvest, keep lighting.', 'Densitas tinggi (OD ' + c.od + ') — kultur mendekati panen, pertahankan cahaya.', '高密度 (OD ' + c.od + ') — 収穫間近、照明を維持。')); }
     if (!rec.length) rec.push(L('Conditions optimal — system keeps current settings.', 'Kondisi optimal — sistem mempertahankan pengaturan saat ini.', '状態は最適 — 現在の設定を維持します。'));
     return { ledIntensity: Math.round(led), aeration: Math.round(aer), co2Injection: co2inj, recommendations: rec };
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  // ---- Predictive / anomaly insights from the rolling history (heads-up BEFORE thresholds trip) ----
+  function insight(icon, title, sub) { return { level: 'warning', icon: icon, title: title, sub: sub, predictive: true }; }
+  function computeInsights(c, air) {
+    var out = [], H = window.ALCURA_HISTORY; if (!H) return out;
+    var TH = thresholds, win = 3 * 3600 * 1000, hrs = 3;
+
+    var t = H.stat('tds', win), tDrop = t.first - t.last;           // nutrients depleting
+    if (tDrop > 25 && t.last > TH.tdsLow) {
+      var tRate = tDrop / hrs, tEta = Math.round((t.last - TH.tdsLow) / tRate);
+      if (tEta > 0 && tEta <= 36) out.push(insight('ph-flask',
+        L('Nutrients trending down', 'Nutrisi cenderung menurun', '栄養が低下傾向'),
+        L('TDS dropping ~' + Math.round(tRate) + ' ppm/h — hits the low limit in ~' + tEta + 'h. Plan a nutrient top-up.',
+          'TDS turun ~' + Math.round(tRate) + ' ppm/jam — capai batas rendah ~' + tEta + ' jam lagi. Siapkan penambahan nutrisi.',
+          'TDSが約' + Math.round(tRate) + ' ppm/時で低下 — 約' + tEta + '時間で下限に到達。栄養補充を計画してください。')));
+    }
+
+    var w = H.stat('level', win), wDrop = w.first - w.last;          // water level falling
+    if (wDrop > 3 && w.last > TH.levelLow) {
+      var wRate = wDrop / hrs, wEta = Math.round((w.last - TH.levelLow) / wRate);
+      if (wEta > 0 && wEta <= 48) out.push(insight('ph-drop',
+        L('Water level dropping', 'Level air menurun', '水位が低下'),
+        L('Level falling ~' + wRate.toFixed(1) + '%/h — refill needed in ~' + wEta + 'h.',
+          'Level turun ~' + wRate.toFixed(1) + '%/jam — perlu isi ulang ~' + wEta + ' jam lagi.',
+          '水位が約' + wRate.toFixed(1) + '%/時で低下 — 約' + wEta + '時間で補充が必要。')));
+    }
+
+    var ph = H.stat('ph', win);                                     // pH drifting toward a limit
+    if (ph.last - ph.first > 0.2 && ph.last > TH.phMax - 0.3 && ph.last <= TH.phMax) out.push(insight('ph-test-tube',
+      L('pH drifting high', 'pH cenderung naik', 'pHが上昇傾向'),
+      L('pH rising toward the upper limit (' + TH.phMax + '). Consider CO₂ injection soon.',
+        'pH naik mendekati batas atas (' + TH.phMax + '). Pertimbangkan injeksi CO₂.',
+        'pHが上限 (' + TH.phMax + ') に接近。CO₂注入を検討してください。')));
+    else if (ph.first - ph.last > 0.2 && ph.last < TH.phMin + 0.3 && ph.last >= TH.phMin) out.push(insight('ph-test-tube',
+      L('pH drifting low', 'pH cenderung turun', 'pHが低下傾向'),
+      L('pH falling toward the lower limit (' + TH.phMin + '). Consider adding bicarbonate.',
+        'pH turun mendekati batas bawah (' + TH.phMin + '). Pertimbangkan menambah bikarbonat.',
+        'pHが下限 (' + TH.phMin + ') に接近。重曹の追加を検討してください。')));
+
+    var g = H.stat('gas', win);                                     // smoke/gas creeping up (pre-alarm)
+    if (g.last > g.first * 1.2 && g.last > TH.gasWarn * 0.7 && g.last <= TH.gasWarn) out.push(insight('ph-warning',
+      L('Gas levels creeping up', 'Kadar gas merangkak naik', 'ガス濃度が上昇中'),
+      L('Smoke/gas trending upward — keep the area ventilated.',
+        'Asap/gas cenderung meningkat — jaga ventilasi area.',
+        '煙/ガスが上昇傾向 — 換気を保ってください。')));
+    return out;
+  }
 
   function buildAlerts(saf, c, h, air, rem) {
     var a = [];
@@ -257,6 +327,7 @@
     else if (saf.level === 'warn') a.push({ level: 'warning', icon: 'ph-warning', title: L('Gas level rising', 'Kadar gas meningkat', 'ガス濃度が上昇'), sub: saf.message });
     if (c.status === 'critical') a.push({ level: 'critical', icon: 'ph-flask', title: L('Culture needs attention', 'Kultur butuh perhatian', '培養に注意が必要'), sub: c.recommendations[0] });
     rem.forEach(function (r) { a.push({ level: r.level, icon: r.icon, title: r.title, sub: r.sub }); });
+    computeInsights(c, air).forEach(function (ins) { a.push(ins); });   // predictive heads-up alerts
     if (h.days <= 3) a.push({ level: 'warning', icon: 'ph-plant', title: L('Harvest ready in ' + h.days + ' days', 'Panen siap dalam ' + h.days + ' hari', '収穫まであと' + h.days + '日'), sub: L('Estimated yield ' + h.yieldG + ' g. Prepare harvest tools.', 'Estimasi yield ' + h.yieldG + ' g. Siapkan peralatan panen.', '推定収量 ' + h.yieldG + ' g。収穫の準備をしてください。') });
     if (air.score >= 85) a.push({ level: 'success', icon: 'ph-wind', title: L('Excellent air quality', 'Kualitas udara sangat baik', '空気の質が非常に良い'), sub: L('Air score ' + air.score + '/100 (' + air.label + ').', 'Skor udara ' + air.score + '/100 (' + air.label + ').', '空気スコア ' + air.score + '/100 (' + air.label + ')。') });
     if (!a.length) a.push({ level: 'success', icon: 'ph-check-circle', title: L('All systems normal', 'Semua sistem normal', 'すべて正常'), sub: L('No active alerts right now.', 'Tidak ada peringatan aktif saat ini.', '現在アクティブな通知はありません。') });
@@ -386,8 +457,9 @@
     function paint(snap) {
       host.innerHTML = snap.alerts.map(function (a) {
         var cls = a.level === 'critical' ? 'critical' : a.level === 'warning' ? 'warning' : a.level === 'success' ? 'success' : '';
-        return '<div class="alert ' + cls + '" data-level="' + a.level + '"><i class="ph-fill ' + a.icon + '"></i>' +
-          '<div class="alert-content"><h4>' + a.title + '</h4><small>' + a.sub + '</small></div></div>';
+        var tag = a.predictive ? ' <span class="pred-tag"><i class="ph-fill ph-trend-up"></i>' + L('Prediction', 'Prediksi', '予測') + '</span>' : '';
+        return '<div class="alert ' + cls + '" data-level="' + a.level + '"' + (a.predictive ? ' data-predictive="1"' : '') + '><i class="ph-fill ' + a.icon + '"></i>' +
+          '<div class="alert-content"><h4>' + a.title + tag + '</h4><small>' + a.sub + '</small></div></div>';
       }).join('');
     }
     paint(last || snapshot());
@@ -413,7 +485,20 @@
     },
     renderAlerts: renderAlerts,
     simulate: simulate,
-    refresh: emit
+    refresh: emit,
+    get thresholds() { return Object.assign({}, thresholds); },
+    thresholdDefaults: function () { return Object.assign({}, TH_DEFAULTS); },
+    setThresholds: function (obj) {
+      if (obj && typeof obj === 'object') {
+        Object.keys(TH_DEFAULTS).forEach(function (k) {
+          if (obj[k] != null && !isNaN(parseFloat(obj[k]))) thresholds[k] = parseFloat(obj[k]);
+        });
+        persistThresholds();
+        emit();
+      }
+      return Object.assign({}, thresholds);
+    },
+    resetThresholds: function () { thresholds = Object.assign({}, TH_DEFAULTS); persistThresholds(); emit(); return Object.assign({}, thresholds); }
   };
 
   // ---- Boot ----

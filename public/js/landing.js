@@ -255,6 +255,127 @@ const I18N={
     'foot.l.privacy':'Privacy Policy','foot.l.terms':'Terms of Service','foot.l.help':'Help',
     'footer.copy':'© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.',
     'common.soon':'Coming soon',
+  },
+  ja:{
+    'nav.general':'概要','nav.validation':'データ','nav.features':'機能','nav.pricing':'料金','nav.team':'チーム','nav.faq':'FAQ',
+    'nav.login':'ログイン','nav.register':'始める',
+
+    'hero.eyebrow':'AIoT フォトバイオリアクター',
+    'hero.h1':'生きた<em>空気</em>を<br>生きた<br><span class="grad">空間へ。</span>',
+    'hero.lead':'ALCURAは、スピルリナ微細藻類を培養するスマートなフォトバイオリアクターと空気清浄機を兼ねた多機能ランプです。空気を浄化し、酸素を生み出し、AIがリアルタイムで監視します。',
+    'hero.start.title':'よりきれいな呼吸を始めよう',
+    'hero.start.desc':'無料アカウントを作成して、ALCURAをリアルタイムで監視しましょう。',
+    'hero.start.register':'アカウント作成','hero.start.login':'アカウントをお持ちの方',
+    'hero.stat1':'CO₂吸収','hero.stat2':'VOC・HCHO除去','hero.stat3':'収穫サイクル',
+    'phone.hint':'メニューを試す','phone.health':'培養状態 · 25/30日目',
+    'phone.live':'ライブセンサー','phone.harvest':'次の収穫','phone.trend':'CO₂推移 24時間',
+    'phone.harvest.sub':'スピルリナ 83%準備完了','phone.harvest.val':'5日',
+    'phone.ctrl':'クイック操作','phone.aeration':'エアレーション','phone.light':'ライトモード',
+    'phone.air.title':'空気品質','phone.alerts.title':'アラート','phone.more.title':'設定',
+    'phone.tab.home':'ホーム','phone.tab.air':'空気','phone.tab.alerts':'アラート','phone.tab.more':'その他',
+    'phone.greet':'おはようございます 👋','phone.room':'ALCURA · リビング','phone.temp':'温度',
+    'phone.on':'稼働中','phone.off':'オフ','phone.mode.grow':'成長','phone.mode.day':'昼','phone.mode.night':'夜',
+    'phone.aq':'空気品質','phone.good':'良好','phone.permonth':'L/月',
+    'phone.air.sub':'屋内リアルタイム','phone.aqi.label':'屋内AQI','phone.aqi.status':'非常に良い',
+    'phone.culture.sub':'スピルリナ · 25/30日目','phone.biomass':'バイオマス OD680 · 指数増殖期',
+    'phone.harvest.days':'あと5日','phone.harvest.ready':'スピルリナ 83%準備完了',
+    'phone.alerts.new':'新着3件','phone.al1.t':'培養pHが低下','phone.al1.s':'24時間以内に栄養を調整してください。',
+    'phone.al2.t':'3日後に収穫可能','phone.al2.s':'収穫用機材を準備してください。',
+    'phone.al3.t':'空気品質 +23%','phone.al3.s':'先週比。素晴らしい進捗です！',
+    'phone.al4.t':'エアレーション最適','phone.al4.s':'DOは11 mg/Lで安定。',
+    'phone.more.sub':'デバイスとアカウント','phone.device':'デバイス','phone.uptime':'稼働時間','phone.uptime.val':'45日','phone.conn':'接続',
+    'phone.dayval':'25/30日目','phone.cycle':'培養サイクル','phone.o2today':'本日のO₂',
+    'phone.phase':'指数増殖','phone.growth':'成長',
+
+    'val.tag':'検証','val.title':'主張ではなく<em>データ</em>に基づく',
+    'val.sub':'ALCURAを支える科学 — 査読付きの結果とデバイス性能の予測。',
+    'val.c1.title':'査読付きの結果','val.c1.desc':'スピルリナ微細藻類によるCO₂吸収とO₂生成に関する検証済み研究。',
+    'val.c2.title':'CO₂削減予測','val.c2.desc':'ユニットあたり1か月の二酸化炭素吸収能力の推定値。',
+    'val.c3.title':'VOC・HCHO除去','val.c3.desc':'屋内空気から揮発性有機化合物とホルムアルデヒドを除去する効果。',
+    'val.unit1':'CO₂ / 月','val.unit2':'吸収','val.unit3':'きれいな空気',
+
+    'val.kpi':'査読付き論文','val.lead.title':'査読に基づく基盤',
+    'val.lead.desc':'ALCURAは39本の査読付き論文に基づき、PubMed・Consensusなどのデータベースで2018〜2026年を対象としたPRISMA準拠の系統的文献レビューを用いて開発されました。',
+    'val.src.more':'+ 関連データベース',
+    'val.m1':'屋内CO₂削減','val.m2':'微細藻類培養の生産性','val.m3':'HVACシステムのエネルギー消費','val.m4':'温熱快適性',
+
+    'inst.tag':'設置','inst.title':'<em>4</em>ステップで稼働','inst.sub':'セットアップから収穫まで — ALCURAはすべてをシンプルに。',
+    'inst.s1.title':'電源に接続','inst.s1.desc':'ALCURAを家庭用電源に接続します。',
+    'inst.s2.title':'セットアップして起動','inst.s2.desc':'微細藻類をユニットに加え、すべての部品が正しく取り付けられていることを確認してから電源を入れます。',
+    'inst.s3.title':'成長を監視','inst.s3.desc':'通知やALCURAウェブアプリの成長データで微細藻類の成長を監視します。',
+    'inst.s4.title':'14日ごとに収穫','inst.s4.desc':'14日ごとに微細藻類を収穫して入れ替えます。',
+
+    'feat.tag':'機能','feat.title':'1台で<em>7</em>つの生きた恩恵','feat.sub':'単なる装飾ランプではありません。あなたの空気と室内の健康のために働く小さな生態系です。',
+    'feat.f1.title':'フォトバイオリアクターランプ','feat.f1.desc':'金属フレームにアクリル製フォトバイオリアクターを備えたランプ。オフィスやリビングの一角にぴったり。',
+    'feat.f2.title':'能動的な空気浄化','feat.f2.desc':'CO₂を55〜90%吸収し、VOCを最大100%除去。PM2.5とPM10も低減します。',
+    'feat.f3.title':'酸素生成','feat.f3.desc':'スピルリナ培養の光合成が新鮮なO₂を継続的に生み出します。',
+    'feat.f4.title':'リアルタイム監視','feat.f4.desc':'スピルリナ培養の状態、バイオマス生産、CO₂–O₂濃度をリアルタイムで監視します。',
+    'feat.f5.title':'スピルリナ培養','feat.f5.desc':'30日サイクルごとに高いバイオマスを収穫できます。',
+    'feat.f6.title':'アンビエント照明','feat.f6.desc':'微細藻類の最適な成長のためにスペクトル調整可能なLED。',
+    'feat.f7.title':'AIによる自動最適化','feat.f7.desc':'機械学習がLED・エアレーション・CO₂注入を調整します。',
+
+    'innov.tag':'イノベーション','innov.title':'1台のデバイス、<em>2</em>つの生きたシステム','innov.sub':'1台が同時に2つの役割を果たします — 空気清浄機とフォトバイオリアクター。',
+    'dual.row.how':'仕組み','dual.row.get':'得られるもの','dual.core':'1台',
+    'dual.air.title':'空気清浄機','dual.air.lead':'生きた微細藻類が室内の空気を生物学的に浄化します — 単なるろ過ではありません。',
+    'dual.air.how':'CO₂・VOC・微粒子を吸収し、新鮮な酸素を放出します。','dual.air.get':'使い捨てフィルター不要で、より健康的な空気。','dual.air.statlabel':'屋内CO₂吸収',
+    'dual.bio.title':'フォトバイオリアクター','dual.bio.lead':'同じデバイスで栄養豊富なスピルリナを家庭で培養します。',
+    'dual.bio.how':'スペクトル調整可能なLEDの下での光合成でスピルリナのバイオマスを育てます。','dual.bio.get':'AI最適化により毎サイクル栄養豊富な収穫を。','dual.bio.statlabel':'培養の生産性',
+    'pf.co2':'空気中CO₂','pf.do':'溶存酸素','pf.harvest':'収穫準備',
+    'innov.a.title':'室内空気品質','innov.a.desc':'ALCURAはCO₂を削減し、新鮮な空気とともにO₂を生み出し、空気清浄機として機能します：',
+    'innov.a.li1':'CO₂を吸収し新鮮な酸素を放出','innov.a.li2':'空気清浄機のように空気をリフレッシュ','innov.a.li3':'室内のVOCと汚染物質を削減',
+    'innov.b.title':'微細藻類培養','innov.b.desc':'ALCURAは健康効果が豊富なスピルリナのバイオマスを培養・サポートします：',
+    'innov.b.li1':'栄養豊富なスピルリナのバイオマスを生成','innov.b.li2':'健康効果が豊富','innov.b.li3':'毎サイクル持続可能な収穫',
+    'innov.fn1':'機能 01','innov.fn2':'機能 02','innov.a.pill':'空気清浄機','innov.b.pill':'フォトバイオリアクター',
+
+    'cmp.tag':'比較','cmp.title':'なぜ<em>ALCURA</em>なのか？','cmp.sub':'単なる空気清浄機ではありません。従来の選択肢との比較をご覧ください。',
+    'cmp.feature':'特徴','cmp.purifier':'HEPA空気清浄機','cmp.lamp':'スマートランプ',
+    'cmp.r1':'浄化方式','cmp.r1.p':'HEPAフィルター（機械式）','cmp.r1.u':'生きた微細藻類（生物学的）',
+    'cmp.r2':'酸素生成','cmp.r2.u':'約240 L/月',
+    'cmp.r3':'消耗フィルター','cmp.r3.p':'3〜6か月ごと','cmp.r3.l':'なし','cmp.r3.u':'なし — 自己再生',
+    'cmp.r4':'ランニングコスト','cmp.r4.p':'フィルター＋電力','cmp.r4.l':'電力','cmp.r4.u':'電力のみ',
+    'cmp.r5':'アンビエント照明','cmp.r5.u':'スペクトル調整可能',
+    'cmp.r6':'リアルタイムAI監視','cmp.r6.l':'基本的',
+    'cmp.r7':'持続可能性','cmp.r7.p':'フィルター廃棄物','cmp.r7.l':'低負荷','cmp.r7.u':'カーボンネガティブ＋収穫',
+    'cmp.takeaway':'ALCURAは空気浄化・酸素生成・培養を1台の持続可能なデバイスに統合します。',
+    'cmp.note':'詳細な料金と具体的なブランドは近日公開。',
+
+    'price.tag':'料金','price.title':'<em>生きた</em>プランを選ぶ','price.sub':'料金・特典・プラン名 — 詳細は近日公開。',
+    'price.p1.name':'Spore','price.p1.desc':'きれいな空気の旅を始めるために。','price.p1.f1':'ALCURA 1台','price.p1.f2':'基本監視','price.p1.f3':'収穫通知',
+    'price.p2.name':'Bloom','price.p2.badge':'人気','price.p2.desc':'ALCURAをフルに体験。','price.p2.f1':'Sporeの全機能','price.p2.f2':'AI最適化（フル）','price.p2.f3':'収穫量予測','price.p2.f4':'無制限のデータ履歴',
+    'price.p3.name':'Canopy','price.p3.desc':'より大きな空間とチームに。','price.p3.f1':'Bloomの全機能','price.p3.f2':'マルチユニットダッシュボード','price.p3.f3':'優先サポート',
+    'price.choose':'プランを選ぶ','price.month':'/月',
+    'price.bestseller':'ベストセラー','price.p1.tag':'スターター','price.p2.tag':'最も人気','price.p3.tag':'スケール',
+
+    'team.tag':'チーム','team.title':'<em>ALCURA</em>を支える人々','team.sub':'生きた空気を生きた空間へ届ける7人。詳細は近日公開。',
+    'team.m1':'メンバー1','team.m2':'メンバー2','team.m3':'メンバー3','team.m4':'メンバー4','team.m5':'メンバー5','team.m6':'メンバー6','team.m7':'メンバー7',
+
+    'rev.tag':'ユーザーレビュー','rev.title':'<em>声</em>をご紹介','rev.sub':'すでにきれいな空気を呼吸している空間からの実体験。',
+
+    'faq.tag':'FAQ','faq.title':'よくある<em>質問</em>','faq.sub':'質問をタップすると回答が表示されます。',
+    'faq.q1':'ALCURAとは？','faq.a1':'ALCURAは、スピルリナ微細藻類を培養するスマートなフォトバイオリアクターと空気清浄機を兼ねた多機能ランプです。空気を浄化し、酸素を生み出し、AIがリアルタイムで監視します。',
+    'faq.q2':'屋内で安全に使えますか？','faq.a2':'はい。ALCURAは安全な屋内デバイスとして設計されています。微細藻類はチューブ内に完全に密閉されており、有害な粒子を空気中に放出しません。',
+    'faq.q3':'スピルリナはどのくらいの頻度で収穫が必要ですか？','faq.a3':'通常は約30日のサイクルごとです。センサーデータに基づき、培養が収穫可能になるとアプリが通知します。',
+    'faq.q4':'フィルターの交換は必要ですか？','faq.a4':'いいえ。従来の空気清浄機と異なり、ALCURAは生物学的に空気を浄化するため、使い捨てフィルターは不要です。',
+    'faq.q5':'デバイスはどのように監視しますか？','faq.a5':'ALCURAアプリを通じて、DO・pH・温度・CO₂・培養状態をどこにいてもリアルタイムで確認できます。',
+
+    'auth.tag':'始める','auth.title':'あなたの<em>空気</em>に命を吹き込む準備はできましたか？','auth.desc':'アカウントを作成またはログインしてALCURAの監視を始めましょう。簡単で無料です。',
+    'auth.fs1.t':'登録','auth.fs1.s':'メールまたはGoogleでアカウントを作成。',
+    'auth.fs2.t':'デバイスを接続','auth.fs2.s':'QRまたはBluetoothでALCURAを接続。',
+    'auth.fs3.t':'監視','auth.fs3.s':'培養データをリアルタイムで確認。',
+
+    'wl.label':'登録の準備はまだ？ ウェイトリストに参加：','wl.ph':'you@email.com','wl.btn':'参加',
+    'wl.count':'人がすでに参加しています',
+    'wl.success':'🎉 リストに登録されました！ALCURA公開時にメールでお知らせします。',
+    'wl.invalid':'有効なメールアドレスを入力してください。',
+    'wl.already':'このメールはすでに登録されています。公開時にお会いしましょう！',
+    'social.title':'<em>ALCURA</em>とつながろう','social.desc':'SNSで私たちの歩みをフォローしてください。',
+    'foot.tagline':'きれいな空気とスピルリナ培養のためのスマートなフォトバイオリアクターランプ — 空気を浄化し、酸素を生み出し、AIがリアルタイムで監視します。',
+    'foot.product':'製品','foot.science':'科学と研究','foot.legal':'法的事項',
+    'foot.l.features':'機能','foot.l.how':'仕組み','foot.l.pricing':'料金','foot.l.demo':'デモアプリ','foot.l.faq':'FAQ',
+    'foot.l.evidence':'研究エビデンス','foot.l.innovation':'イノベーション','foot.l.comparison':'比較','foot.l.about':'会社概要',
+    'foot.l.privacy':'プライバシーポリシー','foot.l.terms':'利用規約','foot.l.help':'ヘルプ',
+    'footer.copy':'© 2026 ALCURA — Algae Cultivation Unit with Real-time AI.',
+    'common.soon':'近日公開',
   }
 };
 
@@ -272,9 +393,33 @@ function applyLang(lang){
   localStorage.setItem('lang',lang);
   if(window.__wlRender)window.__wlRender();
   const tog=document.getElementById('langToggle');
-  if(tog){tog.classList.toggle('en',lang==='en');tog.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));}
+  if(tog){tog.classList.remove('id','en','ja');tog.classList.add(lang);tog.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));}
 }
 function setLang(lang){applyLang(lang);}
+
+/* Render a simple research-style SVG trendline (same look as the app's
+   ALCURA_HISTORY trend; uses the .trend CSS classes from styles.css). */
+var __phTrendN=0;
+function phTrend(host,vals){
+  if(!host||!vals||!vals.length)return;
+  var W=100,H=100,padY=10;
+  var min=Math.min.apply(null,vals),max=Math.max.apply(null,vals),span=(max-min)||1,n=vals.length;
+  var pts=vals.map(function(v,i){return [n>1?(i/(n-1))*W:W/2,(H-padY)-((v-min)/span)*(H-2*padY)];});
+  var line='M '+pts.map(function(p){return p[0].toFixed(2)+' '+p[1].toFixed(2);}).join(' L ');
+  var area=line+' L '+W+' '+H+' L 0 '+H+' Z';
+  var last=pts[n-1];
+  var grid=[25,50,75].map(function(gy){return '<line class="trend-grid" x1="0" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" vector-effect="non-scaling-stroke"/>';}).join('');
+  var gid='phTrend'+(++__phTrendN);
+  host.classList.add('trend');
+  host.innerHTML=
+    '<svg class="trend-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ts-0"/><stop offset="1" class="ts-1"/></linearGradient></defs>'+
+    grid+
+    '<path class="trend-area" d="'+area+'" fill="url(#'+gid+')"/>'+
+    '<path class="trend-line" d="'+line+'" vector-effect="non-scaling-stroke"/>'+
+    '</svg>'+
+    '<i class="trend-cap" style="left:'+last[0].toFixed(2)+'%;top:'+last[1].toFixed(2)+'%"></i>';
+}
 
 /* ---- Nav (mobile + scroll state) ---- */
 function toggleNav(){
@@ -301,9 +446,9 @@ function toggleFaq(el){
 document.addEventListener('DOMContentLoaded',()=>{
   applyLang(localStorage.getItem('lang')||'id');
 
-  // Sparkline bars in the phone mock
+  // Trendline in the phone mock (mirrors the app's CO₂ trendline)
   const spark=document.getElementById('phSpark');
-  if(spark){[42,48,55,60,52,46,40,44,50,58,62,57,49,45,53,59].forEach(v=>{const b=document.createElement('div');b.className='bar';b.style.height=v+'%';spark.appendChild(b);});}
+  if(spark)phTrend(spark,[42,48,55,60,52,46,40,44,50,58,62,57,49,45,53,59]);
 
   // Nav scroll state
   const nav=document.getElementById('lgNav');
@@ -380,8 +525,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     const ENDPOINT='';               // TODO: put a Formspree/Firebase URL here to actually collect emails
     const stored=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}};
     const t=(k)=>{const d=I18N[document.documentElement.getAttribute('lang')||'id']||I18N.id;return d[k]||k;};
-    function render(){if(countEl)countEl.textContent=(SEED+stored().length).toLocaleString(
-      (document.documentElement.getAttribute('lang')||'id')==='en'?'en-US':'id-ID');}
+    function render(){if(countEl){var L=document.documentElement.getAttribute('lang')||'id';countEl.textContent=(SEED+stored().length).toLocaleString(L==='en'?'en-US':L==='ja'?'ja-JP':'id-ID');}}
     window.__wlRender=render; render();
     form.addEventListener('submit',(e)=>{
       e.preventDefault();
@@ -557,9 +701,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(s.prg)s.prg.style.setProperty('--val',Math.round(v));
         s.el.classList.remove('pulse');void s.el.offsetWidth;s.el.classList.add('pulse');
       });
-      // animate the sparkline when Home is visible
+      // refresh the trendline when Home is visible
       if(spark&&phone.querySelector('.ph-view[data-view="home"]').classList.contains('active')){
-        [...spark.children].forEach(b=>{b.style.height=(38+Math.random()*30).toFixed(0)+'%';});
+        var d=[];for(var k=0;k<16;k++)d.push(38+Math.random()*30);phTrend(spark,d);
       }
     }
     let timer=null;

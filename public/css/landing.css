@@ -11,8 +11,8 @@
   --g-stroke:rgba(255,255,255,.5);
   --g-stroke-soft:rgba(255,255,255,.28);
   --g-blur:30px;
-  --g-shadow:0 22px 60px -14px rgba(22,39,28,.2);
-  --g-shadow-hover:0 32px 78px -16px rgba(22,39,28,.28);
+  --g-shadow:0 8px 22px -10px rgba(22,39,28,.16);
+  --g-shadow-hover:0 14px 32px -12px rgba(22,39,28,.22);
   --g-highlight:rgba(255,255,255,.7);
   --blob-a:rgba(86,185,124,.55);
   --blob-b:rgba(77,143,240,.32);
@@ -55,8 +55,8 @@
   --g-fill-2:rgba(34,56,48,.34);
   --g-stroke:rgba(200,232,214,.2);
   --g-stroke-soft:rgba(200,232,214,.1);
-  --g-shadow:0 26px 70px -14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);
-  --g-shadow-hover:0 36px 90px -16px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.16);
+  --g-shadow:0 10px 26px -12px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10);
+  --g-shadow-hover:0 16px 38px -14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.14);
   --g-highlight:rgba(255,255,255,.3);
   --blob-a:rgba(70,209,137,.42);
   --blob-b:rgba(40,180,150,.28);
@@ -188,6 +188,7 @@ html{overflow-x:hidden}
 .lang-toggle .lang-knob{position:absolute;top:var(--lang-toggle-pad);bottom:var(--lang-toggle-pad);left:var(--lang-toggle-pad);width:var(--lang-toggle-segment);border-radius:100px;background:var(--forest-700);box-shadow:var(--shadow-sm);transition:.28s cubic-bezier(.2,.8,.2,1)}
 :root[data-theme="dark"] .lang-toggle .lang-knob{background:var(--leaf-500)}
 .lang-toggle.en .lang-knob{transform:translateX(var(--lang-toggle-segment))}
+.lang-toggle.ja .lang-knob{transform:translateX(calc(var(--lang-toggle-segment) * 2))}
 
 .burger{display:none;font-size:1.6rem;color:var(--ink);width:42px;height:42px;border-radius:12px;align-items:center;justify-content:center}
 
@@ -1074,16 +1075,158 @@ body{font-family:var(--font-helios)}
 .app-container .top-bar,.app-container .app-scroll{background:transparent}
 .app-container .card:not(.hero-status):not(.impact),
 .app-container .metric,
-.app-container .qa{
+.app-container .qa,
+.app-container .list-card,
+.app-container .settings-card,
+.app-container .mini-hero{
   background:var(--g-fill);backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
   border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);
 }
+/* Bottom-nav = clean liquid glass pill (drop the neumorphic green halo) */
 .app-container .bottom-nav{
-  background:var(--g-fill);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
-  border-top:1px solid var(--g-stroke);
+  background:var(--g-fill);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid var(--g-stroke)!important;
+  box-shadow:var(--g-shadow)!important;
 }
+.app-container .bottom-nav .nav-item.active::before,
+.app-container .bottom-nav .bn.active::before{
+  background:linear-gradient(135deg,rgba(46,158,94,.18),rgba(159,224,181,.10));
+  border:1px solid rgba(46,158,94,.30);
+}
+:root[data-theme="dark"] .app-container .bottom-nav .nav-item.active::before{
+  background:linear-gradient(135deg,rgba(52,196,118,.20),rgba(159,224,181,.10));border-color:rgba(52,196,118,.34);
+}
+/* keep the active icon crisp, not glowing/pulsing (less neumorphic) */
+.app-container .bottom-nav .nav-item.active i,
+.app-container .bottom-nav .bn.active i{filter:none;animation:none}
 .app-container .btn-icon{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
-.app-container h2,.app-container h3,.app-container h4{font-family:var(--font-helios)}
+.app-container h2,.app-container h3,.app-container h4,
+.app-container .section-title,.app-container .page-title-block h2{font-family:var(--font-helios);letter-spacing:-.02em}
+
+/* ---- Glassify the smaller app primitives across every /pages screen ---- */
+/* Section headings + page titles */
+.app-container .section-title{color:var(--ink-soft)}
+.app-container .page-title-block p{color:var(--ink-mute)}
+/* List rows / dividers */
+.app-container .list-card .row{border-bottom:1px solid var(--g-stroke-soft)}
+.app-container .divider{background:var(--g-stroke-soft);border:0}
+.app-container .setting-row .setting-icon{
+  background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);box-shadow:none;color:var(--leaf-500);
+}
+/* Native selects + text inputs -> frosted glass (kills inset neumorphism) */
+.app-container select,
+.app-container input[type="text"],
+.app-container input[type="email"],
+.app-container input[type="search"],
+.app-container input[type="number"],
+.app-container input[type="password"],
+.app-container textarea{
+  background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft)!important;
+  box-shadow:none!important;color:var(--ink)!important;border-radius:14px;
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+}
+/* Toggle switches -> glass track */
+.app-container .toggle-track{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);box-shadow:none}
+.app-container .toggle input:checked + .toggle-track{background:linear-gradient(135deg,var(--leaf-400),var(--forest-700));border-color:transparent}
+/* Gauge / ring tracks read against glass */
+.app-container .ring-track{stroke:var(--g-stroke-soft)}
+.app-container .gauge-wrap .gauge{box-shadow:var(--g-shadow)}
+.app-container .gauge-wrap .gauge::before{background:var(--g-fill-2);box-shadow:none}
+/* Quick-action / metric icon chips */
+.app-container .qa .ic,.app-container .metric .ic{background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
+/* More-menu popup + toast share the glass language */
+.more-menu{
+  background:var(--g-fill)!important;backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  border:1px solid var(--g-stroke)!important;box-shadow:var(--g-shadow)!important;
+}
+.toast{
+  background:var(--g-fill)!important;backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid var(--g-stroke)!important;color:var(--ink)!important;box-shadow:var(--g-shadow)!important;
+}
+/* Trendline accent inside glass cards (plain research look — no glow) */
+.app-container .trend .trend-line{stroke:var(--leaf-500)}
+.app-container .trend .trend-grid{stroke:var(--g-stroke-soft)}
+.app-container .trend .ts-0{stop-color:var(--leaf-500)}
+.app-container .trend .ts-1{stop-color:var(--leaf-500)}
+
+/* ---- Bring the feature cards (hero + impact) into the SAME glass ----
+   They were previously solid neumorphic surfaces, which read as a
+   different design language next to the frosted cards. Now they're a
+   green-tinted frosted glass so every info section is cohesive. */
+.app-container .card.hero-status,
+.app-container .card.impact{
+  background:linear-gradient(160deg,rgba(46,158,94,.16),var(--g-fill))!important;
+  backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  border:1px solid var(--g-stroke)!important;
+  box-shadow:var(--g-shadow)!important;
+}
+:root[data-theme="dark"] .app-container .card.hero-status,
+:root[data-theme="dark"] .app-container .card.impact{
+  background:linear-gradient(160deg,rgba(52,196,118,.20),var(--g-fill))!important;
+}
+/* Gauge sits cleanly on the frosted hero */
+.app-container .gauge-wrap .gauge{background:var(--g-fill-2)!important}
+.app-container .gauge-wrap .gauge::before{background:var(--g-fill)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+/* Unify every neumorphic icon chip -> frosted glass chip with green glyph */
+.app-container .metric .ic,
+.app-container .qa .ic,
+.app-container .harvest .leaf-ic,
+.app-container .setting-row .setting-icon{
+  background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft)!important;
+  box-shadow:none!important;color:var(--leaf-500)}
+
+/* Alert cards -> frosted glass (were solid neumorphic) */
+.app-container .alert{
+  background:var(--g-fill)!important;backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+  box-shadow:var(--g-shadow)!important;border:1px solid var(--g-stroke);
+}
+.app-container .alert > i{background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft);box-shadow:none!important}
+
+/* Reduce ALL glow on the user pages for an elegant, flat-glass look */
+.app-container .ring-fill{filter:none}
+.app-container .hero-num{text-shadow:none}
+.app-container .progress-fill,.app-container .progress i{box-shadow:none}
+.app-container .tab.active::after{box-shadow:none}
+.app-container .metric-icon{box-shadow:var(--g-shadow)!important}
+.app-container .big-number .value{text-shadow:none}
+.app-container .pbr-head .live .blink{box-shadow:none!important;animation:none}
+.app-container .gauge-wrap .gauge .val b{text-shadow:none}
+/* center FAB: keep depth, drop the green halo glow */
+.app-container .bottom-nav .nav-item.fab,.app-container .bottom-nav .bn-fab{
+  box-shadow:0 8px 16px -6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)!important;
+}
+.app-container .ai-fab,.app-container .ai-fab-glow{box-shadow:0 8px 18px -8px rgba(0,0,0,.3)!important}
+.app-container .ai-fab-glow{display:none}
+/* "calm" pages also soften the card elevation a touch more */
+.app-container.calm .card{box-shadow:0 6px 18px -12px rgba(16,40,28,.28)!important}
+:root[data-theme="dark"] .app-container.calm .card{box-shadow:0 8px 20px -12px rgba(0,0,0,.5)!important}
+
+/* ============================================================
+   Dashboard info frames follow the AERVINEX .card format:
+   the same soft green aura wash + faint corner leaf seen on the
+   logged-in pages' cards (kept subtle — no hard borders/bars).
+   ============================================================ */
+.feat-card,.val-card,.val-lead,.val-metric,.innov-card,
+.review-card,.price-card,.step-card,.team-card,.start-card,.faq-item{
+  background:
+    radial-gradient(circle at 18% 0%, rgba(52,196,118,.13) 0%, transparent 48%),
+    radial-gradient(circle at 100% 100%, rgba(52,196,118,.07) 0%, transparent 55%),
+    var(--g-fill);
+}
+:root[data-theme="dark"] .feat-card,:root[data-theme="dark"] .val-card,
+:root[data-theme="dark"] .val-lead,:root[data-theme="dark"] .val-metric,
+:root[data-theme="dark"] .innov-card,:root[data-theme="dark"] .review-card,
+:root[data-theme="dark"] .price-card,:root[data-theme="dark"] .step-card,
+:root[data-theme="dark"] .team-card,:root[data-theme="dark"] .start-card,
+:root[data-theme="dark"] .faq-item{
+  background:
+    radial-gradient(circle at 18% 0%, rgba(52,196,118,.17) 0%, transparent 48%),
+    radial-gradient(circle at 100% 100%, rgba(52,196,118,.09) 0%, transparent 55%),
+    var(--g-fill);
+}
+
+/* Phone-mock spark renders as a trendline (matches the app graph) */
+.ph-spark.trend,.phone-screen .ph-spark.trend{display:block;padding:6px}
 
 /* Team photos on a clean white background (transparent cutouts pop) */
 .team-card .team-photo,
@@ -1132,7 +1275,21 @@ body{font-family:var(--font-helios)}
 .phone-screen .ph-mode .ic,
 .phone-screen .ph-row .ic,
 .phone-screen .ph-alert .ic{box-shadow:0 3px 8px -3px rgba(16,40,28,.32)}
-.phone-screen .ph-tabs{background:linear-gradient(180deg,#fbfdfb,#eef5ef);box-shadow:0 -4px 14px -8px rgba(16,40,28,.16)}
+/* Phone mock menu = floating glass pill with an active highlight,
+   mirroring the logged-in app's bottom-nav. */
+.phone-screen .ph-tabs{
+  margin:4px 10px 12px;padding:7px 6px;border-radius:22px;
+  background:linear-gradient(180deg,#ffffff,#f1f7f1);
+  border:1px solid rgba(16,40,28,.06);
+  box-shadow:0 8px 20px -10px rgba(16,40,28,.30),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.phone-screen .ph-tab{border-radius:14px;z-index:1}
+.phone-screen .ph-tab.active:not(.ph-fab){position:relative}
+.phone-screen .ph-tab.active:not(.ph-fab)::before{
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:14px;
+  background:linear-gradient(135deg,rgba(46,158,94,.16),rgba(159,224,181,.10));
+  border:1px solid rgba(46,158,94,.28);
+}
 .phone-screen .ph-card:hover{transform:translateY(-2px);box-shadow:0 10px 20px -7px rgba(16,40,28,.26),inset 0 1px 0 rgba(255,255,255,.9)}
 
 /* ============================================================

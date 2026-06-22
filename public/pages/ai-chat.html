@@ -12,8 +12,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/styles.css?v=8">
+  <link rel="stylesheet" href="../css/mobile.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=8">
   <style>
     .chat-page{display:flex;flex-direction:column;min-height:100dvh}
     /* override .top-bar's space-between so header items sit tight & aligned */
@@ -75,6 +76,12 @@
   </style>
 </head>
 <body>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="culture-cells" aria-hidden="true"></div>
+</div>
 <div class="app-container chat-page">
   <header class="top-bar chat-top">
     <a href="../app.html" class="back" aria-label="Kembali"><i class="ph ph-arrow-left"></i></a>
@@ -96,7 +103,7 @@
       <p>Tanya apa saja tentang kualitas udara, kesehatan kultur Spirulina, jadwal panen, atau perawatan perangkat Anda.</p>
       <div class="chips" id="chips">
         <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-wind"></i> Bagaimana kualitas udara saya?</button>
-        <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-plant"></i> Status kultur Spirulina?</button>
+        <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-circles-three"></i> Status kultur Spirulina?</button>
         <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-calendar-check"></i> Kapan waktu panen?</button>
         <button class="chip" onclick="sendSuggestion(this)"><i class="ph ph-flask"></i> Apa itu Spirulina?</button>
       </div>
@@ -112,10 +119,10 @@
 </div>
 
 <script src="../js/firebase-config.js"></script>
-<script src="../js/app-shell.js"></script>
+<script src="../js/app-shell.js?v=8"></script>
 <script src="../js/more-menu.js"></script>
 <script src="../js/pwa.js"></script>
-<script src="../js/i18n.js"></script>
+<script src="../js/i18n.js?v=8"></script>
 <script src="../js/sensors-engine.js"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>

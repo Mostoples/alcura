@@ -23,6 +23,7 @@
     var links = [
       { href: 'ai-chat.html',   icon: 'ph-sparkle',            label: 'AI Chat' },
       { href: 'harvest.html',   icon: 'ph-basket',             label: i18n('Harvest', 'Panen', '収穫') },
+      { href: 'profile.html',   icon: 'ph-user-circle',         label: 'Profil' },
       { href: 'controls.html',  icon: 'ph-sliders-horizontal', label: 'Kontrol' },
       { href: 'simulator.html', icon: 'ph-flask',               label: 'Simulator' },
       { href: 'impact.html',    icon: 'ph-leaf',                label: 'Impact' },

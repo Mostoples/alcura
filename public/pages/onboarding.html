@@ -10,22 +10,29 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/mobile.css">
+  <link rel="stylesheet" href="../css/styles.css?v=8">
+  <link rel="stylesheet" href="../css/mobile.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=8">
 </head>
 <body data-no-auth>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="culture-cells" aria-hidden="true"></div>
+</div>
 <div class="app-container" style="justify-content:center">
   <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
     <div class="card aura-green no-pattern" style="padding:2rem 1.4rem">
       <div class="carousel" id="carousel">
         <div class="carousel-slide">
-          <div style="font-size:3rem;margin-bottom:1rem"><i class="ph-fill ph-leaf"></i></div>
+          <div style="font-size:3rem;margin-bottom:1rem"><i class="ph-fill ph-circles-three"></i></div>
           <h2>ALCURA</h2>
           <p>Living air for living spaces</p>
           <p style="font-size:.85rem;margin-top:1rem">Photobioreactor pintar dengan mikroalga Spirulina untuk purifikasi udara indoor</p>
         </div>
         <div class="carousel-slide">
-          <div style="font-size:2.2rem;margin-bottom:1rem;display:flex;gap:.8rem;justify-content:center"><i class="ph-fill ph-wind"></i><i class="ph-fill ph-drop"></i><i class="ph-fill ph-plant"></i></div>
+          <div style="font-size:2.2rem;margin-bottom:1rem;display:flex;gap:.8rem;justify-content:center"><i class="ph-fill ph-wind"></i><i class="ph-fill ph-drop"></i><i class="ph-fill ph-circles-three"></i></div>
           <h2>Tiga Manfaat</h2>
           <div style="margin-top:1.2rem;text-align:left;max-width:280px;margin-left:auto;margin-right:auto">
             <div style="margin:.8rem 0"><strong>Udara Lebih Bersih</strong><br><small>CO₂ -55%, VOC -100%, PM2.5 -80%</small></div>
@@ -68,9 +75,9 @@ function goSlide(idx) {
   document.getElementById('slideBtn').textContent = idx === 2 ? 'Mulai' : 'Selanjutnya';
 }
 </script>
-<script src="../js/app-shell.js"></script>
+<script src="../js/app-shell.js?v=8"></script>
 <script src="../js/more-menu.js"></script>
 <script src="../js/pwa.js"></script>
-<script src="../js/i18n.js"></script>
+<script src="../js/i18n.js?v=8"></script>
 </body>
 </html>

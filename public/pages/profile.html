@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Profil — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=8">
+  <link rel="stylesheet" href="../css/mobile.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=8">
+  <style>
+    /* ---- Profile page (Liquid Glass) ---- */
+    .profile-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.55rem;padding:2rem 1.4rem 1.6rem}
+    .profile-hero .pf-ava{width:104px;height:104px;border-radius:32px;object-fit:cover;
+      border:1px solid var(--g-stroke);box-shadow:0 14px 34px -12px rgba(16,40,28,.5),inset 0 1px 0 rgba(255,255,255,.4)}
+    .profile-hero h2{font-family:var(--font-helios);font-weight:800;font-size:1.5rem;letter-spacing:-.02em;margin-top:.3rem}
+    .profile-hero .pf-mail{color:var(--ink-soft);font-size:.85rem}
+    .pf-badge{display:inline-flex;align-items:center;gap:.4rem;margin-top:.4rem;font-size:.74rem;font-weight:700;
+      color:var(--leaf-500);background:rgba(46,158,94,.14);border:1px solid rgba(46,158,94,.36);
+      padding:.32rem .8rem;border-radius:100px}
+    :root[data-theme="dark"] .pf-badge{color:var(--mint-300);background:rgba(86,185,124,.16)}
+
+    .pf-field{margin-bottom:1rem}
+    .pf-field label{display:block;font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.45rem}
+    .pf-field input,.pf-field select{width:100%;padding:.8rem .95rem;font-size:.92rem;border-radius:14px}
+    .pf-hint{font-size:.74rem;color:var(--ink-mute);margin-top:.4rem}
+
+    .ava-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-top:.2rem}
+    .ava-opt{position:relative;aspect-ratio:1;border-radius:18px;overflow:hidden;cursor:pointer;
+      border:1px solid var(--g-stroke-soft);background:var(--g-fill-2);transition:transform .2s,box-shadow .2s}
+    .ava-opt img{width:100%;height:100%;object-fit:cover}
+    .ava-opt:hover{transform:translateY(-2px)}
+    .ava-opt.sel{box-shadow:0 0 0 2px var(--leaf-500),0 8px 18px -8px rgba(46,158,94,.6);border-color:transparent}
+    .ava-opt.sel::after{content:"\2713";position:absolute;right:4px;bottom:3px;font-size:.7rem;font-weight:800;color:#fff;
+      width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--leaf-500);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+    .ava-upload{display:grid;place-items:center;color:var(--leaf-500);font-size:1.6rem}
+    .pf-actions{display:flex;flex-direction:column;gap:.7rem;margin-top:.4rem}
+    .pf-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.2rem 0}
+    .pf-row .lbl{display:flex;align-items:center;gap:.7rem}
+    .pf-row .lbl .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--leaf-500);
+      background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
+    .pf-row .lbl b{font-size:.9rem;font-weight:600}
+    .pf-row .lbl small{display:block;color:var(--ink-mute);font-size:.74rem}
+  </style>
+</head>
+<body>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="culture-cells" aria-hidden="true"></div>
+</div>
+
+<div class="app-container">
+  <header class="top-bar">
+    <div class="page-title-block" style="display:flex;align-items:center;gap:.6rem">
+      <button class="btn-icon" onclick="history.length>1?history.back():location.href='settings.html'" aria-label="Kembali"><i class="ph ph-arrow-left"></i></button>
+      <div><h2>Profil</h2><p>Kelola akun & preferensi</p></div>
+    </div>
+    <div class="top-bar-actions">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema" role="button" tabindex="0"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
+    </div>
+  </header>
+
+  <div class="app-scroll">
+    <!-- Live preview hero -->
+    <div class="card aura-green no-pattern profile-hero">
+      <img class="pf-ava" data-user-avatar id="pfAvatar" src="../img/avatars/leaf.svg" alt="Foto profil">
+      <h2 data-user-name id="pfName">Pengguna ALCURA</h2>
+      <span class="pf-mail" data-user-email id="pfMail">—</span>
+      <span class="pf-badge"><i class="ph-fill ph-circles-three"></i> Anggota ALCURA</span>
+    </div>
+
+    <h3 class="section-title">Edit Profil</h3>
+    <div class="card aura-green no-pattern">
+      <div class="pf-field">
+        <label for="inpName">Nama tampilan</label>
+        <input id="inpName" type="text" placeholder="Nama kamu" maxlength="40" autocomplete="name">
+      </div>
+
+      <div class="pf-field" style="margin-bottom:.4rem">
+        <label>Foto profil</label>
+        <div class="ava-grid" id="avaGrid"></div>
+        <input type="file" id="avaFile" accept="image/*" hidden>
+        <p class="pf-hint">Pilih avatar di atas atau unggah foto sendiri.</p>
+      </div>
+    </div>
+
+    <h3 class="section-title">Preferensi</h3>
+    <div class="card aura-green no-pattern settings-card">
+      <div class="pf-row">
+        <div class="lbl"><span class="ic"><i class="ph ph-moon" data-theme-icon></i></span><div><b>Mode Gelap</b><small id="themeLabel">Off</small></div></div>
+        <button class="btn btn-secondary" onclick="toggleTheme()" style="padding:.5rem 1rem;font-size:.78rem">Ganti</button>
+      </div>
+      <div class="divider"></div>
+      <div class="pf-row">
+        <div class="lbl"><span class="ic"><i class="ph ph-translate"></i></span><div><b>Bahasa</b><small>Bahasa antarmuka</small></div></div>
+        <select id="inpLang" style="width:auto;min-width:160px">
+          <option value="id">Bahasa Indonesia</option>
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+        </select>
+      </div>
+    </div>
+
+    <h3 class="section-title">Akun</h3>
+    <div class="card aura-blue no-pattern list-card">
+      <div class="row"><span>Email</span><b id="acctMail" style="font-size:.8rem">—</b></div>
+      <div class="row"><span>User ID</span><b id="acctUid" style="font-family:var(--font-mono);font-size:.72rem">—</b></div>
+    </div>
+
+    <div class="pf-actions">
+      <button class="btn btn-primary btn-block" id="saveBtn"><i class="ph ph-check"></i> Simpan Perubahan</button>
+      <button class="btn btn-block" onclick="handleLogout()" style="color:#fff;background:linear-gradient(135deg,#ef5350,#df5757);box-shadow:0 8px 22px rgba(223,87,87,.35)"><i class="ph ph-sign-out"></i> Logout</button>
+    </div>
+  </div>
+
+  <div class="spacer-bottom"></div>
+  <nav class="bottom-nav">
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-circles-three"></i></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
+  </nav>
+</div>
+
+<script src="../js/firebase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/app-shell.js?v=8"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/i18n.js?v=8"></script>
+<script>
+(function () {
+  setTimeout(function () {
+    if (typeof alcuraAuth !== 'undefined' && !alcuraAuth.isAuthenticated()) { window.location.href = '../login.html'; }
+  }, 500);
+
+  // Brand-themed avatars (no people) — match the ALCURA visual language
+  var PRESETS = [
+    '../img/avatars/leaf.svg', '../img/avatars/spiral.svg', '../img/avatars/droplet.svg',
+    '../img/avatars/bubbles.svg', '../img/avatars/cell.svg', '../img/avatars/sun.svg'
+  ];
+
+  function cached() { try { return JSON.parse(localStorage.getItem('alcuraUser') || '{}') || {}; } catch (e) { return {}; } }
+  var user = cached();
+  var selected = user.photoURL || PRESETS[0];
+
+  var elName = document.getElementById('inpName');
+  var elLang = document.getElementById('inpLang');
+  var grid = document.getElementById('avaGrid');
+  var fileInp = document.getElementById('avaFile');
+
+  // ---- Prime form fields ----
+  elName.value = user.displayName || (user.email ? user.email.split('@')[0] : '');
+  elLang.value = localStorage.getItem('lang') || 'id';
+  document.getElementById('acctMail').textContent = user.email || '—';
+  document.getElementById('acctUid').textContent = user.uid || '—';
+
+  // ---- Avatar grid (presets + upload tile) ----
+  function buildGrid() {
+    grid.innerHTML = PRESETS.map(function (src) {
+      return '<div class="ava-opt' + (src === selected ? ' sel' : '') + '" data-src="' + src + '"><img loading="lazy" src="' + src + '" alt=""></div>';
+    }).join('') + '<div class="ava-opt ava-upload" id="avaUploadBtn" title="Unggah foto"><i class="ph ph-upload-simple"></i></div>';
+    grid.querySelectorAll('.ava-opt[data-src]').forEach(function (o) {
+      o.addEventListener('click', function () { selected = o.getAttribute('data-src'); paint(); });
+    });
+    document.getElementById('avaUploadBtn').addEventListener('click', function () { fileInp.click(); });
+  }
+  function paint() {
+    grid.querySelectorAll('.ava-opt[data-src]').forEach(function (o) {
+      o.classList.toggle('sel', o.getAttribute('data-src') === selected);
+    });
+    document.getElementById('pfAvatar').src = selected;
+  }
+  fileInp.addEventListener('change', function () {
+    var f = fileInp.files && fileInp.files[0];
+    if (!f) return;
+    if (f.size > 1.5 * 1024 * 1024) { toast('Gambar terlalu besar (maks 1.5 MB)'); return; }
+    var rd = new FileReader();
+    rd.onload = function () { selected = rd.result; document.getElementById('pfAvatar').src = selected;
+      grid.querySelectorAll('.ava-opt[data-src]').forEach(function (o) { o.classList.remove('sel'); }); };
+    rd.readAsDataURL(f);
+  });
+
+  // Live name preview
+  elName.addEventListener('input', function () {
+    document.getElementById('pfName').textContent = elName.value.trim() || 'Pengguna ALCURA';
+  });
+
+  // ---- Save ----
+  document.getElementById('saveBtn').addEventListener('click', function () {
+    var name = elName.value.trim();
+    if (!name) { toast('Nama tidak boleh kosong'); elName.focus(); return; }
+    var u = cached();
+    u.displayName = name;
+    u.photoURL = selected;
+    localStorage.setItem('alcuraUser', JSON.stringify(u));
+
+    var prevLang = localStorage.getItem('lang') || 'id';
+    localStorage.setItem('lang', elLang.value);
+
+    // Push to Firebase Auth when signed in (skip huge data-URL photos)
+    try {
+      if (typeof alcuraAuth !== 'undefined' && alcuraAuth.currentUser) {
+        var patch = { displayName: name };
+        if (/^https?:/.test(selected)) patch.photoURL = selected;
+        alcuraAuth.currentUser.updateProfile(patch).catch(function () {});
+      }
+    } catch (e) {}
+
+    document.dispatchEvent(new CustomEvent('userLoggedIn', { detail: u }));
+    toast('Profil tersimpan ✓');
+    if (prevLang !== elLang.value) { setTimeout(function () { location.reload(); }, 700); }
+  });
+
+  buildGrid();
+  paint();
+
+  // Reflect freshest auth data if it arrives after load
+  document.addEventListener('userLoggedIn', function (e) {
+    var d = e.detail || {};
+    if (d.email) { document.getElementById('acctMail').textContent = d.email; document.getElementById('pfMail').textContent = d.email; }
+    if (d.uid) document.getElementById('acctUid').textContent = d.uid;
+    if (!elName.value && d.displayName) elName.value = d.displayName;
+  });
+})();
+
+function handleLogout() {
+  if (!confirm('Apakah Anda yakin ingin logout?')) return;
+  function done() { localStorage.removeItem('alcuraUser'); window.location.href = '../login.html'; }
+  if (typeof alcuraAuth !== 'undefined' && alcuraAuth.signOut) { alcuraAuth.signOut().then(done).catch(done); } else { done(); }
+}
+</script>
+</body>
+</html>

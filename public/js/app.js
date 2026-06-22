@@ -9,7 +9,8 @@ window.addEventListener('scroll',()=>{const n=document.getElementById('nav');if(
 
 document.querySelectorAll('.bottom-nav .bn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.bottom-nav .bn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.bottom-nav .bn i').forEach(i=>{i.className=i.className.replace('ph-fill','ph');});const ic=b.querySelector('i');if(ic)ic.className=ic.className.replace('ph ','ph-fill ');});});
 
-(function(){const data=[42,48,55,60,52,46,40,38,44,50,58,62,57,49,45,41,47,53,59,64,55,48,43,46];const el=document.getElementById('spark');if(el)data.forEach(v=>{const b=document.createElement('div');b.className='bar';b.style.height=v+'%';b.style.opacity=(0.55+v/160).toFixed(2);el.appendChild(b);});})();
+/* #spark is rendered as a live SVG trendline by js/history.js (renderSpark),
+   driven from the dashboard's ALCURA.on(...) handler — no static bars here. */
 
 (function(){
   let bubbles='';

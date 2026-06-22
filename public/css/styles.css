@@ -39,9 +39,9 @@
   --font-mono:    'Space Grotesk', monospace;
 
   /* Neumorphic shadow recipes */
-  --shadow-raised:    -6px -6px 14px var(--shadow-light), 6px 6px 14px var(--shadow-dark);
-  --shadow-raised-sm: -3px -3px 7px var(--shadow-light), 3px 3px 7px var(--shadow-dark);
-  --shadow-inset:     inset -3px -3px 8px var(--shadow-light), inset 4px 4px 10px var(--shadow-dark);
+  --shadow-raised:    -3px -3px 8px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+  --shadow-raised-sm: -2px -2px 5px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+  --shadow-inset:     inset -2px -2px 5px var(--shadow-light), inset 3px 3px 7px var(--shadow-dark);
   --shadow-accent:    var(--accent-glow), -4px -4px 10px var(--shadow-light), 5px 5px 12px var(--shadow-dark);
 
   /* Aura color tokens (RGB triplets — used via rgba(var(--aura), x)) */
@@ -266,10 +266,10 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
   content:"";position:absolute;right:-8%;bottom:-8%;width:55%;aspect-ratio:1/1;
   pointer-events:none;z-index:0;opacity:.09;
   background-position:center;background-size:contain;background-repeat:no-repeat;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2334c476'><path d='M50 12c-18 6-30 22-30 40 0 4 .5 8 1.5 11C30 50 44 38 60 32c-12 10-22 24-26 41 3 1 6 1.5 10 1.5 22 0 36-18 36-42 0-8-2-15-6-20-6 1-13 0-18-1 5-1 9-3 12-6-7 4-16 5-24 5z'/></svg>");
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2334c476'><circle cx='42' cy='40' r='20'/><circle cx='68' cy='56' r='14'/><circle cx='46' cy='71' r='11'/><circle cx='73' cy='33' r='8'/></svg>");
 }
-.card[data-pattern="leaf"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2334c476'><path d='M50 12c-18 6-30 22-30 40 0 4 .5 8 1.5 11C30 50 44 38 60 32c-12 10-22 24-26 41 3 1 6 1.5 10 1.5 22 0 36-18 36-42 0-8-2-15-6-20-6 1-13 0-18-1 5-1 9-3 12-6-7 4-16 5-24 5z'/></svg>")}
-.card[data-pattern="plant"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2356b97c'><path d='M48 88V52c-14 0-26-10-28-26 16 0 28 8 30 22 3-16 16-26 32-26-2 18-16 28-32 28v38z'/></svg>")}
+.card[data-pattern="leaf"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2334c476'><circle cx='42' cy='40' r='20'/><circle cx='68' cy='56' r='14'/><circle cx='46' cy='71' r='11'/><circle cx='73' cy='33' r='8'/></svg>")}
+.card[data-pattern="plant"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2356b97c'><circle cx='42' cy='40' r='20'/><circle cx='68' cy='56' r='14'/><circle cx='46' cy='71' r='11'/><circle cx='73' cy='33' r='8'/></svg>")}
 .card[data-pattern="drop"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%234d8ff0'><path d='M50 10c-3 8-25 30-25 50 0 14 11 25 25 25s25-11 25-25c0-20-22-42-25-50z'/></svg>")}
 .card[data-pattern="wind"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2334c476'><path d='M12 40h44a10 10 0 1 0-10-10 4 4 0 0 0 8 0 2 2 0 1 1 2 2H12zm0 18h62a10 10 0 1 1-10 10 4 4 0 0 1 8 0 2 2 0 1 0 2-2H12zm0 18h40a8 8 0 1 0-8-8 4 4 0 0 0 8 0H12z'/></svg>")}
 .card[data-pattern="flask"]::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%238d6df0'><path d='M42 14h16v22l20 38a8 8 0 0 1-7 12H29a8 8 0 0 1-7-12l20-38zm8 36a6 6 0 1 0 0 12 6 6 0 0 0 0-12z'/></svg>")}
@@ -708,13 +708,28 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
 .qa span{font-size:.8rem;font-weight:600;display:block;color:var(--text)}
 .qa small{font-size:.66rem;color:var(--text-muted)}
 
-/* spark bars (dashboard #spark) */
-#spark{display:flex;align-items:flex-end;gap:5px;height:74px;margin-top:.4rem}
-#spark .bar{flex:1;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg, var(--accent), rgba(var(--aura-mint),1));opacity:.9}
-/* chart mock bars (pages) */
-.chart-mock{display:flex;align-items:flex-end;gap:6px;height:120px}
-.chart-mock .bar{flex:1;border-radius:6px 6px 3px 3px;background:var(--bg-soft);box-shadow:var(--shadow-inset)}
-.chart-mock .bar.active{background:linear-gradient(180deg, var(--accent), rgba(var(--aura-mint),1));box-shadow:0 0 8px rgba(var(--aura-green),.4)}
+/* spark / chart hosts (dashboard #spark + page .chart-mock) */
+#spark{height:74px;margin-top:.4rem}
+.chart-mock{height:120px}
+
+/* ---- Trendline chart — plain research-style line plot ----
+   Painted by ALCURA_HISTORY.renderTrend/renderBars/renderSpark.
+   Thin trace + faint gridlines, no glow, no animation. */
+.trend{position:relative;display:block;width:100%;height:100%}
+#spark.trend,.chart-mock.trend{display:block}
+.trend .trend-svg{display:block;width:100%;height:100%;overflow:visible;filter:none}
+.trend .trend-grid{stroke:var(--line);stroke-width:1}
+.trend .trend-area{stroke:none}
+.trend .trend-line{
+  fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+.trend .ts-0{stop-color:var(--accent);stop-opacity:.12}
+.trend .ts-1{stop-color:var(--accent);stop-opacity:0}
+.trend .trend-cap{
+  position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent);
+  transform:translate(-50%,-50%);pointer-events:none;
+  box-shadow:0 0 0 2px var(--surface);
+}
 
 /* sky-100 legacy callout token */
 .sky-100,[style*="--sky-100"]{}

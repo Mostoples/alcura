@@ -56,6 +56,13 @@
       link.href = APP_BASE + 'manifest.webmanifest';
       document.head.appendChild(link);
     }
+    // iOS home-screen icon (uses the brand logo).
+    if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+      var ati = document.createElement('link');
+      ati.rel = 'apple-touch-icon';
+      ati.href = APP_BASE + 'img/logo.png';
+      document.head.appendChild(ati);
+    }
     addMeta('theme-color', '#56b97c');
     // Standalone hints. mobile-web-app-capable is the standard (replaces the
     // now-deprecated apple- prefix); keep the apple one too for older iOS Safari.

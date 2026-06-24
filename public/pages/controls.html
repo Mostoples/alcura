@@ -2,28 +2,38 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Controls — ALCURA</title>
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css?v=8">
   <link rel="stylesheet" href="../css/mobile.css?v=8">
-  <link rel="stylesheet" href="../css/landing.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=9">
   <style>
-    .sch-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.45rem 0;font-size:.84rem;color:var(--text)}
-    .sch-row .sch-in{display:flex;align-items:center;gap:.35rem;color:var(--text-muted);font-size:.78rem}
-    .sch-row input{border:0;background:var(--bg-sunken,rgba(0,0,0,.05));border-radius:10px;padding:.4rem .55rem;font-family:var(--font);font-size:.85rem;color:var(--text);outline:none;box-shadow:inset 0 0 0 1px rgba(var(--aura-green),.16);width:74px;text-align:center}
-    .sch-row input[type=time]{width:96px}
-    .sch-row input:focus{box-shadow:inset 0 0 0 2px rgba(var(--aura-green),.5)}
-    .sch-sep{height:1px;background:var(--line,rgba(0,0,0,.08));margin:.6rem 0}
-    .sch-status{margin-top:.7rem;padding:.6rem .75rem;border-radius:12px;background:rgba(var(--aura-green),.10);font-size:.76rem;color:var(--text-muted);line-height:1.5}
-    .sch-status b{color:var(--accent)}
-    .sch-status.warn{background:rgba(var(--aura-amber),.14)}
-    .sch-body[hidden]{display:none}
+    .tgl-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem .15rem}
+    .tgl-label{display:flex;align-items:center;gap:.65rem;font-size:.9rem;font-weight:600;color:var(--text)}
+    .tgl-label i{font-size:1.3rem;color:var(--accent)}
+    .tgl-label small{display:block;font-weight:400;font-size:.72rem;color:var(--text-muted);margin-top:.1rem}
+    .switch{position:relative;display:inline-block;width:48px;height:28px;flex-shrink:0}
+    .switch input{opacity:0;width:0;height:0}
+    .switch .sl{position:absolute;cursor:pointer;inset:0;background:var(--bg-sunken,rgba(0,0,0,.14));border-radius:999px;transition:.2s;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+    .switch .sl:before{content:"";position:absolute;height:22px;width:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+    .switch input:checked + .sl{background:rgb(var(--aura-green))}
+    .switch input:checked + .sl:before{transform:translateX(20px)}
+    .lamp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-top:.5rem}
+    .lamp-cell{display:flex;flex-direction:column;align-items:center;gap:.35rem;padding:.7rem .2rem;border-radius:14px;background:rgba(var(--aura-green),.07);cursor:pointer;transition:.15s;border:0;font-family:var(--font)}
+    .lamp-cell i{font-size:1.55rem;color:var(--text-muted);transition:.15s}
+    .lamp-cell span{font-size:.7rem;font-weight:700;color:var(--text-muted)}
+    .lamp-cell.on{background:rgba(var(--aura-amber),.2)}
+    .lamp-cell.on i{color:rgb(var(--aura-amber))}
+    .lamp-cell.on span{color:var(--text)}
+    .ctrl-sep{height:1px;background:var(--line,rgba(0,0,0,.08));margin:.2rem 0}
   </style>
 </head>
 <body>
@@ -35,70 +45,57 @@
 </div>
 <div class="app-container">
   <header class="top-bar">
-    <div class="page-title-block"><h2>Controls</h2><p>Atur LED, aerasi & mode</p></div>
+    <div class="page-title-block"><h2>Controls</h2><p>Kontrol perangkat real-time</p></div>
     <div class="top-bar-actions">
       <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema" role="button" tabindex="0"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
     </div>
   </header>
 
   <div class="app-scroll">
-    <div class="checkbox" style="border:0"><input type="checkbox" id="autoMode" checked><label for="autoMode"><b>Auto Mode (AI Optimized)</b> — Sistem menyesuaikan parameter otomatis dari data sensor.</label></div>
+    <div class="auto-banner on" id="autoBanner"><i class="ph-fill ph-robot"></i><div><b id="autoState">Saran AI dari sensor</b><ul class="rec-list" id="autoRecs" style="margin-top:.4rem"></ul></div></div>
 
-    <div class="auto-banner on" id="autoBanner"><i class="ph-fill ph-robot"></i><div><b id="autoState">AI Auto Mode aktif</b><ul class="rec-list" id="autoRecs" style="margin-top:.4rem"></ul></div></div>
-
-    <h3 class="section-title">LED & Environment</h3>
-    <div class="slider-group">
-      <label><span>LED Intensity</span><span id="ledVal">72%</span></label>
-      <input type="range" min="0" max="100" value="72" id="ledSlider" oninput="onSlider('ledIntensity', this)">
-    </div>
-
-    <h3 class="section-title">Spectrum Tuning</h3>
-    <div class="spectrum-grid">
-      <div class="spectrum-item"><label>Red</label><div class="spectrum-swatch" style="background:#ff4444"></div><input type="range" min="0" max="100" value="85" data-spec="red" oninput="onSpectrum(this)"></div>
-      <div class="spectrum-item"><label>Blue</label><div class="spectrum-swatch" style="background:#4488ff"></div><input type="range" min="0" max="100" value="60" data-spec="blue" oninput="onSpectrum(this)"></div>
-      <div class="spectrum-item"><label>Green</label><div class="spectrum-swatch" style="background:#44ff44"></div><input type="range" min="0" max="100" value="45" data-spec="green" oninput="onSpectrum(this)"></div>
-      <div class="spectrum-item"><label>Far-Red</label><div class="spectrum-swatch" style="background:#cc3333"></div><input type="range" min="0" max="100" value="30" data-spec="farRed" oninput="onSpectrum(this)"></div>
-      <div class="spectrum-item"><label>UV</label><div class="spectrum-swatch" style="background:#9944ff"></div><input type="range" min="0" max="100" value="15" data-spec="uv" oninput="onSpectrum(this)"></div>
-    </div>
-
-    <div class="slider-group">
-      <label><span>Aeration Rate</span><span id="aerVal">60%</span></label>
-      <input type="range" min="0" max="100" value="60" id="aerSlider" oninput="onSlider('aeration', this)">
-    </div>
-
-    <h3 class="section-title">Advanced Settings</h3>
-    <div class="card no-pattern aura-green">
-      <div class="checkbox" style="border:0;padding:.4rem 0"><input type="checkbox" id="co2" checked onchange="onCo2(this)"><label for="co2">CO₂ Injection</label></div>
-      <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.4rem;font-size:.8rem"><span style="color:var(--text-muted)">Status: <b style="color:var(--accent)" id="co2Status">Aktif</b></span></div>
-    </div>
-
-    <h3 class="section-title">Jadwal Otomatis</h3>
-    <div class="card no-pattern aura-green">
-      <div class="checkbox" style="border:0;padding:.3rem 0"><input type="checkbox" id="schPhoto"><label for="schPhoto"><b>Fotoperiode LED</b> — siklus terang/gelap harian untuk ritme kultur.</label></div>
-      <div class="sch-body" id="schPhotoBody">
-        <div class="sch-row"><span><i class="ph ph-sun" style="color:var(--accent);margin-right:.3rem"></i>Nyala</span><span class="sch-in"><input type="time" id="schOn" step="3600"></span></div>
-        <div class="sch-row"><span><i class="ph ph-moon" style="color:var(--accent);margin-right:.3rem"></i>Mati</span><span class="sch-in"><input type="time" id="schOff" step="3600"></span></div>
-        <div class="sch-row"><span>LED siang</span><span class="sch-in"><input type="number" id="schDay" min="0" max="100">%</span></div>
-        <div class="sch-row"><span>LED malam</span><span class="sch-in"><input type="number" id="schNight" min="0" max="100">%</span></div>
+    <!-- Lampu (lamp/brightness + l1..l5) -->
+    <h3 class="section-title">Lampu <span class="count-chip" id="lampChip">0/5</span></h3>
+    <div class="card no-pattern aura-amber">
+      <div class="slider-group" style="margin:0">
+        <label><span><i class="ph-fill ph-lightbulb-filament" style="margin-right:.35rem;color:rgb(var(--aura-amber))"></i>Kecerahan</span><span id="briVal">72%</span></label>
+        <input type="range" min="0" max="100" value="72" id="briSlider">
       </div>
-      <div class="sch-sep"></div>
-      <div class="checkbox" style="border:0;padding:.3rem 0"><input type="checkbox" id="schAer"><label for="schAer"><b>Siklus Aerasi</b> — pompa menyala berkala untuk pencampuran.</label></div>
-      <div class="sch-body" id="schAerBody">
-        <div class="sch-row"><span>Interval</span><span class="sch-in"><input type="number" id="schInt" min="5" max="240"> mnt</span></div>
-        <div class="sch-row"><span>Durasi nyala</span><span class="sch-in"><input type="number" id="schDur" min="1" max="120"> mnt</span></div>
-        <div class="sch-row"><span>Aerasi saat aktif</span><span class="sch-in"><input type="number" id="schLvl" min="0" max="100">%</span></div>
+      <div class="ctrl-sep" style="margin:.7rem 0"></div>
+      <div class="lamp-grid" id="lampGrid">
+        <button class="lamp-cell" data-lamp="l1"><i class="ph-fill ph-lightbulb"></i><span>L1</span></button>
+        <button class="lamp-cell" data-lamp="l2"><i class="ph-fill ph-lightbulb"></i><span>L2</span></button>
+        <button class="lamp-cell" data-lamp="l3"><i class="ph-fill ph-lightbulb"></i><span>L3</span></button>
+        <button class="lamp-cell" data-lamp="l4"><i class="ph-fill ph-lightbulb"></i><span>L4</span></button>
+        <button class="lamp-cell" data-lamp="l5"><i class="ph-fill ph-lightbulb"></i><span>L5</span></button>
       </div>
-      <div class="sch-status" id="schStatus"></div>
     </div>
 
-    <h3 class="section-title">Mode Preset</h3>
-    <div class="btn-group">
-      <button class="btn btn-secondary" data-mode="siang" onclick="setMode('siang', this)"><i class="ph-fill ph-sun"></i> Siang</button>
-      <button class="btn btn-secondary" data-mode="malam" onclick="setMode('malam', this)"><i class="ph-fill ph-moon-stars"></i> Malam</button>
-      <button class="btn btn-primary" data-mode="growth" onclick="setMode('growth', this)"><i class="ph-fill ph-rocket"></i> Growth</button>
+    <!-- Kipas (fan/fan1, fan/fan2) -->
+    <h3 class="section-title">Kipas (Ventilasi)</h3>
+    <div class="card no-pattern aura-blue">
+      <div class="tgl-row"><span class="tgl-label"><i class="ph-fill ph-fan"></i><span>Kipas 1<small>Sirkulasi udara</small></span></span><label class="switch"><input type="checkbox" data-fan="fan1"><span class="sl"></span></label></div>
+      <div class="ctrl-sep"></div>
+      <div class="tgl-row"><span class="tgl-label"><i class="ph-fill ph-fan"></i><span>Kipas 2<small>Sirkulasi udara</small></span></span><label class="switch"><input type="checkbox" data-fan="fan2"><span class="sl"></span></label></div>
     </div>
 
-    <button class="btn btn-primary btn-block" onclick="saveSettings()"><i class="ph ph-floppy-disk"></i> Simpan Pengaturan</button>
+    <!-- Pompa (pump/pump1, pump/pump2) -->
+    <h3 class="section-title">Pompa Air</h3>
+    <div class="card no-pattern aura-green">
+      <div class="tgl-row"><span class="tgl-label"><i class="ph-fill ph-drop"></i><span>Pompa 1<small>Sirkulasi air</small></span></span><label class="switch"><input type="checkbox" data-pump="pump1"><span class="sl"></span></label></div>
+      <div class="ctrl-sep"></div>
+      <div class="tgl-row"><span class="tgl-label"><i class="ph-fill ph-drop"></i><span>Pompa 2<small>Sirkulasi air</small></span></span><label class="switch"><input type="checkbox" data-pump="pump2"><span class="sl"></span></label></div>
+    </div>
+
+    <!-- Device status -->
+    <h3 class="section-title">Status Perangkat</h3>
+    <div class="card no-pattern">
+      <div class="row"><span><i class="ph ph-pulse" style="margin-right:.4rem;color:var(--accent)"></i>Uptime perangkat</span><b><span data-bind="device.uptime">0</span> dtk</b></div>
+      <div class="row"><span><i class="ph ph-wifi-high" style="margin-right:.4rem;color:var(--accent)"></i>Koneksi</span><b id="connState">—</b></div>
+      <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.6rem;font-size:.76rem;color:var(--text-muted);line-height:1.5">
+        <i class="ph ph-info" style="margin-right:.4rem;color:var(--accent)"></i>Setiap perubahan langsung dikirim ke perangkat melalui Realtime Database — tidak perlu tombol simpan.
+      </div>
+    </div>
   </div>
 
   <div class="spacer-bottom"></div>
@@ -115,125 +112,63 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=8"></script>
+<script src="../js/firebase-config.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script src="../js/notifications.js"></script>
-<script src="../js/scheduler.js"></script>
 <script>
 requireAuthPage();
-
-var ledSlider = document.getElementById('ledSlider');
-var aerSlider = document.getElementById('aerSlider');
-var autoChk = document.getElementById('autoMode');
-var co2Chk = document.getElementById('co2');
-
-// --- Initialise inputs from saved control state ---
-(function initFromControl() {
-  var c = ALCURA.control;
-  autoChk.checked = !!c.autoMode;
-  co2Chk.checked = !!c.co2Injection;
-  document.querySelectorAll('[data-spec]').forEach(function (s) {
-    var k = s.getAttribute('data-spec'); if (c.spectrum[k] != null) s.value = c.spectrum[k];
-  });
-  document.querySelectorAll('.btn-group .btn').forEach(function (b) {
-    var on = b.getAttribute('data-mode') === c.mode;
-    b.classList.toggle('btn-primary', on); b.classList.toggle('btn-secondary', !on);
-  });
-})();
-
 function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
-autoChk.addEventListener('change', function () {
-  ALCURA.setControl('autoMode', autoChk.checked);
-  toast(autoChk.checked ? T('AI Auto Mode on', 'AI Auto Mode diaktifkan', 'AIオートモード オン') : T('Manual mode on', 'Mode manual diaktifkan', '手動モード オン'));
+
+var briSlider = document.getElementById('briSlider');
+var briVal = document.getElementById('briVal');
+var dragging = false;
+
+// ---- Brightness (lamp/brightness) ----
+briSlider.addEventListener('input', function () { briVal.textContent = briSlider.value + '%'; dragging = true; });
+briSlider.addEventListener('change', function () {
+  ALCURA.setDevice('lamp/brightness', +briSlider.value);
+  dragging = false;
+  toast(T('Brightness set to ', 'Kecerahan diatur ke ', '明るさを設定 ') + briSlider.value + '%');
 });
 
-function onSlider(key, el) {
-  document.getElementById(key === 'ledIntensity' ? 'ledVal' : 'aerVal').textContent = el.value + '%';
-  if (!autoChk.checked) ALCURA.setControl(key, +el.value);
-}
-function onSpectrum(el) {
-  var obj = {}; obj[el.getAttribute('data-spec')] = +el.value;
-  ALCURA.setControl('spectrum', obj);
-}
-function onCo2(el) {
-  ALCURA.setControl('co2Injection', el.checked);
-  document.getElementById('co2Status').textContent = el.checked ? T('Active', 'Aktif', '有効') : T('Inactive', 'Nonaktif', '無効');
-}
-function setMode(mode, el) {
-  ALCURA.setControl('mode', mode);
-  document.querySelectorAll('.btn-group .btn').forEach(b => { b.classList.add('btn-secondary'); b.classList.remove('btn-primary'); });
-  if (el) { el.classList.add('btn-primary'); el.classList.remove('btn-secondary'); }
-  var mn = mode === 'siang' ? T('Day', 'Siang', '昼') : mode === 'malam' ? T('Night', 'Malam', '夜') : T('Growth', 'Growth', 'グロース');
-  toast(T('Mode changed to: ', 'Mode diubah ke: ', 'モード変更: ') + mn);
-}
-function saveSettings() { toast(T('Settings saved ✓', 'Pengaturan tersimpan ✓', '設定を保存しました ✓')); }
+// ---- Individual lamps (lamp/l1..l5) ----
+document.querySelectorAll('[data-lamp]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var k = btn.getAttribute('data-lamp');
+    ALCURA.setDevice('lamp/' + k, !ALCURA.device.lamp[k]);
+  });
+});
 
-// --- Reflect engine state: when Auto Mode is on, sliders mirror the AI setpoints ---
+// ---- Fans (fan/fan1, fan/fan2) ----
+document.querySelectorAll('[data-fan]').forEach(function (inp) {
+  inp.addEventListener('change', function () { ALCURA.setDevice('fan/' + inp.getAttribute('data-fan'), inp.checked); });
+});
+
+// ---- Pumps (pump/pump1, pump/pump2) ----
+document.querySelectorAll('[data-pump]').forEach(function (inp) {
+  inp.addEventListener('change', function () { ALCURA.setDevice('pump/' + inp.getAttribute('data-pump'), inp.checked); });
+});
+
+// ---- Reflect live device state from RTDB ----
 ALCURA.on(function (d) {
-  var auto = autoChk.checked;
-  // Lock manual sliders while AI drives them
-  ledSlider.disabled = auto; aerSlider.disabled = auto;
-  ledSlider.style.opacity = auto ? '.6' : '1'; aerSlider.style.opacity = auto ? '.6' : '1';
+  var dev = d.device;
+  if (!dragging) { briSlider.value = dev.brightness; briVal.textContent = Math.round(dev.brightness) + '%'; }
+  document.querySelectorAll('[data-lamp]').forEach(function (btn) { btn.classList.toggle('on', !!dev.lamp[btn.getAttribute('data-lamp')]); });
+  document.getElementById('lampChip').textContent = dev.lampsOn + '/5';
+  document.querySelectorAll('[data-fan]').forEach(function (inp) { if (document.activeElement !== inp) inp.checked = !!dev.fan[inp.getAttribute('data-fan')]; });
+  document.querySelectorAll('[data-pump]').forEach(function (inp) { if (document.activeElement !== inp) inp.checked = !!dev.pump[inp.getAttribute('data-pump')]; });
 
-  ledSlider.value = d.applied.ledIntensity;
-  aerSlider.value = d.applied.aeration;
-  document.getElementById('ledVal').textContent = d.applied.ledIntensity + '%';
-  document.getElementById('aerVal').textContent = d.applied.aeration + '%';
-  if (auto) { co2Chk.checked = d.applied.co2Injection; document.getElementById('co2Status').textContent = d.applied.co2Injection ? T('Active', 'Aktif', '有効') : T('Inactive', 'Nonaktif', '無効'); }
+  // AI advisory (read-only, derived from live sensors)
+  document.getElementById('autoState').textContent = T('AI suggestions from live sensors:', 'Saran AI dari sensor langsung:', 'ライブセンサーからのAI提案:');
+  document.getElementById('autoRecs').innerHTML = d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('');
 
-  var banner = document.getElementById('autoBanner');
-  banner.classList.toggle('on', auto);
-  document.getElementById('autoState').textContent = auto ? T('AI Auto Mode active — latest decisions:', 'AI Auto Mode aktif — keputusan terkini:', 'AIオートモード有効 — 最新の判断:') : T('Manual mode — Auto Mode off', 'Mode manual — Auto Mode nonaktif', '手動モード — オートモード オフ');
-  document.getElementById('autoRecs').innerHTML = auto
-    ? d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('')
-    : '<li><i class="ph-fill ph-hand"></i><span>' + T('Turn on Auto Mode so the system manages LED, aeration & CO₂ automatically.', 'Aktifkan Auto Mode agar sistem mengatur LED, aerasi & CO₂ otomatis.', 'オートモードを有効にすると、LED・エアレーション・CO₂を自動管理します。') + '</span></li>';
+  var cs = document.getElementById('connState');
+  if (cs) {
+    var on = ALCURA.deviceBound;
+    cs.textContent = on ? T('Connected', 'Terhubung', '接続済み') : T('Offline', 'Luring', 'オフライン');
+    cs.style.color = on ? 'rgb(var(--aura-green))' : 'rgb(var(--aura-coral))';
+  }
 });
-
-// ===== Scheduler (Jadwal Otomatis) UI =====
-(function () {
-  var S = window.ALCURA_SCHED; if (!S) return;
-  var e = {
-    photo: document.getElementById('schPhoto'), on: document.getElementById('schOn'), off: document.getElementById('schOff'),
-    day: document.getElementById('schDay'), night: document.getElementById('schNight'),
-    aer: document.getElementById('schAer'), int: document.getElementById('schInt'), dur: document.getElementById('schDur'), lvl: document.getElementById('schLvl'),
-    pBody: document.getElementById('schPhotoBody'), aBody: document.getElementById('schAerBody'), status: document.getElementById('schStatus')
-  };
-  function hh(h) { return (h < 10 ? '0' : '') + h + ':00'; }
-  function clampN(v, a, b, d) { var n = parseFloat(v); if (isNaN(n)) return d; return Math.max(a, Math.min(b, Math.round(n))); }
-  function parseHour(v) { var n = parseInt((v || '').split(':')[0], 10); return isNaN(n) ? 0 : Math.max(0, Math.min(23, n)); }
-  function fill() {
-    var c = S.get();
-    e.photo.checked = c.photoperiod.enabled;
-    e.on.value = hh(c.photoperiod.onHour); e.off.value = hh(c.photoperiod.offHour);
-    e.day.value = c.photoperiod.dayLevel; e.night.value = c.photoperiod.nightLevel;
-    e.aer.checked = c.aeration.enabled;
-    e.int.value = c.aeration.intervalMin; e.dur.value = c.aeration.durationMin; e.lvl.value = c.aeration.level;
-    e.pBody.hidden = !c.photoperiod.enabled; e.aBody.hidden = !c.aeration.enabled;
-  }
-  function commit() {
-    S.set({
-      photoperiod: { enabled: e.photo.checked, onHour: parseHour(e.on.value), offHour: parseHour(e.off.value), dayLevel: clampN(e.day.value, 0, 100, 75), nightLevel: clampN(e.night.value, 0, 100, 20) },
-      aeration: { enabled: e.aer.checked, intervalMin: clampN(e.int.value, 5, 240, 60), durationMin: clampN(e.dur.value, 1, 120, 20), level: clampN(e.lvl.value, 0, 100, 70) }
-    });
-    e.pBody.hidden = !e.photo.checked; e.aBody.hidden = !e.aer.checked;
-    renderStatus();
-  }
-  function renderStatus() {
-    var st = S.status();
-    if (!e.photo.checked && !e.aer.checked) { e.status.classList.remove('warn'); e.status.innerHTML = T('No schedule active.', 'Belum ada jadwal aktif.', 'スケジュールは未設定です。'); return; }
-    var parts = [];
-    if (e.photo.checked) parts.push('LED: <b>' + st.photoSummary + '</b> · ' + (st.ledOn ? T('now ON', 'sekarang NYALA', '現在 点灯') : T('now OFF', 'sekarang MATI', '現在 消灯')) + ' ' + (st.ledWant != null ? st.ledWant + '%' : ''));
-    if (e.aer.checked) parts.push(T('Aeration', 'Aerasi', 'エアレーション') + ': ' + (st.aerOn ? T('burst', 'semburan', '噴出') : T('idle', 'siaga', '待機')) + ' ' + (st.aerWant != null ? st.aerWant + '%' : ''));
-    var msg = parts.join('<br>');
-    if (!st.governed) { e.status.classList.add('warn'); msg += '<br>⚠ ' + T('Schedule applies only when Auto Mode is OFF.', 'Jadwal berlaku hanya saat Auto Mode nonaktif.', 'スケジュールはオートモード OFF の時のみ有効です。'); }
-    else e.status.classList.remove('warn');
-    e.status.innerHTML = msg;
-  }
-  [e.photo, e.aer].forEach(function (c) { c.addEventListener('change', commit); });
-  [e.on, e.off, e.day, e.night, e.int, e.dur, e.lvl].forEach(function (i) { i.addEventListener('change', commit); });
-  fill(); renderStatus();
-  ALCURA.on(renderStatus);
-  document.addEventListener('alcura:lang', renderStatus);
-})();
 </script>
 </body>
 </html>

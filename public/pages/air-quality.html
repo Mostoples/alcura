@@ -2,17 +2,19 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Air Quality — ALCURA</title>
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css?v=8">
   <link rel="stylesheet" href="../css/mobile.css?v=8">
-  <link rel="stylesheet" href="../css/landing.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=9">
 </head>
 <body>
 <div class="liquid-bg">
@@ -47,18 +49,18 @@
       </div>
     </div>
 
-    <!-- ===== Keamanan — Asap & Gas (triangulasi 3× MQ-2) ===== -->
-    <h3 class="section-title">Keamanan — Asap &amp; Gas</h3>
+    <!-- ===== Keamanan — Deteksi Kebocoran Gas (CO · CH₄ · H₂) ===== -->
+    <h3 class="section-title">Keamanan — Deteksi Gas</h3>
     <div class="alert" data-bind-aura="safety.aura" id="safetyCard"><i class="ph-fill ph-shield-check" id="safetyIcon"></i><div class="alert-content"><h4 id="safetyTitle">Memuat…</h4><small data-bind="safety.message">—</small></div></div>
 
     <div class="card no-pattern aura-amber">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-        <b style="font-size:.85rem">Triangulasi 3× MQ-2</b>
-        <span style="font-size:.7rem;color:var(--text-muted)">Zona berisiko: <b id="safWorst" style="color:var(--text)">—</b></span>
+        <b style="font-size:.85rem">Pemantauan Gas (CO · CH₄ · H₂)</b>
+        <span style="font-size:.7rem;color:var(--text-muted)">Gas berisiko: <b id="safWorst" style="color:var(--text)">—</b></span>
       </div>
       <div class="tri-list" id="triList"></div>
       <div style="margin-top:.85rem;font-size:.72rem;color:var(--text-muted);line-height:1.5">
-        <i class="ph ph-info" style="color:var(--accent);margin-right:.3rem"></i>Tiga sensor MQ-2 dibandingkan untuk menemukan sumber asap/gas. Ambang: <b>&lt;300</b> aman · <b>300–600</b> waspada · <b>&gt;600</b> bahaya (ppm).
+        <i class="ph ph-info" style="color:var(--accent);margin-right:.3rem"></i>Tiga gas dipantau untuk mendeteksi kebocoran/penumpukan. Status mengikuti firmware perangkat (Aman · Waspada · Bahaya).
       </div>
     </div>
 
@@ -68,43 +70,43 @@
       <ul class="rec-list" id="emList"></ul>
     </div>
 
-    <!-- Real gas & VOC sensors (ENS160 · MG811 · MQ-2 · UV) -->
-    <h3 class="section-title">Sensor Gas &amp; VOC <span class="count-chip">6</span></h3>
+    <!-- Real gas array (CO₂ · O₂ · CO · CH₄ · H₂) + UV — from /sensor/gas & /sensor/air -->
+    <h3 class="section-title">Sensor Gas &amp; UV <span class="count-chip">6</span></h3>
     <section class="grid-2">
       <div class="card metric-card aura-violet" data-pattern="cloud">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-cloud"></i></div><span class="metric-trend up" data-status data-ok="Optimal">Optimal</span></div>
-        <p class="metric-label">CO₂ — MG811</p>
-        <div class="metric-value"><span data-sensor="mg811" data-warn="900" data-danger="1200">486</span><span class="metric-unit">ppm</span></div>
-        <div class="sensor-pins">Karbon dioksida indoor</div>
+        <p class="metric-label">CO₂ — Karbon Dioksida</p>
+        <div class="metric-value"><span data-sensor="co2" data-warn="1000" data-danger="2000">638</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Konsentrasi CO₂ indoor</div>
       </div>
-      <div class="card metric-card aura-green" data-pattern="leaf">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-atom"></i></div><span class="metric-trend up" data-status>Baik</span></div>
-        <p class="metric-label">TVOC — ENS160</p>
-        <div class="metric-value"><span data-sensor="tvoc" data-min="30" data-max="120">58</span><span class="metric-unit">ppb</span></div>
-        <div class="sub-value">eCO₂ <b data-sensor="eco2" data-min="400" data-max="600">452</b> ppm · AQI 1</div>
-      </div>
-      <div class="card metric-card aura-amber" data-pattern="cloud">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
-        <p class="metric-label">Asap / Gas — MQ-2 <span style="opacity:.6">#1</span></p>
-        <div class="metric-value"><span data-sensor="mq2_1" data-warn="300" data-danger="600">214</span><span class="metric-unit">ppm</span></div>
-        <div class="sensor-pins">Dapur · triangulasi kebocoran gas</div>
+      <div class="card metric-card aura-blue" data-pattern="leaf">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-wind"></i></div><span class="metric-trend up" data-status data-ok="Optimal">Normal</span></div>
+        <p class="metric-label">O₂ — Oksigen</p>
+        <div class="metric-value"><span data-sensor="o2">818</span><span class="metric-unit">lvl</span></div>
+        <div class="sensor-pins">Kadar oksigen relatif</div>
       </div>
       <div class="card metric-card aura-amber" data-pattern="cloud">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
-        <p class="metric-label">Asap / Gas — MQ-2 <span style="opacity:.6">#2</span></p>
-        <div class="metric-value"><span data-sensor="mq2_2" data-warn="300" data-danger="600">198</span><span class="metric-unit">ppm</span></div>
-        <div class="sensor-pins">Ruang tamu · triangulasi kebocoran gas</div>
+        <p class="metric-label">CO — Karbon Monoksida</p>
+        <div class="metric-value"><span data-sensor="co" data-warn="35" data-danger="200">1239</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Gas beracun · deteksi kebocoran</div>
       </div>
       <div class="card metric-card aura-amber" data-pattern="cloud">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
-        <p class="metric-label">Asap / Gas — MQ-2 <span style="opacity:.6">#3</span></p>
-        <div class="metric-value"><span data-sensor="mq2_3" data-warn="300" data-danger="600">226</span><span class="metric-unit">ppm</span></div>
-        <div class="sensor-pins">Area reaktor · triangulasi kebocoran gas</div>
+        <p class="metric-label">CH₄ — Metana</p>
+        <div class="metric-value"><span data-sensor="ch4" data-warn="1000" data-danger="5000">457</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Gas mudah terbakar</div>
+      </div>
+      <div class="card metric-card aura-amber" data-pattern="cloud">
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-flame"></i></div><span class="metric-trend up" data-status data-ok="Aman">Aman</span></div>
+        <p class="metric-label">H₂ — Hidrogen</p>
+        <div class="metric-value"><span data-sensor="h2" data-warn="1000" data-danger="4000">388</span><span class="metric-unit">ppm</span></div>
+        <div class="sensor-pins">Gas mudah terbakar</div>
       </div>
       <div class="card metric-card aura-violet" data-pattern="sun">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-sun-dim"></i></div><span class="metric-trend up" data-status>Rendah</span></div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-sun-dim"></i></div><span class="metric-trend up" data-status data-ok="Optimal">Rendah</span></div>
         <p class="metric-label">Ultraviolet</p>
-        <div class="metric-value"><span data-sensor="uv" data-min="1" data-max="6" data-dec="1">2.4</span><span class="metric-unit">index</span></div>
+        <div class="metric-value"><span data-sensor="uv" data-dec="0">0</span><span class="metric-unit">index</span></div>
         <div class="sensor-pins">Indeks paparan UV ruang</div>
       </div>
     </section>
@@ -126,14 +128,14 @@
 
     <h3 class="section-title">Tren CO₂ 24 Jam</h3>
     <div class="card aura-green no-pattern">
-      <div class="chart-mock" id="co2Chart" style="height:84px;max-width:520px;margin:0 auto"></div>
+      <div class="chart-mock" id="co2Chart" style="height:84px;width:100%"></div>
       <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)" id="co2TrendNote">Memuat tren…</div>
     </div>
 
     <h3 class="section-title">Comparison</h3>
     <div class="card aura-blue no-pattern">
-      <div class="row"><span><i class="ph ph-house" style="margin-right:.4rem"></i>Dalam Ruangan</span><b>480 ppm</b></div>
-      <div class="row"><span><i class="ph ph-wind" style="margin-right:.4rem"></i>Luar Ruangan (est.)</span><b>420 ppm</b></div>
+      <div class="row"><span><i class="ph ph-house" style="margin-right:.4rem"></i>Dalam Ruangan</span><b><span data-bind="air.co2">480</span> ppm</b></div>
+      <div class="row"><span><i class="ph ph-wind" style="margin-right:.4rem"></i>Luar Ruangan (est.)</span><b>~420 ppm</b></div>
       <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.8rem;font-size:.8rem;color:var(--text-muted)">
         <i class="ph ph-info" style="margin-right:.4rem;color:var(--accent)"></i><span>ALCURA membantu mengurangi CO₂ indoor hingga optimal</span>
       </div>
@@ -154,6 +156,7 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=8"></script>
+<script src="../js/firebase-config.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
@@ -193,15 +196,15 @@ ALCURA.on(function (d) {
   var host = document.getElementById('triList');
   if (host) {
     host.innerHTML = saf.sensors.map(function (s, i) {
-      var lvl = s.v > 600 ? 'danger' : s.v > 300 ? 'warn' : 'ok';
+      var lvl = s.level;
       var cls = lvl === 'danger' ? 'is-danger' : lvl === 'warn' ? 'is-warn' : '';
       var loc = T(s.loc.en, s.loc.id, s.loc.ja);
-      var tag = lvl === 'danger' ? T('leak source', 'sumber bocor', '漏れ源') : lvl === 'warn' ? T('rising', 'meningkat', '上昇中') : T('normal', 'normal', '正常');
+      var tag = lvl === 'danger' ? T('leak risk', 'risiko bocor', '漏れリスク') : lvl === 'warn' ? T('rising', 'meningkat', '上昇中') : T('normal', 'normal', '正常');
       return '<div class="tri-row ' + cls + '">' +
         '<div class="tri-rank">' + (i + 1) + '</div>' +
         '<div class="tri-main"><div class="tri-loc">' + loc + ' <span style="opacity:.5;font-weight:600">' + s.id + '</span></div>' +
         '<div class="tri-sub">' + tag + '</div>' +
-        '<div class="tri-bar"><i style="width:' + pct(s.v) + '%"></i></div></div>' +
+        '<div class="tri-bar"><i style="width:' + s.pct + '%"></i></div></div>' +
         '<div class="tri-val">' + Math.round(s.v) + ' <small>ppm</small></div></div>';
     }).join('');
   }

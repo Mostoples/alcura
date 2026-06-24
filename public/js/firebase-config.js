@@ -7,7 +7,9 @@
       projectId: "alcura-id",
       storageBucket: "alcura-id.firebasestorage.app",
       messagingSenderId: "978633752737",
-      appId: "1:978633752737:web:3b7418f607a52c711270e0"
+      appId: "1:978633752737:web:3b7418f607a52c711270e0",
+      // Realtime Database (device firmware writes live sensor data here).
+      databaseURL: "https://alcura-id-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
   }
 
@@ -30,6 +32,15 @@
       return firebase.firestore();
     }
     console.error('Firestore not loaded');
+    return null;
+  };
+
+  // Realtime Database accessor — used by the sensors engine for live device data.
+  window.getFirebaseRTDB = window.getFirebaseRTDB || function () {
+    if (typeof firebase !== 'undefined' && typeof firebase.database === 'function') {
+      return firebase.database();
+    }
+    console.error('Realtime Database not loaded');
     return null;
   };
 })();

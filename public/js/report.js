@@ -122,7 +122,7 @@
     try { localStorage.setItem(TS, String(Date.now())); } catch (e) {}
     var body = summaryText();
     if (window.Notification && Notification.permission === 'granted') {
-      try { new Notification(T('Weekly impact report', 'Laporan dampak mingguan', '週間インパクトレポート'), { body: body, icon: '/favicon.svg', tag: 'alcura-weekly' }); } catch (e) {}
+      try { new Notification(T('Weekly impact report', 'Laporan dampak mingguan', '週間インパクトレポート'), { body: body, icon: '/img/logo.png', tag: 'alcura-weekly' }); } catch (e) {}
     } else if (window.toast) { toast(body); }
   }
 

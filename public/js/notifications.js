@@ -70,8 +70,8 @@
     try {
       var n = new Notification(a.title, {
         body: a.sub || '',
-        icon: '/favicon.svg',
-        badge: '/favicon.svg',
+        icon: '/img/logo.png',
+        badge: '/img/logo.png',
         tag: keyOf(a),          // coalesce duplicates in the tray
         renotify: false,
         lang: (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id'

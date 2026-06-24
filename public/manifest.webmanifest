@@ -14,8 +14,8 @@
   "dir": "ltr",
   "categories": ["utilities", "health", "productivity"],
   "icons": [
-    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "img/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "img/logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" },
+    { "src": "img/logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     { "name": "Tanya AI", "short_name": "AI Chat", "url": "pages/ai-chat.html" },

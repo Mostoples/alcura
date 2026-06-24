@@ -6,7 +6,7 @@
    - Cross-origin (Firebase, Gemini, fonts, CDNs): never intercepted.
    Bump CACHE on every shell change to invalidate old caches.
    ============================================================ */
-var CACHE = 'alcura-shell-v1';
+var CACHE = 'alcura-shell-v2';
 // Relative to the SW's own location so it works at the site root (Firebase)
 // or under a subpath like /public/ (Live Server).
 var CORE = [
@@ -15,8 +15,7 @@ var CORE = [
   'index.html',
   'css/styles.css',
   'css/mobile.css',
-  'favicon.svg',
-  'img/icon-maskable.svg',
+  'img/logo.png',
   'manifest.webmanifest'
 ];
 

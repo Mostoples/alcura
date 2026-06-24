@@ -2,17 +2,19 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Culture Health — ALCURA</title>
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css?v=8">
   <link rel="stylesheet" href="../css/mobile.css?v=8">
-  <link rel="stylesheet" href="../css/landing.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=9">
   <style>
     .dose-vol{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--text-muted);margin-bottom:.7rem}
     .dose-vol input{width:70px;border:0;background:var(--bg-sunken,rgba(0,0,0,.05));border-radius:10px;padding:.4rem .55rem;font-family:var(--font);font-size:.85rem;color:var(--text);outline:none;box-shadow:inset 0 0 0 1px rgba(var(--aura-green),.16);text-align:center}
@@ -68,8 +70,8 @@
       <div class="card metric-card aura-violet" data-pattern="flask">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up" data-status>Optimal</span></div>
         <p class="metric-label">pH Meter</p>
-        <div class="metric-value"><span data-sensor="ph" data-min="9.0" data-max="9.8" data-dec="1">9.4</span></div>
-        <div class="sensor-pins">Probe analog · ideal 9.0–10.2</div>
+        <div class="metric-value"><span data-sensor="ph" data-dec="2">7.06</span></div>
+        <div class="sensor-pins">Probe analog · ideal 6.5–8.0</div>
       </div>
       <div class="card metric-card aura-blue" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up" data-status>Normal</span></div>
@@ -79,43 +81,38 @@
       </div>
       <div class="card metric-card aura-amber" data-pattern="sun">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer-hot"></i></div><span class="metric-trend up" data-status>Non-kontak</span></div>
-        <p class="metric-label">Suhu Kultur — MLX90614</p>
-        <div class="metric-value"><span data-sensor="mlx" data-min="26" data-max="29" data-dec="1">27.3</span><span class="metric-unit">°C</span></div>
-        <div class="sensor-pins">Infra-merah, tanpa sentuh permukaan</div>
+        <p class="metric-label">Suhu Air</p>
+        <div class="metric-value"><span data-sensor="mlx" data-min="22" data-max="32" data-dec="1">27</span><span class="metric-unit">°C</span></div>
+        <div class="sensor-pins">Sensor suhu air kultur</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-waves"></i></div><span class="metric-trend up" data-status>Cukup</span></div>
-        <p class="metric-label">Level Air — HC-SR04</p>
-        <div class="metric-value"><span data-sensor="level" data-min="74" data-max="92">86</span><span class="metric-unit">%</span></div>
-        <div class="sub-value">Jarak <b data-sensor="dist" data-min="4" data-max="11" data-dec="1">5.8</b> cm</div>
+        <p class="metric-label">Level Air</p>
+        <div class="metric-value"><span data-sensor="level" data-min="0" data-max="100">0</span><span class="metric-unit">%</span></div>
+        <div class="sub-value">Jarak <b data-sensor="dist" data-min="2" data-max="20" data-dec="1">12</b> cm</div>
       </div>
     </section>
 
-    <!-- Ambient board (AHT21) + colour (TCS3200) -->
-    <h3 class="section-title">Lingkungan &amp; Warna <span class="count-chip">3</span></h3>
+    <!-- Turbidity + density estimate + device uptime -->
+    <h3 class="section-title">Kualitas Air &amp; Perangkat <span class="count-chip">3</span></h3>
     <section class="grid-2">
       <div class="card metric-card aura-blue" data-pattern="drop">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer-simple"></i></div><span class="metric-trend up" data-status>Presisi</span></div>
-        <p class="metric-label">Suhu Sekitar — AHT21</p>
-        <div class="metric-value"><span data-sensor="aht_t" data-min="25" data-max="28" data-dec="1">26.7</span><span class="metric-unit">°C</span></div>
-        <div class="sub-value">RH <b data-sensor="aht_h" data-min="48" data-max="60" data-dec="1">53.1</b>%</div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-eyedropper"></i></div><span class="metric-trend up" data-status data-ok="Optimal">Jernih</span></div>
+        <p class="metric-label">Kekeruhan — Turbidity</p>
+        <div class="metric-value"><span data-sensor="turbidity" data-dec="2">0.5</span><span class="metric-unit">NTU</span></div>
+        <div class="sensor-pins">Kejernihan air kultur</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="leaf">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-circles-three"></i></div><span class="metric-trend up">Sehat</span></div>
-        <p class="metric-label">Chlorophyll (est.)</p>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-circles-three"></i></div><span class="metric-trend up">Estimasi</span></div>
+        <p class="metric-label">Densitas (est.)</p>
         <div class="metric-value"><span data-bind="culture.chl">92</span><span class="metric-unit">%</span></div>
-        <div class="sub-value">Densitas <b data-bind="culture.od" data-dec="2">1.32</b> OD680</div>
+        <div class="sub-value">OD <b data-bind="culture.od" data-dec="2">1.32</b> · dari kekeruhan</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="leaf">
-        <div class="metric-head"><div class="metric-icon"><i class="ph ph-palette"></i></div><span class="metric-trend up" data-status>Hijau pekat</span></div>
-        <p class="metric-label">Warna Spirulina — TCS3200</p>
-        <div class="metric-value"><span data-sensor="green" data-min="180" data-max="230">208</span><span class="metric-unit">G-freq</span></div>
-        <div class="led-swatches" aria-hidden="true">
-          <span style="background:#7bd17b" title="R"></span>
-          <span style="background:#2e8b3d" title="G dominan"></span>
-          <span style="background:#5fa86b" title="B"></span>
-        </div>
-        <div class="sensor-pins">Dominasi hijau = klorofil sehat</div>
+        <div class="metric-head"><div class="metric-icon"><i class="ph ph-pulse"></i></div><span class="metric-trend up">Online</span></div>
+        <p class="metric-label">Uptime Perangkat</p>
+        <div class="metric-value"><span data-sensor="uptime" data-dec="0">0</span><span class="metric-unit">dtk</span></div>
+        <div class="sensor-pins">Lama perangkat aktif (detik)</div>
       </div>
     </section>
 
@@ -173,6 +170,7 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=8"></script>
+<script src="../js/firebase-config.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>

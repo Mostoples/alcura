@@ -4,8 +4,9 @@
    derived feature in the app.
 
    Data source:
-     • If Firestore has a `devices/live` doc, binds to it realtime.
-     • Otherwise simulates a believable random-walk so the UI lives.
+     • Binds realtime to the Realtime Database `/sensor` node (firmware writes it).
+     • Actuators bind to `/control` (fan/lamp/pump) via bindDevice()/setDevice().
+     • Falls back to a simulated random-walk only if RTDB is unreachable.
 
    Derived features (computed every tick):
      • air      — indoor air-health score (CO₂ + TVOC + gas + RH)
@@ -35,34 +36,48 @@
   'use strict';
 
   // ---- Normal ranges (used for simulation seeds + comfort scoring) ----
+  // Keyed exactly to the Realtime Database `sensor` node the firmware writes.
   var RANGES = {
-    mq2_1: [180, 300], mq2_2: [180, 300], mq2_3: [180, 320],
-    mg811: [440, 620], tvoc: [30, 140], eco2: [420, 600],
-    uv: [1, 4], dht_t: [24, 29], dht_h: [45, 65],
-    aht_t: [25, 28], aht_h: [48, 60], mlx: [26, 29],
-    ph: [9.0, 9.8], tds: [780, 1000], level: [60, 92],
-    dist: [4, 12], green: [180, 230]
+    // sensor/gas
+    co: [2, 50], ch4: [200, 600], co2: [400, 800], h2: [100, 450], o2: [780, 850],
+    // sensor/air
+    uv: [0, 4], dht_t: [24, 30], dht_h: [45, 70], aht_t: [24, 30], aht_h: [45, 70],
+    // sensor/water
+    ph: [6.5, 8.0], tds: [200, 600], mlx: [24, 30], level: [40, 95], turbidity: [0, 3],
+    // derived / legacy mirrors
+    mg811: [400, 800], eco2: [400, 800], dist: [4, 18]
   };
 
-  // Current readings (sensible seed values)
+  // Current readings — seeded from a real RTDB snapshot so the first paint is sane.
   var S = {
-    mq2_1: 214, mq2_2: 198, mq2_3: 226, mg811: 486, tvoc: 58, eco2: 452,
-    uv: 2.4, dht_t: 26, dht_h: 52, aht_t: 26.7, aht_h: 53.1, mlx: 27.3,
-    ph: 9.4, tds: 864, level: 86, dist: 5.8, green: 208
+    // gas (sensor/gas)
+    co: 1239, ch4: 457, co2: 638, h2: 388, o2: 818,
+    // legacy gas mirrors (CO/CH₄/H₂ feed the gas-leak ranking)
+    mq2_1: 1239, mq2_2: 457, mq2_3: 388, mg811: 638, eco2: 638, tvoc: 0,
+    // air (sensor/air)
+    uv: 0, dht_t: 25.1, dht_h: 95, aht_t: 25.1, aht_h: 95,
+    // water (sensor/water)
+    ph: 7.06, tds: 340, mlx: 27, level: 0, turbidity: 0.5, dist: 12, green: 208,
+    // device
+    uptime: 0
   };
+
+  // Firmware-computed status strings, keyed by sensor (authoritative when present).
+  var STATUS = {};
 
   var listeners = [];
   var liveBound = false;
   var last = null;
 
   // ---- User-configurable alert thresholds (editable in Settings) ----
+  // Calibrated to the real device: neutral-pH water + electrochemical gas array.
   var TH_DEFAULTS = {
-    phMin: 9.0, phMax: 10.2,   // ideal culture pH window
-    tdsLow: 800,               // nutrients-low alert (ppm)
-    tempMin: 25, tempMax: 30,  // ideal culture temp (°C)
-    levelLow: 40,              // water-level refill alert (%)
-    co2Warn: 800,              // indoor CO₂ attention (ppm)
-    gasWarn: 300, gasDanger: 600 // MQ-2 gas/smoke (ppm)
+    phMin: 6.5, phMax: 8.0,    // ideal water pH window
+    tdsLow: 250,               // dissolved-solids attention floor (ppm)
+    tempMin: 22, tempMax: 32,  // ideal water temp (°C)
+    levelLow: 30,              // water-level refill alert (%)
+    co2Warn: 1000,             // indoor CO₂ attention (ppm)
+    gasWarn: 35, gasDanger: 200 // CO (carbon monoxide) attention/danger (ppm)
   };
   function loadThresholds() {
     try { return Object.assign({}, TH_DEFAULTS, JSON.parse(localStorage.getItem('alcuraThresholds') || '{}')); }
@@ -87,7 +102,7 @@
     }, obj);
   }
 
-  // ---- Simulation: gentle bounded random walk ----
+  // ---- Simulation: gentle bounded random walk (only used until RTDB binds) ----
   function randomWalk() {
     Object.keys(RANGES).forEach(function (k) {
       var r = RANGES[k], span = r[1] - r[0], step = span * 0.05;
@@ -96,6 +111,38 @@
     });
     // water level & ultrasonic distance are physically linked
     S.dist = clamp((100 - S.level) / 100 * 20 + 3, 2, 22);
+    syncMirrors();
+  }
+
+  // Keep legacy/derived keys consistent with the canonical RTDB sensors.
+  function syncMirrors() {
+    S.mg811 = S.co2; S.eco2 = S.co2;            // indoor CO₂
+    S.mq2_1 = S.co; S.mq2_2 = S.ch4; S.mq2_3 = S.h2; // CO / CH₄ / H₂ leak ranking
+  }
+
+  // ---- Firmware status helpers (firmware is the source of truth for statuses) ----
+  // Which firmware status string applies to each bound sensor key.
+  var FW_STATUS_KEY = {
+    dht_t: 'temp', aht_t: 'temp', uv: 'uv', co: 'co', mq2_1: 'co',
+    ph: 'ph', tds: 'tds', level: 'level', turbidity: 'turbidity'
+  };
+  function fwState(str) {
+    if (!str) return null;
+    var s = String(str).toLowerCase();
+    if (/error|danger|critical|hazard|bahaya|high/.test(s)) return 'danger';
+    if (/warn|caution|fair|waspada|poor|moderate/.test(s)) return 'warn';
+    return 'ok'; // optimal, normal, low, clear, good, safe, ideal
+  }
+  function localizeStatus(s) {
+    var map = {
+      normal: ['Normal', 'Normal', '正常'], optimal: ['Optimal', 'Optimal', '最適'],
+      low: ['Low', 'Rendah', '低'], high: ['High', 'Tinggi', '高'],
+      warning: ['Warning', 'Waspada', '警告'], error: ['Error', 'Error', 'エラー'],
+      fair: ['Fair', 'Cukup', '普通'], clear: ['Clear', 'Jernih', '澄明'],
+      good: ['Good', 'Baik', '良好'], safe: ['Safe', 'Aman', '安全']
+    };
+    var k = String(s).toLowerCase();
+    return map[k] ? L(map[k][0], map[k][1], map[k][2]) : s;
   }
 
   // ---- Scoring helper: 100 at `good`, 0 at `bad` (either direction) ----
@@ -118,68 +165,94 @@
   // ====================== FEATURE COMPUTATIONS ======================
 
   function computeAir() {
-    var co2 = S.mg811, tvoc = S.tvoc, gas = Math.max(S.mq2_1, S.mq2_2, S.mq2_3), rh = S.dht_h;
-    var sCo2 = score2(co2, 500, 2000);
-    var sTvoc = score2(tvoc, 100, 1000);
-    var sGas = score2(gas, 250, 1000);
-    var sRh = clamp(100 - Math.abs(rh - 50) * 3, 0, 100);
-    var score = Math.round(sCo2 * 0.35 + sTvoc * 0.25 + sGas * 0.25 + sRh * 0.15);
+    var co2 = S.co2, co = S.co, rh = S.dht_h, o2 = S.o2;
+    var combustible = Math.max(S.ch4, S.h2);          // flammable-gas headroom
+    var sCo2 = score2(co2, 500, 2000);                // indoor CO₂ comfort
+    var sCo = score2(co, 9, 200);                     // carbon monoxide (WHO 9ppm good)
+    var sGas = score2(combustible, 400, 4000);        // CH₄ / H₂ build-up
+    var sRh = clamp(100 - Math.abs(rh - 55) * 2.5, 0, 100);
+    var score = Math.round(sCo2 * 0.25 + sCo * 0.35 + sGas * 0.20 + sRh * 0.20);
     var label = airLabel(score);
     var aura = score >= 70 ? 'green' : score >= 50 ? 'amber' : 'coral';
-    return { score: score, label: label, aura: aura, co2: Math.round(co2), tvoc: Math.round(tvoc), eco2: Math.round(S.eco2), gas: Math.round(gas), rh: Math.round(rh) };
+    return {
+      score: score, label: label, aura: aura,
+      co2: Math.round(co2), co: Math.round(co), ch4: Math.round(S.ch4), h2: Math.round(S.h2),
+      o2: Math.round(o2), eco2: Math.round(S.eco2), gas: Math.round(Math.max(co, combustible)), rh: Math.round(rh)
+    };
   }
 
+  // Gas-leak detection across the real electrochemical array (CO / CH₄ / H₂).
+  // Each gas has its own ppm thresholds; CO defers to the firmware status when present.
   function computeSafety() {
-    var arr = [
-      { id: '#1', v: S.mq2_1, loc: { en: 'Kitchen', id: 'Dapur', ja: 'キッチン' } },
-      { id: '#2', v: S.mq2_2, loc: { en: 'Living Room', id: 'Ruang Tamu', ja: 'リビング' } },
-      { id: '#3', v: S.mq2_3, loc: { en: 'Reactor Area', id: 'Area Reaktor', ja: 'リアクター付近' } }
-    ].sort(function (a, b) { return b.v - a.v; });
+    var rank = { ok: 0, warn: 1, danger: 2 };
+    var defs = [
+      { id: 'CO', v: S.co, warn: thresholds.gasWarn, danger: thresholds.gasDanger, fw: STATUS.co, loc: { en: 'Carbon Monoxide', id: 'Karbon Monoksida', ja: '一酸化炭素' } },
+      { id: 'CH₄', v: S.ch4, warn: 1000, danger: 5000, loc: { en: 'Methane', id: 'Metana', ja: 'メタン' } },
+      { id: 'H₂', v: S.h2, warn: 1000, danger: 4000, loc: { en: 'Hydrogen', id: 'Hidrogen', ja: '水素' } }
+    ];
+    var arr = defs.map(function (d) {
+      var lvl = d.fw ? fwState(d.fw) : (d.v > d.danger ? 'danger' : d.v > d.warn ? 'warn' : 'ok');
+      var pct = clamp(Math.round(d.v / d.danger * 100), 3, 100);
+      return { id: d.id, v: d.v, loc: d.loc, level: lvl, pct: pct };
+    }).sort(function (a, b) { return (rank[b.level] - rank[a.level]) || (b.v - a.v); });
     var top = arr[0];
     var loc = L(top.loc.en, top.loc.id, top.loc.ja);
     var v = Math.round(top.v);
-    var level = top.v > thresholds.gasDanger ? 'danger' : top.v > thresholds.gasWarn ? 'warn' : 'ok';
+    var level = top.level;
     var message = level === 'danger'
-      ? L('High smoke/gas detected in ' + loc + ' (' + v + ' ppm). Check immediately & ensure ventilation!',
-          'Asap/gas tinggi terdeteksi di ' + loc + ' (' + v + ' ppm). Periksa segera & pastikan ventilasi!',
-          loc + 'で高濃度の煙/ガスを検知 (' + v + ' ppm)。直ちに確認し換気してください！')
+      ? L('Dangerous ' + loc + ' level detected (' + v + ' ppm). Ventilate immediately & find the source!',
+          'Kadar ' + loc + ' berbahaya terdeteksi (' + v + ' ppm). Segera ventilasi & cari sumbernya!',
+          loc + 'が危険濃度 (' + v + ' ppm)。直ちに換気し原因を特定してください！')
       : level === 'warn'
-        ? L('Gas level rising in ' + loc + ' (' + v + ' ppm). Monitoring.',
-            'Kadar gas meningkat di ' + loc + ' (' + v + ' ppm). Sedang dipantau.',
-            loc + 'でガス濃度が上昇 (' + v + ' ppm)。監視中。')
-        : L('No smoke or gas leak detected. Environment is safe.',
-            'Tidak ada asap atau kebocoran gas terdeteksi. Lingkungan aman.',
-            '煙やガス漏れは検知されていません。環境は安全です。');
+        ? L(loc + ' is elevated (' + v + ' ppm). Keep the area ventilated & monitor.',
+            'Kadar ' + loc + ' meningkat (' + v + ' ppm). Jaga ventilasi & pantau.',
+            loc + 'が上昇 (' + v + ' ppm)。換気を保ち監視してください。')
+        : L('No gas leak detected. Environment is safe.',
+            'Tidak ada kebocoran gas terdeteksi. Lingkungan aman.',
+            'ガス漏れは検知されていません。環境は安全です。');
     var aura = level === 'danger' ? 'coral' : level === 'warn' ? 'amber' : 'green';
     return { level: level, aura: aura, loc: loc, value: v, message: message, sensors: arr };
   }
 
+  // Map a firmware status string into the culture engine's ok/warn/bad scale.
+  function fwCult(str) { var s = fwState(str); return s === 'danger' ? 'bad' : s; }
+
   function computeCulture() {
-    var ph = S.ph, tds = S.tds, temp = S.mlx, green = S.green;
+    var ph = S.ph, tds = S.tds, temp = S.mlx, turb = S.turbidity;
     var TH = thresholds, rec = [];
-    var phStat = (ph >= TH.phMin && ph <= TH.phMax) ? 'ok' : (ph < TH.phMin - 0.4 || ph > TH.phMax + 0.4) ? 'bad' : 'warn';
+
+    var phStat = STATUS.ph ? fwCult(STATUS.ph)
+      : (ph >= TH.phMin && ph <= TH.phMax) ? 'ok' : (ph < TH.phMin - 0.5 || ph > TH.phMax + 0.5) ? 'bad' : 'warn';
     if (phStat !== 'ok') rec.push(ph < TH.phMin
-      ? L('pH low — add sodium bicarbonate to raise pH.', 'pH rendah — tambah sodium bikarbonat untuk menaikkan pH.', 'pHが低い — 重曹を加えてpHを上げてください。')
-      : L('pH high — enable CO₂ injection to lower pH.', 'pH tinggi — aktifkan injeksi CO₂ untuk menurunkan pH.', 'pHが高い — CO₂注入を有効にしてpHを下げてください。'));
-    var tdsStat = (tds >= TH.tdsLow) ? 'ok' : (tds < TH.tdsLow - 200) ? 'bad' : 'warn';
-    if (tdsStat !== 'ok') rec.push(tds < TH.tdsLow
-      ? L('Nutrients (TDS) running low — add nutrient solution.', 'Nutrisi (TDS) menipis — tambahkan larutan nutrisi.', '栄養（TDS）が不足 — 栄養液を追加してください。')
-      : L('TDS too high — dilute with clean water.', 'TDS terlalu tinggi — encerkan dengan air bersih.', 'TDSが高すぎ — きれいな水で薄めてください。'));
+      ? L('pH low (acidic) — add a base/buffer to raise it.', 'pH rendah (asam) — tambah basa/buffer untuk menaikkannya.', 'pHが低い（酸性）— 塩基/緩衝剤で上げてください。')
+      : L('pH high (alkaline) — add a mild acid/buffer to lower it.', 'pH tinggi (basa) — tambah asam/buffer ringan untuk menurunkannya.', 'pHが高い（アルカリ性）— 弱酸/緩衝剤で下げてください。'));
+
+    var tdsStat = STATUS.tds ? fwCult(STATUS.tds)
+      : (tds <= TH.tdsLow + 200 && tds >= TH.tdsLow * 0.4) ? 'ok' : (tds > TH.tdsLow + 500) ? 'bad' : 'warn';
+    if (tdsStat !== 'ok') rec.push(tds > TH.tdsLow + 200
+      ? L('TDS high — dilute with clean water or check for buildup.', 'TDS tinggi — encerkan dengan air bersih atau cek penumpukan.', 'TDSが高い — きれいな水で薄めるか堆積を確認してください。')
+      : L('TDS low — top up minerals/nutrients.', 'TDS rendah — tambahkan mineral/nutrisi.', 'TDSが低い — ミネラル/栄養を補充してください。'));
+
     var tStat = (temp >= TH.tempMin && temp <= TH.tempMax) ? 'ok' : (temp > TH.tempMax + 4 || temp < TH.tempMin - 7) ? 'bad' : 'warn';
-    if (tStat !== 'ok') rec.push(temp > 30
-      ? L('Culture temperature high — reduce LED intensity.', 'Suhu kultur tinggi — kurangi intensitas LED.', '培養温度が高い — LED強度を下げてください。')
-      : L('Culture temperature low — increase heating/LED.', 'Suhu kultur rendah — tingkatkan pemanasan/LED.', '培養温度が低い — 加熱/LEDを上げてください。'));
-    var od = +(1.0 + (green - 180) / 50 * 0.7).toFixed(2);
-    var chl = Math.round(clamp(70 + (green - 180) / 50 * 29, 40, 99));
-    var greenStat = green >= 195 ? 'ok' : 'warn';
-    if (green < 190) rec.push(L('Culture color fading — sign of stress/chlorophyll drop. Check light & nutrients.', 'Warna kultur memudar — indikasi stress/penurunan klorofil. Periksa cahaya & nutrisi.', '培養の色が薄い — ストレス/クロロフィル低下の兆候。光と栄養を確認してください。'));
-    var status = ([phStat, tdsStat, tStat].indexOf('bad') >= 0) ? 'critical'
-      : ([phStat, tdsStat, tStat, greenStat].indexOf('warn') >= 0) ? 'attention' : 'optimal';
-    if (!rec.length) rec.push(L('All culture parameters are within ideal range. Keep current settings.', 'Semua parameter kultur dalam rentang ideal. Pertahankan pengaturan saat ini.', 'すべての培養パラメータが理想範囲内です。現在の設定を維持してください。'));
+    if (tStat !== 'ok') rec.push(temp > TH.tempMax
+      ? L('Water temperature high — reduce heating/lighting.', 'Suhu air tinggi — kurangi pemanasan/pencahayaan.', '水温が高い — 加熱/照明を下げてください。')
+      : L('Water temperature low — increase heating/lighting.', 'Suhu air rendah — tingkatkan pemanasan/pencahayaan.', '水温が低い — 加熱/照明を上げてください。'));
+
+    var turbStat = STATUS.turbidity ? fwCult(STATUS.turbidity) : (turb < 5 ? 'ok' : turb < 25 ? 'warn' : 'bad');
+    if (turbStat === 'bad') rec.push(L('Water is turbid — filter or perform a partial water change.', 'Air keruh — saring atau lakukan pergantian air sebagian.', '水が濁っています — ろ過または部分換水をしてください。'));
+
+    // Density proxy from turbidity (no optical-density sensor on this device).
+    var od = +clamp(0.8 + turb * 0.45, 0.5, 2.2).toFixed(2);
+    var chl = Math.round(clamp(58 + turb * 12, 40, 99));
+
+    var status = ([phStat, tdsStat, tStat, turbStat].indexOf('bad') >= 0) ? 'critical'
+      : ([phStat, tdsStat, tStat, turbStat].indexOf('warn') >= 0) ? 'attention' : 'optimal';
+    if (!rec.length) rec.push(L('All water parameters are within ideal range. Keep current settings.', 'Semua parameter air dalam rentang ideal. Pertahankan pengaturan saat ini.', 'すべての水質パラメータが理想範囲内です。現在の設定を維持してください。'));
     var aura = status === 'critical' ? 'coral' : status === 'attention' ? 'amber' : 'green';
     return {
-      status: status, aura: aura, ph: +ph.toFixed(1), phStat: phStat, tds: Math.round(tds), tdsStat: tdsStat,
-      temp: +temp.toFixed(1), tStat: tStat, od: od, chl: chl, green: Math.round(green), greenStat: greenStat, recommendations: rec
+      status: status, aura: aura, ph: +ph.toFixed(2), phStat: phStat, tds: Math.round(tds), tdsStat: tdsStat,
+      temp: +temp.toFixed(1), tStat: tStat, turbidity: +turb.toFixed(2), turbStat: turbStat,
+      od: od, chl: chl, green: Math.round(S.green), greenStat: turbStat, recommendations: rec
     };
   }
 
@@ -255,8 +328,9 @@
     var TH = thresholds, r = [];
     if (S.level < TH.levelLow) r.push({ level: 'warning', icon: 'ph-drop', title: L('Low water level', 'Level air rendah', '水位が低い'), sub: L('Culture water ' + Math.round(S.level) + '% — refill soon.', 'Air kultur ' + Math.round(S.level) + '% — isi ulang segera.', '培養水 ' + Math.round(S.level) + '% — 早めに補充してください。') });
     if (c.tds < TH.tdsLow) r.push({ level: c.tds < TH.tdsLow - 200 ? 'critical' : 'warning', icon: 'ph-flask', title: L('Nutrients running low', 'Nutrisi menipis', '栄養不足'), sub: L('TDS ' + c.tds + ' ppm — add nutrient solution.', 'TDS ' + c.tds + ' ppm — tambahkan larutan nutrisi.', 'TDS ' + c.tds + ' ppm — 栄養液を追加してください。') });
-    if (c.phStat !== 'ok') r.push({ level: c.phStat === 'bad' ? 'critical' : 'warning', icon: 'ph-test-tube', title: L('pH needs correction', 'pH perlu koreksi', 'pHの調整が必要'), sub: L('pH ' + c.ph + ' is outside the ideal range (9.0–10.2).', 'pH ' + c.ph + ' di luar rentang ideal (9.0–10.2).', 'pH ' + c.ph + ' は理想範囲(9.0–10.2)外です。') });
-    if (c.tStat !== 'ok') r.push({ level: c.tStat === 'bad' ? 'critical' : 'warning', icon: 'ph-thermometer-hot', title: L('Culture temp not ideal', 'Suhu kultur tidak ideal', '培養温度が不適'), sub: L('Temp ' + c.temp + '°C — adjust LED/cooling.', 'Suhu ' + c.temp + '°C — sesuaikan LED/pendingin.', '温度 ' + c.temp + '°C — LED/冷却を調整してください。') });
+    var phRange = '(' + TH.phMin + '–' + TH.phMax + ')';
+    if (c.phStat !== 'ok') r.push({ level: c.phStat === 'bad' ? 'critical' : 'warning', icon: 'ph-test-tube', title: L('pH needs correction', 'pH perlu koreksi', 'pHの調整が必要'), sub: L('pH ' + c.ph + ' is outside the ideal range ' + phRange + '.', 'pH ' + c.ph + ' di luar rentang ideal ' + phRange + '.', 'pH ' + c.ph + ' は理想範囲' + phRange + '外です。') });
+    if (c.tStat !== 'ok') r.push({ level: c.tStat === 'bad' ? 'critical' : 'warning', icon: 'ph-thermometer-hot', title: L('Water temp not ideal', 'Suhu air tidak ideal', '水温が不適'), sub: L('Temp ' + c.temp + '°C — adjust heating/cooling.', 'Suhu ' + c.temp + '°C — sesuaikan pemanas/pendingin.', '温度 ' + c.temp + '°C — 加熱/冷却を調整してください。') });
     return r;
   }
 
@@ -346,14 +420,68 @@
       return Object.assign({}, CONTROL_DEFAULTS, saved, { spectrum: Object.assign({}, CONTROL_DEFAULTS.spectrum, saved.spectrum || {}) });
     } catch (e) { return Object.assign({}, CONTROL_DEFAULTS); }
   }
+  // App-side preferences only (autoMode/spectrum/mode). The real actuators live in
+  // `device` below and are written to RTDB /control — NOT this abstract object.
   function persistControl() {
     try { localStorage.setItem('alcuraControl', JSON.stringify(control)); } catch (e) {}
-    // best-effort mirror to Firestore for the device to read
+  }
+
+  // ====================== REAL DEVICE CONTROL (RTDB /control) ======================
+  // Firmware actuator state. Mirrors the exact /control structure the device reads.
+  var DEVICE_DEFAULTS = {
+    fan: { fan1: false, fan2: false },
+    lamp: { brightness: 72, l1: false, l2: false, l3: false, l4: false, l5: false },
+    pump: { pump1: false, pump2: false },
+    uptime: 0
+  };
+  var device = JSON.parse(JSON.stringify(DEVICE_DEFAULTS));
+  var deviceBound = false;
+
+  function deviceView() {
+    var l = device.lamp, f = device.fan, p = device.pump;
+    var lampsOn = ['l1', 'l2', 'l3', 'l4', 'l5'].filter(function (k) { return !!l[k]; }).length;
+    var fansOn = (f.fan1 ? 1 : 0) + (f.fan2 ? 1 : 0);
+    var pumpsOn = (p.pump1 ? 1 : 0) + (p.pump2 ? 1 : 0);
+    return {
+      fan: Object.assign({}, f), lamp: Object.assign({}, l), pump: Object.assign({}, p),
+      brightness: +l.brightness || 0, lampsOn: lampsOn, fansOn: fansOn, pumpsOn: pumpsOn, uptime: device.uptime
+    };
+  }
+  // Circulation proxy (for impact/energy): share of fans+pumps that are running.
+  function circulationPct() {
+    var d = deviceView();
+    return Math.round((d.fansOn + d.pumpsOn) / 4 * 100);
+  }
+
+  function bindDevice() {
     try {
-      if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length && firebase.firestore) {
-        firebase.firestore().collection('devices').doc('control').set(control, { merge: true });
+      if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length || typeof firebase.database !== 'function') return;
+      firebase.database().ref('control').on('value', function (snap) {
+        var d = snap.val();
+        if (!d) return;
+        if (d.fan) device.fan = Object.assign({}, device.fan, d.fan);
+        if (d.lamp) device.lamp = Object.assign({}, device.lamp, d.lamp);
+        if (d.pump) device.pump = Object.assign({}, device.pump, d.pump);
+        if (d.uptime != null) device.uptime = +d.uptime;
+        if (d.lamp && d.lamp.brightness != null) control.ledIntensity = +d.lamp.brightness;
+        deviceBound = true;
+        emit();
+      }, function () { /* keep last-known device state */ });
+    } catch (e) { /* ignore */ }
+  }
+
+  // Write a single actuator. path is 'fan/fan1' | 'lamp/brightness' | 'lamp/l3' | 'pump/pump2'.
+  function setDevice(path, val) {
+    var parts = String(path).split('/');
+    if (parts.length === 2 && device[parts[0]]) device[parts[0]][parts[1]] = val;
+    if (parts[0] === 'lamp' && parts[1] === 'brightness') control.ledIntensity = +val;
+    try {
+      if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length && typeof firebase.database === 'function') {
+        var u = {}; u[path] = val;
+        firebase.database().ref('control').update(u);
       }
-    } catch (e) {}
+    } catch (e) { /* ignore */ }
+    emit();
   }
 
   // ====================== SNAPSHOT + EMIT ======================
@@ -362,17 +490,16 @@
     var saf = computeSafety();
     var c = computeCulture();
     var h = computeHarvest(c);
-    var au = computeAuto(c, air);
-    var applied = control.autoMode
-      ? { ledIntensity: au.ledIntensity, aeration: au.aeration, co2Injection: au.co2Injection }
-      : { ledIntensity: control.ledIntensity, aeration: control.aeration, co2Injection: control.co2Injection };
+    var au = computeAuto(c, air);                 // advisory recommendations only
+    // Effective actuator state comes from the REAL device (lamp brightness + fans/pumps).
+    var applied = { ledIntensity: device.lamp.brightness, aeration: circulationPct(), co2Injection: false };
     var im = computeImpact(c, applied);
     var rem = computeReminders(c);
     var alerts = buildAlerts(saf, c, h, air, rem);
     return {
       s: Object.assign({}, S),
       air: air, safety: saf, culture: c, harvest: h, impact: im,
-      reminders: rem, auto: au, applied: applied, control: control, alerts: alerts
+      reminders: rem, auto: au, applied: applied, control: control, device: deviceView(), alerts: alerts
     };
   }
 
@@ -410,22 +537,31 @@
     });
   }
 
-  // status badge from per-value thresholds (data-warn / data-danger)
+  // Status badge — prefers the firmware status string, falls back to per-value thresholds.
   function updateStatusBadge(valEl, v) {
-    var warn = num(valEl.getAttribute('data-warn'));
-    var danger = num(valEl.getAttribute('data-danger'));
-    if (warn == null && danger == null) return;
     var card = valEl.closest('.metric-card');
     var badge = card && card.querySelector('[data-status]');
     if (!badge) return;
-    var state = (danger != null && v >= danger) ? 'danger' : (warn != null && v >= warn) ? 'warn' : 'ok';
+    var fw = STATUS[FW_STATUS_KEY[valEl.getAttribute('data-sensor')]];
+    var state, label;
+    if (fw) {
+      state = fwState(fw); label = localizeStatus(fw);
+    } else {
+      var warn = num(valEl.getAttribute('data-warn'));
+      var danger = num(valEl.getAttribute('data-danger'));
+      if (warn == null && danger == null) return;
+      state = (danger != null && v >= danger) ? 'danger' : (warn != null && v >= warn) ? 'warn' : 'ok';
+    }
     badge.classList.remove('up', 'warn', 'danger');
-    if (state === 'danger') { badge.classList.add('danger'); badge.textContent = L('Danger', 'Bahaya', '危険'); }
-    else if (state === 'warn') { badge.classList.add('warn'); badge.textContent = L('Caution', 'Waspada', '注意'); }
+    if (state === 'danger') { badge.classList.add('danger'); badge.textContent = label || L('Danger', 'Bahaya', '危険'); }
+    else if (state === 'warn') { badge.classList.add('warn'); badge.textContent = label || L('Caution', 'Waspada', '注意'); }
     else {
       badge.classList.add('up');
-      var ok = badge.getAttribute('data-ok') || 'Aman';
-      badge.textContent = (ok === 'Optimal') ? L('Optimal', 'Optimal', '最適') : L('Safe', 'Aman', '安全');
+      if (label) { badge.textContent = label; }
+      else {
+        var ok = badge.getAttribute('data-ok') || 'Aman';
+        badge.textContent = (ok === 'Optimal') ? L('Optimal', 'Optimal', '最適') : L('Safe', 'Aman', '安全');
+      }
     }
   }
 
@@ -436,14 +572,42 @@
     try { document.dispatchEvent(new CustomEvent('alcura:update', { detail: last })); } catch (e) {}
   }
 
-  // ---- Firestore live binding (optional) ----
+  // ---- Realtime Database live binding ----
+  // Firmware writes /sensor/{air,gas,water} + /sensor/uptime. We bind realtime and
+  // map those fields onto the engine's canonical sensor keys.
+  function mapLive(d) {
+    var air = d.air || {}, gas = d.gas || {}, water = d.water || {};
+    if (air.temp != null) { S.dht_t = +air.temp; S.aht_t = +air.temp; }
+    if (air.humidity != null) { S.dht_h = +air.humidity; S.aht_h = +air.humidity; }
+    if (air.uv_index != null) S.uv = +air.uv_index;
+    if (gas.co2 != null) S.co2 = +gas.co2;
+    if (gas.co != null) S.co = +gas.co;
+    if (gas.ch4 != null) S.ch4 = +gas.ch4;
+    if (gas.h2 != null) S.h2 = +gas.h2;
+    if (gas.o2 != null) S.o2 = +gas.o2;
+    if (water.ph != null) S.ph = +water.ph;
+    if (water.tds != null) S.tds = +water.tds;
+    if (water.temp != null) S.mlx = +water.temp;
+    if (water.level != null) { S.level = +water.level; S.dist = clamp((100 - S.level) / 100 * 20 + 3, 2, 22); }
+    if (water.turbidity != null) S.turbidity = +water.turbidity;
+    if (d.uptime != null) S.uptime = +d.uptime;
+    else if (gas.uptime != null) S.uptime = +gas.uptime;
+    syncMirrors();
+    // Firmware-computed status strings (authoritative for badges & diagnosis).
+    STATUS = {
+      temp: air.temp_status, uv: air.uv_status, co: gas.co_status,
+      level: water.level_status, ph: water.ph_status, tds: water.tds_status,
+      turbidity: water.turbidity_status
+    };
+  }
+
   function tryBindLive() {
     try {
-      if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length || !firebase.firestore) return;
-      firebase.firestore().collection('devices').doc('live').onSnapshot(function (snap) {
-        if (!snap.exists) return;
-        var d = snap.data() || {};
-        Object.keys(RANGES).forEach(function (k) { if (d[k] != null) S[k] = parseFloat(d[k]); });
+      if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length || typeof firebase.database !== 'function') return;
+      firebase.database().ref('sensor').on('value', function (snap) {
+        var d = snap.val();
+        if (!d) return;
+        mapLive(d);
         liveBound = true;
         emit();
       }, function () { /* stay on simulation */ });
@@ -483,6 +647,9 @@
       persistControl();
       emit();
     },
+    get device() { return deviceView(); },
+    setDevice: setDevice,
+    get deviceBound() { return deviceBound; },
     renderAlerts: renderAlerts,
     simulate: simulate,
     refresh: emit,
@@ -504,6 +671,7 @@
   // ---- Boot ----
   function boot() {
     tryBindLive();
+    bindDevice();
     emit();
     setInterval(function () { if (!liveBound) randomWalk(); emit(); }, 4000);
     // Re-render all generated text when the language changes

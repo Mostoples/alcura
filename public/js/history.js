@@ -63,16 +63,16 @@
       var air = clamp(d.air.score - dayPhase * 8 + noise(4), 30, 100);
       pts.push({
         t: t,
-        co2: r1(co2), air: r1(air), gas: r1(clamp(d.air.gas + noise(30), 120, 700)),
-        ph: r2(clamp(d.culture.ph + Math.sin(i * 0.4) * 0.12, 8.6, 10.4)),
-        tds: r1(clamp(d.culture.tds - i * 1.1 + noise(20), 600, 1100)),
-        temp: r2(clamp(d.culture.temp - dayPhase * 1.2 + noise(0.4), 24, 31)),
+        co2: r1(co2), air: r1(air), gas: r1(clamp(d.air.gas + noise(30), 60, d.air.gas * 1.6 + 80)),
+        ph: r2(clamp(d.culture.ph + Math.sin(i * 0.4) * 0.12, d.culture.ph - 0.6, d.culture.ph + 0.6)),
+        tds: r1(clamp(d.culture.tds - i * 0.4 + noise(15), Math.max(0, d.culture.tds - 120), d.culture.tds + 120)),
+        temp: r2(clamp(d.culture.temp - dayPhase * 1.2 + noise(0.4), d.culture.temp - 3, d.culture.temp + 3)),
         od: r2(clamp(d.culture.od - i * 0.0045, 0.4, d.culture.od)),
-        level: r1(clamp(d.s.level + i * 0.06 + noise(1), 30, 100)),
+        level: r1(clamp(d.s.level + i * 0.06 + noise(1), 0, 100)),
         o2Today: r2(clamp(d.impact.o2Today * (1 - i / n), 0, d.impact.o2Today)),
         co2Today: r1(clamp(d.impact.co2Today * (1 - i / n), 0, d.impact.co2Today)),
         led: r1(clamp((hour >= 22 || hour < 6) ? 25 : d.applied.ledIntensity, 0, 100)),
-        safety: r1(clamp(d.safety.value + noise(25), 100, 700))
+        safety: r1(clamp(d.safety.value + noise(25), 0, d.safety.value * 1.5 + 50))
       });
     }
     store.points = pts;

@@ -2,7 +2,7 @@
 <html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-  <link rel="shortcut icon" href="favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="img/logo.png" type="image/png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Dashboard — ALCURA</title>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -10,11 +10,12 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css?v=8">
-<link rel="stylesheet" href="css/landing.css?v=8">
+<link rel="stylesheet" href="css/landing.css?v=9">
 </head>
 <body>
 <div class="liquid-bg">
@@ -108,7 +109,32 @@
 
     <section class="dash-block dash-qa span-2">
       <div class="sec-title"><h3>Aksi Cepat</h3></div>
-      <div class="qa-grid"><a class="qa" href="pages/air-quality.html"><div class="ic"><i class="ph-fill ph-shield-check"></i></div><span>Keamanan</span><small>Aman</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-lightbulb-filament"></i></div><span>LED</span><small><span data-bind="applied.ledIntensity">72</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-fan"></i></div><span>Aerasi</span><small><span data-bind="applied.aeration">60</span>%</small></a><a class="qa" href="pages/controls.html"><div class="ic"><i class="ph-fill ph-moon-stars"></i></div><span>Mode</span><small>Growth</small></a></div>
+      <div class="qa-grid" id="qaGrid">
+        <a class="qa" href="pages/controls.html">
+          <div class="ic"><i class="ph-fill ph-sliders-horizontal"></i></div>
+          <span>Kontrol</span><small id="qaCtrl">Lampu · kipas · pompa</small>
+        </a>
+        <a class="qa" href="pages/air-quality.html">
+          <div class="ic"><i class="ph-fill ph-shield-check"></i></div>
+          <span>Keamanan</span><small id="qaSafety">Memuat…</small>
+        </a>
+        <a class="qa" href="pages/ai-chat.html">
+          <div class="ic"><i class="ph-fill ph-sparkle"></i></div>
+          <span>Tanya AI</span><small>Asisten cerdas</small>
+        </a>
+        <a class="qa" href="pages/simulator.html">
+          <div class="ic"><i class="ph-fill ph-flask"></i></div>
+          <span>Simulasi</span><small>Rencana panen</small>
+        </a>
+        <a class="qa" href="pages/impact.html">
+          <div class="ic"><i class="ph-fill ph-leaf"></i></div>
+          <span>Dampak</span><small id="qaImpact">Lingkungan</small>
+        </a>
+        <a class="qa" href="pages/harvest.html">
+          <div class="ic"><i class="ph-fill ph-basket"></i></div>
+          <span>Panen</span><small>Catatan panen</small>
+        </a>
+      </div>
     </section>
   </div>
 
@@ -154,6 +180,28 @@ ALCURA.on(function (d) {
   if (window.ALCURA_HISTORY) ALCURA_HISTORY.renderSpark('#spark', 'co2', { n: 24 });
 });
 
+/* ===== Aksi Cepat — pintasan halaman dengan ringkasan status langsung ===== */
+(function () {
+  function Tq(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+  ALCURA.on(function (d) {
+    var dev = d.device;
+    var ctrl = document.getElementById('qaCtrl');
+    if (ctrl) ctrl.textContent = Tq('Lights', 'Lampu', 'ライト') + ' ' + dev.lampsOn + '/5 · ' +
+      Tq('Fan', 'Kipas', 'ファン') + ' ' + dev.fansOn + '/2 · ' + Tq('Pump', 'Pompa', 'ポンプ') + ' ' + dev.pumpsOn + '/2';
+
+    var sEl = document.getElementById('qaSafety');
+    if (sEl) {
+      var s = d.safety;
+      sEl.textContent = s.level === 'danger' ? Tq('Danger', 'Bahaya', '危険') + ' · ' + s.value + ' ppm'
+        : s.level === 'warn' ? Tq('Caution', 'Waspada', '注意') + ' · ' + s.value + ' ppm'
+          : Tq('All safe', 'Aman', '安全');
+    }
+
+    var imp = document.getElementById('qaImpact');
+    if (imp) imp.textContent = Tq('CO₂ ', 'CO₂ ', 'CO₂ ') + d.impact.co2Today + ' g ' + Tq('today', 'hari ini', '今日');
+  });
+})();
+
 /* ===== AI Daily Briefing — generated once per day, cached ===== */
 (function () {
   var BKEY = 'alcuraBriefV1';
@@ -177,7 +225,7 @@ ALCURA.on(function (d) {
       '- Keamanan gas: ' + d.safety.value + ' ppm di ' + d.safety.loc + ' (' + d.safety.level + ')',
       '- Kultur: OD ' + d.culture.od + ', pH ' + d.culture.ph + (ph ? ' (dari ' + ph.first + ')' : '') + ', TDS ' + d.culture.tds + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status,
       '- Panen ~' + d.harvest.days + ' hari lagi (kesiapan ' + d.harvest.readiness + '%, est ' + d.harvest.yieldG + ' g)',
-      '- Auto Mode ' + (d.control.autoMode ? 'aktif' : 'nonaktif') + ', LED ' + d.applied.ledIntensity + '%, aerasi ' + d.applied.aeration + '%',
+      '- Perangkat: lampu ' + d.device.lampsOn + '/5 @ ' + d.device.brightness + '%, kipas ' + d.device.fansOn + '/2, pompa ' + d.device.pumpsOn + '/2',
       '- Dampak hari ini: CO₂ terserap ' + d.impact.co2Today + ' g, O₂ ' + d.impact.o2Today + ' L',
       d.culture.recommendations && d.culture.recommendations.length ? '- Catatan kultur: ' + d.culture.recommendations[0] : ''
     ].join('\n');

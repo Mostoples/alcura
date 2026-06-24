@@ -2,19 +2,20 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ALCURA AI — Asisten Cerdas</title>
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css?v=8">
   <link rel="stylesheet" href="../css/mobile.css?v=8">
-  <link rel="stylesheet" href="../css/landing.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=9">
   <style>
     .chat-page{display:flex;flex-direction:column;min-height:100dvh}
     /* override .top-bar's space-between so header items sit tight & aligned */
@@ -157,19 +158,19 @@ function liveContext() {
   return [
     'DATA SENSOR REAL-TIME SAAT INI (gunakan untuk menjawab pertanyaan tentang kondisi terkini):',
     '- Skor kualitas udara: ' + d.air.score + '/100 (' + d.air.label + ')',
-    '- CO₂: ' + d.air.co2 + ' ppm | TVOC: ' + d.air.tvoc + ' ppb | kelembapan: ' + d.air.rh + '%',
-    '- Keamanan gas/asap: tertinggi ' + d.safety.value + ' ppm di ' + d.safety.loc + ' (status: ' + d.safety.level + ')',
-    '- Kultur: suhu ' + d.culture.temp + '°C, pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', klorofil ' + d.culture.chl + '%, status ' + d.culture.status,
+    '- CO₂: ' + d.air.co2 + ' ppm | CO: ' + d.air.co + ' ppm | CH₄: ' + d.air.ch4 + ' ppm | H₂: ' + d.air.h2 + ' ppm | O₂(lvl): ' + d.air.o2 + ' | kelembapan: ' + d.air.rh + '%',
+    '- Keamanan gas: tertinggi ' + d.safety.value + ' ppm (' + d.safety.loc + ', status: ' + d.safety.level + ')',
+    '- Air kultur: suhu ' + d.culture.temp + '°C, pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, kekeruhan ' + d.culture.turbidity + ' NTU, OD(est) ' + d.culture.od + ', status ' + d.culture.status,
     '- Level air: ' + Math.round(d.s.level) + '%',
     '- Prediksi panen: ' + d.harvest.days + ' hari lagi (kesiapan ' + d.harvest.readiness + '%, estimasi ' + d.harvest.yieldG + ' g)',
-    '- Aktuator: LED ' + d.applied.ledIntensity + '%, aerasi ' + d.applied.aeration + '%, Auto Mode ' + (d.control.autoMode ? 'aktif' : 'nonaktif'),
+    '- Aktuator perangkat: lampu ' + d.device.lampsOn + '/5 @ ' + d.device.brightness + '%, kipas ' + d.device.fansOn + '/2, pompa ' + d.device.pumpsOn + '/2',
     '- Dampak hari ini: CO₂ terserap ' + d.impact.co2Today + ' g, O₂ diproduksi ' + d.impact.o2Today + ' L'
   ].join('\n');
 }
 
 function systemPrompt() {
   return 'Kamu adalah ALCURA AI, asisten cerdas di dalam aplikasi ALCURA — sebuah fotobioreaktor Spirulina pintar yang memurnikan udara dalam ruangan dengan menyerap CO₂ dan memproduksi O₂.\n' +
-    'Perangkat memiliki sensor: 3× MQ-2 (asap/gas), MG811 (CO₂), ENS160+AHT21 (TVOC/eCO₂/suhu/kelembapan), DHT-11, MLX90614 (suhu kultur non-kontak), pH meter, TDS, HC-SR04 (level air), TCS3200 (warna/klorofil kultur), sensor UV, serta lampu grow LED WS2812B & strip.\n' +
+    'Perangkat memiliki sensor (dari Realtime Database): udara (suhu, kelembapan, indeks UV), gas (CO₂, CO, CH₄, H₂, O₂), dan air (level, pH, TDS, suhu, kekeruhan/turbidity). Status tiap sensor dihitung firmware (mis. Normal/Optimal/Warning/Error). OD/densitas adalah estimasi dari kekeruhan.\n' +
     'Tugasmu: bantu pengguna memahami kualitas udara, kesehatan kultur, jadwal panen, dan perawatan. Jawab ramah, ringkas, dan praktis (gunakan poin bila perlu). Jika ditanya kondisi terkini, gunakan DATA SENSOR di bawah. Jangan mengarang angka di luar data yang diberikan.\n\n' +
     liveContext() + '\n\n' +
     replyLangInstruction();   // kept LAST so the response-language rule carries the most weight

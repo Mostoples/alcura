@@ -883,11 +883,11 @@ body{font-family:var(--font-helios)}
 /* ============================================================
    Microalgae logo mark (replaces the square + leaf chip)
    ============================================================ */
-.brand .mark-algae{
-  background:url(../img/logo-algae.svg) center/contain no-repeat !important;
+.mark-algae{
+  background:url(../img/logo.png) center/contain no-repeat !important;
   box-shadow:none !important;border-radius:0 !important;
 }
-.brand .mark-algae i{display:none}
+.mark-algae i{display:none}
 
 /* ============================================================
    3D floating phone — tilts in perspective + bobs up and down

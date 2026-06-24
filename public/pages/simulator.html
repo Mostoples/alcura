@@ -2,17 +2,19 @@
 <html lang="id" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <link rel="shortcut icon" href="../favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Simulator Panen — ALCURA</title>
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css?v=8">
   <link rel="stylesheet" href="../css/mobile.css?v=8">
-  <link rel="stylesheet" href="../css/landing.css?v=8">
+  <link rel="stylesheet" href="../css/landing.css?v=9">
   <style>
     .sim-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem}
     .sim-stat{background:var(--bg);border-radius:var(--radius-lg);padding:.9rem 1rem;box-shadow:var(--shadow-raised-sm)}
@@ -115,6 +117,7 @@
 <script src="../js/more-menu.js"></script>
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=8"></script>
+<script src="../js/firebase-config.js"></script>
 <script src="../js/sensors-engine.js"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
@@ -167,11 +170,13 @@ function onSim() {
 }
 
 function applySim() {
-  ALCURA.setControl('autoMode', false);
-  ALCURA.setControl('ledIntensity', +led.value);
-  ALCURA.setControl('aeration', +aer.value);
-  ALCURA.setControl('co2Injection', co2.checked);
-  toast(T('Scenario applied to controls ✓', 'Skenario diterapkan ke kontrol ✓', 'シナリオを適用しました ✓'));
+  // Apply the scenario's lamp brightness to the real device, and run pumps if the
+  // scenario calls for aeration. (No abstract setpoints — writes straight to RTDB.)
+  ALCURA.setDevice('lamp/brightness', +led.value);
+  var wantCirc = +aer.value >= 50;
+  ALCURA.setDevice('pump/pump1', wantCirc);
+  ALCURA.setDevice('fan/fan1', wantCirc);
+  toast(T('Brightness applied to device ✓', 'Kecerahan diterapkan ke perangkat ✓', '明るさをデバイスに適用しました ✓'));
 }
 
 resetSim();

@@ -173,10 +173,12 @@ function applySim() {
   // Apply the scenario's lamp brightness to the real device, and run pumps if the
   // scenario calls for aeration. (No abstract setpoints — writes straight to RTDB.)
   ALCURA.setDevice('lamp/brightness', +led.value);
-  var wantCirc = +aer.value >= 50;
-  ALCURA.setDevice('pump/pump1', wantCirc);
-  ALCURA.setDevice('fan/fan1', wantCirc);
-  toast(T('Brightness applied to device ✓', 'Kecerahan diterapkan ke perangkat ✓', '明るさをデバイスに適用しました ✓'));
+  // Spread the scenario's aeration across all 4 circulation units (2 pumps + 2 fans)
+  // so the device's circulationPct round-trips the simulated value (was capped at 50%).
+  var units = ['pump/pump1', 'pump/pump2', 'fan/fan1', 'fan/fan2'];
+  var on = Math.round(+aer.value / 100 * units.length);
+  units.forEach(function (u, i) { ALCURA.setDevice(u, i < on); });
+  toast(T('Applied to device ✓', 'Diterapkan ke perangkat ✓', 'デバイスに適用しました ✓'));
 }
 
 resetSim();

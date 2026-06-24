@@ -363,7 +363,7 @@
     setLang: setLang,
     t: function (en, id, ja) { return ({ en: en, id: id, ja: ja })[lang]; },
     pick: function (obj) { return obj[lang] != null ? obj[lang] : obj.en; },
-    cycle: function () { cycle(); },                       // advance en→id→ja→en
+    cycle: function () { setLang(LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]); }, // advance en→id→ja→en
     set: function (l) {                                    // jump straight to a language
       if (LANGS.indexOf(l) < 0 || l === lang) return;
       lang = l; localStorage.setItem('lang', lang); applyAll();

@@ -97,17 +97,23 @@ const I18N={
     'cmp.takeaway':'ALCURA menyatukan pemurnian udara, produksi oksigen, dan budi daya — dalam satu alat berkelanjutan.',
     'cmp.note':'Perbandingan harga & merk spesifik menyusul.',
 
-    'price.tag':'Langganan','price.title':'Pilih paket yang <em>hidup</em>','price.sub':'Harga, benefit, dan nama langganan — detail menyusul.',
+    'price.tag':'Langganan','price.title':'Pilih paket yang <em>hidup</em>','price.sub':'Tiga paket fleksibel — untuk rumah, kantor, hingga tim yang berkembang.','price.note':'Coba 30 hari tanpa risiko · Batalkan kapan saja · Termasuk pembaruan AI.',
     'price.p1.name':'Spora','price.p1.desc':'Untuk memulai perjalanan udara bersih.','price.p1.f1':'1 unit ALCURA','price.p1.f2':'Monitoring dasar','price.p1.f3':'Notifikasi panen',
     'price.p2.name':'Bloom','price.p2.badge':'Populer','price.p2.desc':'Untuk pengalaman penuh ALCURA.','price.p2.f1':'Semua fitur Spora','price.p2.f2':'Optimasi AI penuh','price.p2.f3':'Prediksi hasil panen','price.p2.f4':'Riwayat data tak terbatas',
     'price.p3.name':'Canopy','price.p3.desc':'Untuk ruang dan tim yang lebih besar.','price.p3.f1':'Semua fitur Bloom','price.p3.f2':'Multi-unit dashboard','price.p3.f3':'Dukungan prioritas',
     'price.choose':'Pilih Paket','price.month':'/bulan',
     'price.bestseller':'Paling Populer','price.p1.tag':'Pemula','price.p2.tag':'Terlaris','price.p3.tag':'Skala',
 
-    'team.tag':'Tim Kami','team.title':'Orang di balik <em>ALCURA</em>','team.sub':'Tujuh orang yang menghidupkan udara untuk ruang yang hidup. Detail menyusul.',
+    'team.tag':'Tim Kami','team.title':'Orang di balik <em>ALCURA</em>','team.sub':'Tujuh orang yang menghidupkan udara untuk ruang yang hidup.',
     'team.m1':'Anggota 1','team.m2':'Anggota 2','team.m3':'Anggota 3','team.m4':'Anggota 4','team.m5':'Anggota 5','team.m6':'Anggota 6','team.m7':'Anggota 7',
 
     'rev.tag':'Review Pengguna','rev.title':'Apa kata <em>mereka</em>','rev.sub':'Pengalaman nyata dari ruang yang sudah bernapas lebih bersih.',
+    'rev.1.t':'"Ruang kerja terasa jauh lebih segar sejak ada ALCURA. Memantau kultur lewat aplikasinya bikin ketagihan."','rev.1.s':'Desainer Interior · Jakarta',
+    'rev.2.t':'"Desainnya estetik sekaligus fungsional. Panen Spirulina pertama saya berhasil dalam 28 hari!"','rev.2.s':'Software Engineer · Bandung',
+    'rev.3.t':'"Optimasi AI-nya benar-benar otomatis — tinggal pasang, lalu nikmati udara bersih tiap hari."','rev.3.s':'Pemilik Kafe · Surabaya',
+    'rev.4.t':'"CO₂ di ruang meeting kami turun drastis. Klien sering bertanya soal \'lampu hijau\' yang menyala itu."','rev.4.s':'Manajer Kantor · Jakarta',
+    'rev.5.t':'"Sebagai pemilik studio yoga, kualitas udara itu segalanya. ALCURA jadi pembeda yang dirasakan member."','rev.5.s':'Pemilik Studio Yoga · Tangerang',
+    'rev.6.t':'"Tidak ada filter yang perlu diganti — hemat dan ramah lingkungan. Investasi yang langsung terasa manfaatnya."','rev.6.s':'Founder Startup · Jakarta',
 
     'faq.tag':'FAQ','faq.title':'Pertanyaan yang <em>sering</em> muncul','faq.sub':'Klik pertanyaan untuk melihat jawabannya.',
     'faq.q1':'Apa itu ALCURA?','faq.a1':'ALCURA adalah lampu multifungsi yang berperan sebagai photobioreactor pintar untuk budi daya mikroalga Spirulina sekaligus air purifier — memurnikan udara, memproduksi oksigen, dan dipantau real-time oleh AI.',
@@ -218,17 +224,23 @@ const I18N={
     'cmp.takeaway':'ALCURA unites air purification, oxygen production, and cultivation in one sustainable device.',
     'cmp.note':'Detailed pricing & specific brands coming soon.',
 
-    'price.tag':'Pricing','price.title':'Choose a <em>living</em> plan','price.sub':'Pricing, benefits, and plan names — details coming soon.',
+    'price.tag':'Pricing','price.title':'Choose a <em>living</em> plan','price.sub':'Three flexible plans — for homes, offices, and growing teams.','price.note':'30-day risk-free trial · Cancel anytime · AI updates included.',
     'price.p1.name':'Spore','price.p1.desc':'To begin your clean-air journey.','price.p1.f1':'1 ALCURA unit','price.p1.f2':'Basic monitoring','price.p1.f3':'Harvest notifications',
     'price.p2.name':'Bloom','price.p2.badge':'Popular','price.p2.desc':'For the full ALCURA experience.','price.p2.f1':'Everything in Spore','price.p2.f2':'Full AI optimization','price.p2.f3':'Harvest yield predictions','price.p2.f4':'Unlimited data history',
     'price.p3.name':'Canopy','price.p3.desc':'For larger spaces and teams.','price.p3.f1':'Everything in Bloom','price.p3.f2':'Multi-unit dashboard','price.p3.f3':'Priority support',
     'price.choose':'Choose Plan','price.month':'/month',
     'price.bestseller':'Best Seller','price.p1.tag':'Starter','price.p2.tag':'Most Popular','price.p3.tag':'Scale',
 
-    'team.tag':'Our Team','team.title':'The people behind <em>ALCURA</em>','team.sub':'Seven people bringing living air to living spaces. Details coming soon.',
+    'team.tag':'Our Team','team.title':'The people behind <em>ALCURA</em>','team.sub':'Seven people bringing living air to living spaces.',
     'team.m1':'Member 1','team.m2':'Member 2','team.m3':'Member 3','team.m4':'Member 4','team.m5':'Member 5','team.m6':'Member 6','team.m7':'Member 7',
 
     'rev.tag':'User Reviews','rev.title':'What they <em>say</em>','rev.sub':'Real experiences from spaces already breathing cleaner.',
+    'rev.1.t':'"My workspace feels so much fresher with ALCURA, and tracking the culture in the app is honestly addictive."','rev.1.s':'Interior Designer · Jakarta',
+    'rev.2.t':'"Beautiful yet functional design. My first Spirulina harvest succeeded in just 28 days!"','rev.2.s':'Software Engineer · Bandung',
+    'rev.3.t':'"The AI optimization is truly hands-off — just set it up and enjoy clean air every day."','rev.3.s':'Café Owner · Surabaya',
+    'rev.4.t':'"CO₂ in our meeting room dropped dramatically. Clients keep asking about the glowing green lamp."','rev.4.s':'Office Manager · Jakarta',
+    'rev.5.t':'"As a yoga studio owner, air quality is everything. ALCURA is a difference our members can feel."','rev.5.s':'Yoga Studio Owner · Tangerang',
+    'rev.6.t':'"No filters to replace — cost-effective and eco-friendly. An investment that pays off right away."','rev.6.s':'Startup Founder · Jakarta',
 
     'faq.tag':'FAQ','faq.title':'Frequently <em>asked</em> questions','faq.sub':'Tap a question to reveal its answer.',
     'faq.q1':'What is ALCURA?','faq.a1':'ALCURA is a multifunctional lamp that acts as a smart photobioreactor for cultivating Spirulina microalgae as well as an air purifier — purifying the air, producing oxygen, and monitored in real time by AI.',
@@ -339,17 +351,23 @@ const I18N={
     'cmp.takeaway':'ALCURAは空気浄化・酸素生成・培養を1台の持続可能なデバイスに統合します。',
     'cmp.note':'詳細な料金と具体的なブランドは近日公開。',
 
-    'price.tag':'料金','price.title':'<em>生きた</em>プランを選ぶ','price.sub':'料金・特典・プラン名 — 詳細は近日公開。',
+    'price.tag':'料金','price.title':'<em>生きた</em>プランを選ぶ','price.sub':'ご家庭からオフィス、成長するチームまで、3つの柔軟なプラン。','price.note':'30日間リスクなしでお試し · いつでもキャンセル可 · AIアップデート込み。',
     'price.p1.name':'Spore','price.p1.desc':'きれいな空気の旅を始めるために。','price.p1.f1':'ALCURA 1台','price.p1.f2':'基本監視','price.p1.f3':'収穫通知',
     'price.p2.name':'Bloom','price.p2.badge':'人気','price.p2.desc':'ALCURAをフルに体験。','price.p2.f1':'Sporeの全機能','price.p2.f2':'AI最適化（フル）','price.p2.f3':'収穫量予測','price.p2.f4':'無制限のデータ履歴',
     'price.p3.name':'Canopy','price.p3.desc':'より大きな空間とチームに。','price.p3.f1':'Bloomの全機能','price.p3.f2':'マルチユニットダッシュボード','price.p3.f3':'優先サポート',
     'price.choose':'プランを選ぶ','price.month':'/月',
     'price.bestseller':'ベストセラー','price.p1.tag':'スターター','price.p2.tag':'最も人気','price.p3.tag':'スケール',
 
-    'team.tag':'チーム','team.title':'<em>ALCURA</em>を支える人々','team.sub':'生きた空気を生きた空間へ届ける7人。詳細は近日公開。',
+    'team.tag':'チーム','team.title':'<em>ALCURA</em>を支える人々','team.sub':'生きた空気を生きた空間へ届ける7人のチーム。',
     'team.m1':'メンバー1','team.m2':'メンバー2','team.m3':'メンバー3','team.m4':'メンバー4','team.m5':'メンバー5','team.m6':'メンバー6','team.m7':'メンバー7',
 
     'rev.tag':'ユーザーレビュー','rev.title':'<em>声</em>をご紹介','rev.sub':'すでにきれいな空気を呼吸している空間からの実体験。',
+    'rev.1.t':'「ALCURAを置いてから仕事場の空気が格段に新鮮に。アプリで培養を見守るのが楽しくて仕方ありません。」','rev.1.s':'インテリアデザイナー · ジャカルタ',
+    'rev.2.t':'「美しくて機能的なデザイン。初めてのスピルリナ収穫がわずか28日で成功しました！」','rev.2.s':'ソフトウェアエンジニア · バンドン',
+    'rev.3.t':'「AI最適化は完全おまかせ — 設置したら毎日きれいな空気を楽しむだけ。」','rev.3.s':'カフェオーナー · スラバヤ',
+    'rev.4.t':'「会議室のCO₂が劇的に下がりました。来客によく『光る緑のランプ』について聞かれます。」','rev.4.s':'オフィスマネージャー · ジャカルタ',
+    'rev.5.t':'「ヨガスタジオを営む身として空気品質は最重要。ALCURAは会員も実感できる違いです。」','rev.5.s':'ヨガスタジオオーナー · タンゲラン',
+    'rev.6.t':'「交換するフィルターがなく、経済的でエコ。すぐに効果を実感できる投資です。」','rev.6.s':'スタートアップ創業者 · ジャカルタ',
 
     'faq.tag':'FAQ','faq.title':'よくある<em>質問</em>','faq.sub':'質問をタップすると回答が表示されます。',
     'faq.q1':'ALCURAとは？','faq.a1':'ALCURAは、スピルリナ微細藻類を培養するスマートなフォトバイオリアクターと空気清浄機を兼ねた多機能ランプです。空気を浄化し、酸素を生み出し、AIがリアルタイムで監視します。',

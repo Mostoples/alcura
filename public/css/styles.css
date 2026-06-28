@@ -32,8 +32,8 @@
   --r-sm:12px; --r-md:18px; --r-lg:24px; --r-xl:28px;
   --line: rgba(22,39,28,0.08);
 
-  --gap:          14px;
-  --pad:          18px;
+  --gap:          12px;
+  --pad:          16px;
 
   --font:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono:    'Space Grotesk', monospace;
@@ -118,16 +118,16 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
    LAYOUT SHELL
    ========================================================= */
 .app-shell, .app-container{
-  max-width: 440px;
+  max-width: 460px;
   margin: 0 auto;
-  padding: 22px 20px 0;
+  padding: 16px 14px 0;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 14px;
   min-height: 100vh;
   position: relative;
 }
-@media (min-width:480px){ .app-shell,.app-container{ padding: 30px 24px 0; } }
+@media (min-width:480px){ .app-shell,.app-container{ padding: 22px 18px 0; } }
 
 /* Legacy alcura status bar — hidden in new shell */
 .app-statusbar{display:none}
@@ -338,7 +338,7 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
 /* =========================================================
    SECTION TITLE / QUICK ACTIONS
    ========================================================= */
-.section-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:.2px}
+.section-title{font-size:14px;font-weight:700;color:var(--text);margin:6px 0 0;letter-spacing:.2px}
 .section-title.row-link{display:flex;justify-content:space-between;align-items:center}
 .section-title a, .sec-title a{font-size:11px;color:var(--accent);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.2rem}
 .sec-title{display:flex;align-items:center;justify-content:space-between}
@@ -929,6 +929,35 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 
   /* Auth + onboarding stay as a centered, comfortably sized card */
   .auth-shell{ max-width:460px; }
+
+  /* Subpages: tile content into TWO columns so it fills the width instead of
+     one ultra-wide column (cards stop looking empty/stretched). Section
+     headers, the hero, multi-card grids and the alert feed span full width. */
+  .app-container:not(.chat-page):not(.dash-shell) .app-scroll:not(.dash){
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px 18px;
+    align-items:start;
+    grid-auto-flow:row dense;
+  }
+  .app-scroll:not(.dash) > .section-title{ grid-column:1 / -1; margin:8px 0 -2px; }
+  .app-scroll:not(.dash) > .grid-2,
+  .app-scroll:not(.dash) > .hero-card,
+  .app-scroll:not(.dash) > .tabs,
+  .app-scroll:not(.dash) > #alertFeed,
+  .app-scroll:not(.dash) > .profile-hero,
+  .app-scroll:not(.dash) > .pf-actions{ grid-column:1 / -1; }
+  /* Alerts feed tiles into its own responsive columns */
+  .app-scroll:not(.dash) #alertFeed{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start;
+  }
+}
+
+/* On very wide screens go to three columns for the densest fit */
+@media (min-width:1500px){
+  .app-container:not(.chat-page):not(.dash-shell) .app-scroll:not(.dash){
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
 }
 
 /* Ultra-wide — keep a sensible cap */

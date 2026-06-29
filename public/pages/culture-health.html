@@ -50,15 +50,15 @@
     <div class="card hero-card aura-green" data-pattern="plant">
       <div class="hero-left">
         <p class="hero-label">Biomass Density</p>
-        <div class="hero-value"><span class="hero-num" data-bind="culture.od" data-dec="2">1.32</span><span class="hero-unit">OD680</span></div>
-        <p class="hero-desc">Kesiapan <b data-bind="harvest.readiness">83</b>% · panen ~<span data-bind="harvest.days">5</span> hari lagi</p>
+        <div class="hero-value"><span class="hero-num" data-bind="culture.od" data-dec="2">--</span><span class="hero-unit">OD680</span></div>
+        <p class="hero-desc">Kesiapan <b data-bind="harvest.readiness">--</b>% · panen ~<span data-bind="harvest.days">--</span> hari lagi</p>
         <div class="progress-bar"><div class="progress-fill" style="width:83%" data-bind-w="harvest.readiness"></div></div>
       </div>
       <div class="hero-right">
         <svg viewBox="0 0 120 120" class="ring">
           <circle cx="60" cy="60" r="50" class="ring-track"/>
           <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:53"/>
-          <text x="60" y="58" text-anchor="middle" class="ring-num"><tspan data-bind="harvest.readiness">83</tspan>%</text>
+          <text x="60" y="58" text-anchor="middle" class="ring-num"><tspan data-bind="harvest.readiness">--</tspan>%</text>
           <text x="60" y="78" text-anchor="middle" class="ring-sub">GROW</text>
         </svg>
       </div>
@@ -70,26 +70,26 @@
       <div class="card metric-card aura-violet" data-pattern="flask">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up" data-status>Optimal</span></div>
         <p class="metric-label">pH Meter</p>
-        <div class="metric-value"><span data-sensor="ph" data-dec="2">7.06</span></div>
+        <div class="metric-value"><span data-sensor="ph" data-dec="2">--</span></div>
         <div class="sensor-pins">Probe analog · ideal 6.5–8.0</div>
       </div>
       <div class="card metric-card aura-blue" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up" data-status>Normal</span></div>
         <p class="metric-label">TDS (nutrisi)</p>
-        <div class="metric-value"><span data-sensor="tds" data-min="780" data-max="980">864</span><span class="metric-unit">ppm</span></div>
+        <div class="metric-value"><span data-sensor="tds" data-min="780" data-max="980">--</span><span class="metric-unit">ppm</span></div>
         <div class="sensor-pins">Total padatan terlarut</div>
       </div>
       <div class="card metric-card aura-amber" data-pattern="sun">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer-hot"></i></div><span class="metric-trend up" data-status>Non-kontak</span></div>
         <p class="metric-label">Suhu Air</p>
-        <div class="metric-value"><span data-sensor="mlx" data-min="22" data-max="32" data-dec="1">27</span><span class="metric-unit">°C</span></div>
+        <div class="metric-value"><span data-sensor="mlx" data-min="22" data-max="32" data-dec="1">--</span><span class="metric-unit">°C</span></div>
         <div class="sensor-pins">Sensor suhu air kultur</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-waves"></i></div><span class="metric-trend up" data-status>Cukup</span></div>
         <p class="metric-label">Level Air</p>
-        <div class="metric-value"><span data-sensor="level" data-min="0" data-max="100">0</span><span class="metric-unit">%</span></div>
-        <div class="sub-value">Jarak <b data-sensor="dist" data-min="2" data-max="20" data-dec="1">12</b> cm</div>
+        <div class="metric-value"><span data-sensor="level" data-min="0" data-max="100">--</span><span class="metric-unit">%</span></div>
+        <div class="sub-value">Jarak <b data-sensor="dist" data-min="2" data-max="20" data-dec="1">--</b> cm</div>
       </div>
     </section>
 
@@ -99,19 +99,19 @@
       <div class="card metric-card aura-blue" data-pattern="drop">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-eyedropper"></i></div><span class="metric-trend up" data-status data-ok="Optimal">Jernih</span></div>
         <p class="metric-label">Kekeruhan — Turbidity</p>
-        <div class="metric-value"><span data-sensor="turbidity" data-dec="2">0.5</span><span class="metric-unit">NTU</span></div>
+        <div class="metric-value"><span data-sensor="turbidity" data-dec="2">--</span><span class="metric-unit">NTU</span></div>
         <div class="sensor-pins">Kejernihan air kultur</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="leaf">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-circles-three"></i></div><span class="metric-trend up">Estimasi</span></div>
         <p class="metric-label">Densitas (est.)</p>
-        <div class="metric-value"><span data-bind="culture.chl">92</span><span class="metric-unit">%</span></div>
-        <div class="sub-value">OD <b data-bind="culture.od" data-dec="2">1.32</b> · dari kekeruhan</div>
+        <div class="metric-value"><span data-bind="culture.chl">--</span><span class="metric-unit">%</span></div>
+        <div class="sub-value">OD <b data-bind="culture.od" data-dec="2">--</b> · dari kekeruhan</div>
       </div>
       <div class="card metric-card aura-green" data-pattern="leaf">
         <div class="metric-head"><div class="metric-icon"><i class="ph ph-pulse"></i></div><span class="metric-trend up">Online</span></div>
         <p class="metric-label">Uptime Perangkat</p>
-        <div class="metric-value"><span data-sensor="uptime" data-dec="0">0</span><span class="metric-unit">dtk</span></div>
+        <div class="metric-value"><span data-sensor="uptime" data-dec="0">--</span><span class="metric-unit">dtk</span></div>
         <div class="sensor-pins">Lama perangkat aktif (detik)</div>
       </div>
     </section>
@@ -134,7 +134,7 @@
     <h3 class="section-title">Growth Curve (OD680)</h3>
     <div class="card aura-green no-pattern">
       <div class="chart-mock" style="height:160px" id="growthChart"></div>
-      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Kurva densitas menuju target panen <b>1.6 OD</b> — <span data-bind="harvest.days">5</span> hari lagi</div>
+      <div style="text-align:center;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">Kurva densitas menuju target panen <b>1.6 OD</b> — <span data-bind="harvest.days">--</span> hari lagi</div>
     </div>
 
     <h3 class="section-title">Asisten Perawatan</h3>
@@ -171,10 +171,10 @@
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=14"></script>
 <script src="../js/firebase-config.js"></script>
-<script src="../js/sensors-engine.js"></script>
+<script src="../js/sensors-engine.js?v=9"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
-<script src="../js/history.js"></script>
+<script src="../js/history.js?v=9"></script>
 <script src="../js/dosing.js"></script>
 <script src="../js/ai-secret.js" onerror="void 0"></script>
 <script src="../js/ai-core.js"></script>
@@ -242,7 +242,9 @@ function paintGrowth() {
       show('<i class="ph ph-spinner"></i> ' + T('AI is reading the culture…', 'AI sedang membaca kultur…', 'AIが培養を読み取っています…'));
 
       var d = ALCURA.snapshot();
-      var ctx = 'Data sensor saat ini untuk dicocokkan: warna TCS3200 G-freq ' + d.s.green + ' (klorofil est. ' + d.culture.chl + '%), pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status + '.';
+      var ctx = ALCURA.live
+        ? 'Data sensor saat ini untuk dicocokkan: warna TCS3200 G-freq ' + d.s.green + ' (klorofil est. ' + d.culture.chl + '%), pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status + '.'
+        : 'Belum ada data sensor real-time (perangkat mungkin offline) — nilai hanya dari analisis foto, jangan mengarang angka sensor.';
       var sys = 'Kamu ahli budidaya mikroalga Spirulina. Analisis FOTO kultur dalam fotobioreaktor. Nilai secara singkat: (1) warna & kepekatan hijau (sehat = hijau pekat merata), (2) estimasi densitas/kesehatan, (3) tanda masalah (menguning/pemutihan/bleaching, gumpalan, busa, kontaminasi, pengendapan). Bandingkan dengan data sensor — sebutkan bila cocok atau ada ketidaksesuaian. Akhiri dengan 1 rekomendasi tindakan. Maksimal 5 kalimat, gunakan poin bila perlu. ' + (function () { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? 'Jawab dalam Bahasa Indonesia.' : l === 'ja' ? 'Reply in Japanese.' : 'Reply in English.'; })();
 
       ALCURA_AI.vision(ctx, { mime: mime, data: base64 }, sys)
@@ -255,6 +257,7 @@ function paintGrowth() {
 })();
 
 ALCURA.on(function (d) {
+  if (!ALCURA.live) return;   // only render real RTDB data — no seed/placeholder values
   paintGrowth();
   var c = d.culture;
   var label = c.status === 'optimal' ? T('Optimal', 'Optimal', '最適') : c.status === 'attention' ? T('Needs attention', 'Perlu Perhatian', '要注意') : T('Critical', 'Kritis', '危機');

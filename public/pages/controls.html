@@ -90,7 +90,7 @@
     <!-- Device status -->
     <h3 class="section-title">Status Perangkat</h3>
     <div class="card no-pattern">
-      <div class="row"><span><i class="ph ph-pulse" style="margin-right:.4rem;color:var(--accent)"></i>Uptime perangkat</span><b><span data-bind="device.uptime">0</span> dtk</b></div>
+      <div class="row"><span><i class="ph ph-pulse" style="margin-right:.4rem;color:var(--accent)"></i>Uptime perangkat</span><b><span data-bind="device.uptime">--</span> dtk</b></div>
       <div class="row"><span><i class="ph ph-wifi-high" style="margin-right:.4rem;color:var(--accent)"></i>Koneksi</span><b id="connState">—</b></div>
       <div style="background:rgba(var(--aura-green),.10);border-radius:var(--radius);padding:.8rem;margin-top:.6rem;font-size:.76rem;color:var(--text-muted);line-height:1.5">
         <i class="ph ph-info" style="margin-right:.4rem;color:var(--accent)"></i>Setiap perubahan langsung dikirim ke perangkat melalui Realtime Database — tidak perlu tombol simpan.
@@ -113,7 +113,7 @@
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=14"></script>
 <script src="../js/firebase-config.js"></script>
-<script src="../js/sensors-engine.js"></script>
+<script src="../js/sensors-engine.js?v=9"></script>
 <script src="../js/notifications.js"></script>
 <script>
 requireAuthPage();
@@ -158,9 +158,14 @@ ALCURA.on(function (d) {
   document.querySelectorAll('[data-fan]').forEach(function (inp) { if (document.activeElement !== inp) inp.checked = !!dev.fan[inp.getAttribute('data-fan')]; });
   document.querySelectorAll('[data-pump]').forEach(function (inp) { if (document.activeElement !== inp) inp.checked = !!dev.pump[inp.getAttribute('data-pump')]; });
 
-  // AI advisory (read-only, derived from live sensors)
-  document.getElementById('autoState').textContent = T('AI suggestions from live sensors:', 'Saran AI dari sensor langsung:', 'ライブセンサーからのAI提案:');
-  document.getElementById('autoRecs').innerHTML = d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('');
+  // AI advisory (read-only, derived from live sensors) — only with real RTDB data
+  if (ALCURA.live) {
+    document.getElementById('autoState').textContent = T('AI suggestions from live sensors:', 'Saran AI dari sensor langsung:', 'ライブセンサーからのAI提案:');
+    document.getElementById('autoRecs').innerHTML = d.auto.recommendations.map(function (r) { return '<li><i class="ph-fill ph-caret-right"></i><span>' + r + '</span></li>'; }).join('');
+  } else {
+    document.getElementById('autoState').textContent = T('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…');
+    document.getElementById('autoRecs').innerHTML = '';
+  }
 
   var cs = document.getElementById('connState');
   if (cs) {

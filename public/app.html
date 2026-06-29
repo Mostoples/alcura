@@ -40,8 +40,8 @@
     <section class="dash-block dash-hero span-2">
       <div class="card hero-status aura-green no-pattern">
         <div class="top"><span class="tag"><i class="ph-fill ph-circles-three"></i> ALCURA · Living Room</span><span class="tag"><i class="ph-fill ph-wifi-high"></i> Online</span></div>
-        <div class="gauge-wrap"><div class="gauge" style="--gp:88%" data-bind-gp="air.score"><div class="val"><b data-bind="air.score">88</b><span>HEALTH</span></div></div>
-          <div class="meta"><div class="m m-air"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">Excellent</b><small>Air Quality <span data-bind="air.score">94</span></small></div></div><div class="m m-grow"><i class="ph-fill ph-circles-three"></i><div><b>Day 25 / 30</b><small>Exponential growth</small></div></div><div class="m m-o2"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">8</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
+        <div class="gauge-wrap"><div class="gauge" style="--gp:0%" data-bind-gp="air.score"><div class="val"><b data-bind="air.score">--</b><span>HEALTH</span></div></div>
+          <div class="meta"><div class="m m-air"><i class="ph-fill ph-wind"></i><div><b data-bind="air.label">—</b><small>Air Quality <span data-bind="air.score">--</span></small></div></div><div class="m m-grow"><i class="ph-fill ph-circles-three"></i><div><b>—</b><small>Exponential growth</small></div></div><div class="m m-o2"><i class="ph-fill ph-drop"></i><div><b><span data-bind="impact.o2Today" data-dec="1">--</span> L O₂</b><small>diproduksi hari ini</small></div></div></div>
         </div>
       </div>
 
@@ -69,7 +69,7 @@
       <div class="card aura-green no-pattern pbr-card">
         <div class="pbr-head"><h3>Spirulina Culture</h3><span class="live"><span class="blink"></span> LIVE</span></div>
         <div class="pbr-stage" id="pbrStage"></div>
-        <div class="pbr-foot"><div class="f"><b>1.32</b><span>OD680</span></div><div class="f"><b>11.2</b><span>DO mg/L</span></div><div class="f"><b>72%</b><span>LED PAR</span></div><div class="f"><b>60%</b><span>AERASI</span></div></div>
+        <div class="pbr-foot"><div class="f"><b data-bind="culture.od" data-dec="2">--</b><span>OD680</span></div><div class="f"><b>--</b><span>DO mg/L</span></div><div class="f"><b><span data-bind="device.brightness">--</span>%</b><span>LED PAR</span></div><div class="f"><b><span data-bind="applied.aeration">--</span>%</b><span>AERASI</span></div></div>
       </div>
 
     </section>
@@ -108,9 +108,9 @@
     <section class="dash-block dash-harvest">
       <div class="sec-title"><h3>Panen Berikutnya</h3></div>
       <div class="card aura-green harvest" data-pattern="plant">
-        <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-circles-three"></i></div><div><h4>Spirulina siap dalam <span data-bind="harvest.days">5</span> hari</h4><span>Probabilitas kesiapan <span data-bind="harvest.readiness">85</span>%</span></div></div>
-        <div class="progress"><i style="width:83%" data-bind-w="harvest.readiness"></i></div>
-        <div class="stat-row"><span>Estimasi yield <b><span data-bind="harvest.yieldG">280</span> g</b></span><span>Densitas <b><span data-bind="harvest.od" data-dec="2">1.32</span> OD</b></span></div>
+        <div class="hh"><div class="leaf-ic"><i class="ph-fill ph-circles-three"></i></div><div><h4>Spirulina siap dalam <span data-bind="harvest.days">--</span> hari</h4><span>Probabilitas kesiapan <span data-bind="harvest.readiness">--</span>%</span></div></div>
+        <div class="progress"><i style="width:0%" data-bind-w="harvest.readiness"></i></div>
+        <div class="stat-row"><span>Estimasi yield <b><span data-bind="harvest.yieldG">--</span> g</b></span><span>Densitas <b><span data-bind="harvest.od" data-dec="2">--</span> OD</b></span></div>
         <button class="btn btn-primary btn-block" onclick="window.location.href='pages/simulator.html'"><i class="ph ph-calendar-check"></i> Rencanakan Panen</button>
       </div>
 
@@ -120,8 +120,8 @@
       <div class="sec-title"><h3>Dampak Hari Ini</h3></div>
       <div class="card aura-green impact" data-pattern="leaf">
         <div class="label"><i class="ph-fill ph-sparkle"></i> Ringkasan hari ini</div>
-        <h3>Hari ini Anda menghirup udara lebih bersih — <b><span data-bind="impact.co2Today">12</span> g CO₂</b> terserap.</h3>
-        <div class="ig"><div class="x"><b><span data-bind="impact.o2Today" data-dec="1">8</span> L</b><span>O₂ diproduksi</span></div><div class="x"><b><span data-bind="impact.vocMonth" data-dec="1">0.4</span> g</b><span>VOC dihapus</span></div><div class="x"><b><span data-bind="impact.energyMonth" data-dec="1">1.2</span> kWh</b><span>HVAC dihemat</span></div></div>
+        <h3>Hari ini Anda menghirup udara lebih bersih — <b><span data-bind="impact.co2Today">--</span> g CO₂</b> terserap.</h3>
+        <div class="ig"><div class="x"><b><span data-bind="impact.o2Today" data-dec="1">--</span> L</b><span>O₂ diproduksi</span></div><div class="x"><b><span data-bind="impact.vocMonth" data-dec="1">--</span> g</b><span>VOC dihapus</span></div><div class="x"><b><span data-bind="impact.energyMonth" data-dec="1">--</span> kWh</b><span>HVAC dihemat</span></div></div>
       </div>
 
     </section>
@@ -129,7 +129,7 @@
     <section class="dash-block dash-tren">
       <div class="sec-title"><h3>Tren Udara 24 Jam</h3><a href="pages/impact.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="card aura-blue" data-pattern="cloud">
-        <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-size:.82rem;color:var(--text-muted)">Rata-rata CO₂</span><div style="font-weight:800;font-size:1.5rem"><span data-bind="air.co2">498</span> <small style="font-size:.8rem;color:var(--text-muted);font-weight:600">ppm</small></div></div><span class="pill"><i class="ph-fill ph-trend-down"></i> 23% lebih bersih</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div><span style="font-size:.82rem;color:var(--text-muted)">Rata-rata CO₂</span><div style="font-weight:800;font-size:1.5rem"><span data-bind="air.co2">--</span> <small style="font-size:.8rem;color:var(--text-muted);font-weight:600">ppm</small></div></div><span class="pill"><i class="ph-fill ph-trend-down"></i> 23% lebih bersih</span></div>
         <div class="spark" id="spark"></div>
       </div>
 
@@ -202,7 +202,7 @@
 <script src="js/sensors-engine.js"></script>
 <script src="js/notifications.js"></script>
 <script src="js/scheduler.js"></script>
-<script src="js/history.js"></script>
+<script src="js/history.js?v=9"></script>
 <script src="js/report.js"></script>
 <script src="js/ai-secret.js" onerror="void 0"></script>
 <script src="js/ai-core.js"></script>
@@ -214,6 +214,7 @@
 <script>
 // Reflect active critical/warning alerts on the bell badge + draw the live spark
 ALCURA.on(function (d) {
+  if (!ALCURA.live) return;   // only react to real RTDB data
   var dot = document.querySelector('.notif .badge-dot');
   if (dot) {
     var active = d.alerts.some(function (a) { return a.level === 'critical' || a.level === 'warning'; });
@@ -232,7 +233,7 @@ ALCURA.on(function (d) {
       Tq('Fan', 'Kipas', 'ファン') + ' ' + dev.fansOn + '/2 · ' + Tq('Pump', 'Pompa', 'ポンプ') + ' ' + dev.pumpsOn + '/2';
 
     var sEl = document.getElementById('qaSafety');
-    if (sEl) {
+    if (sEl && ALCURA.live) {   // sensor-derived — only show with real RTDB data
       var s = d.safety;
       sEl.textContent = s.level === 'danger' ? Tq('Danger', 'Bahaya', '危険') + ' · ' + s.value + ' ppm'
         : s.level === 'warn' ? Tq('Caution', 'Waspada', '注意') + ' · ' + s.value + ' ppm'
@@ -240,7 +241,7 @@ ALCURA.on(function (d) {
     }
 
     var imp = document.getElementById('qaImpact');
-    if (imp) imp.textContent = Tq('CO₂ ', 'CO₂ ', 'CO₂ ') + d.impact.co2Today + ' g ' + Tq('today', 'hari ini', '今日');
+    if (imp && ALCURA.live) imp.textContent = Tq('CO₂ ', 'CO₂ ', 'CO₂ ') + d.impact.co2Today + ' g ' + Tq('today', 'hari ini', '今日');
   });
 })();
 
@@ -300,6 +301,7 @@ ALCURA.on(function (d) {
 
   function generate(force) {
     if (!window.ALCURA_AI || !ALCURA_AI.ready()) { setText(Tb('AI briefing unavailable (no key).', 'Briefing AI tidak tersedia (tanpa key).', 'AIブリーフィングは利用できません。')); return; }
+    if (!(window.ALCURA && ALCURA.live)) { setText(Tb('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…')); return; }
     setText('<i class="ph ph-spinner"></i> ' + Tb('Preparing your briefing…', 'Menyiapkan briefing Anda…', 'ブリーフィングを準備中…'));
     ALCURA_AI.text('Buat briefing harian sekarang.', systemPrompt())
       .then(function (txt) {
@@ -313,7 +315,14 @@ ALCURA.on(function (d) {
     var cached = null;
     try { cached = JSON.parse(localStorage.getItem(BKEY) || 'null'); } catch (e) {}
     if (cached && cached.date === todayStr() && cached.lang === lang() && cached.text) setText(fmt(cached.text));
-    else setTimeout(function () { generate(false); }, 600); // let the engine settle first
+    else {
+      // Wait for real RTDB data before generating (don't brief on placeholder values)
+      setText(Tb('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…'));
+      var done = false;
+      var tryGen = function () { if (!done && window.ALCURA && ALCURA.live) { done = true; generate(false); } };
+      if (window.ALCURA) ALCURA.on(tryGen);
+      setTimeout(tryGen, 600);
+    }
     var rb = document.getElementById('briefRefresh');
     if (rb) rb.addEventListener('click', function () { generate(true); });
     document.addEventListener('alcura:lang', function () {

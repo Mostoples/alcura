@@ -6,7 +6,8 @@
    Data source:
      • Binds realtime to the Realtime Database `/sensor` node (firmware writes it).
      • Actuators bind to `/control` (fan/lamp/pump) via bindDevice()/setDevice().
-     • Falls back to a simulated random-walk only if RTDB is unreachable.
+     • Shows nothing but "--" placeholders until real RTDB data arrives —
+       there is NO simulation; every value on screen is exactly what RTDB holds.
 
    Derived features (computed every tick):
      • air      — indoor air-health score (CO₂ + TVOC + gas + RH)
@@ -35,20 +36,8 @@
 (function () {
   'use strict';
 
-  // ---- Normal ranges (used for simulation seeds + comfort scoring) ----
-  // Keyed exactly to the Realtime Database `sensor` node the firmware writes.
-  var RANGES = {
-    // sensor/gas
-    co: [2, 50], ch4: [200, 600], co2: [400, 800], h2: [100, 450], o2: [780, 850],
-    // sensor/air
-    uv: [0, 4], dht_t: [24, 30], dht_h: [45, 70], aht_t: [24, 30], aht_h: [45, 70],
-    // sensor/water
-    ph: [6.5, 8.0], tds: [200, 600], mlx: [24, 30], level: [40, 95], turbidity: [0, 3],
-    // derived / legacy mirrors
-    mg811: [400, 800], eco2: [400, 800], dist: [4, 18]
-  };
-
-  // Current readings — seeded from a real RTDB snapshot so the first paint is sane.
+  // Current readings — seeded only so derived math never divides by undefined before
+  // the first RTDB push. These values are NEVER shown: every binder waits for `liveBound`.
   var S = {
     // gas (sensor/gas)
     co: 1239, ch4: 457, co2: 638, h2: 388, o2: 818,
@@ -100,18 +89,6 @@
     return path.split('.').reduce(function (o, k) {
       return (o == null) ? undefined : o[k];
     }, obj);
-  }
-
-  // ---- Simulation: gentle bounded random walk (only used until RTDB binds) ----
-  function randomWalk() {
-    Object.keys(RANGES).forEach(function (k) {
-      var r = RANGES[k], span = r[1] - r[0], step = span * 0.05;
-      var next = S[k] + (Math.random() - 0.5) * 2 * step;
-      S[k] = clamp(next, r[0] - span * 0.06, r[1] + span * 0.06);
-    });
-    // water level & ultrasonic distance are physically linked
-    S.dist = clamp((100 - S.level) / 100 * 20 + 3, 2, 22);
-    syncMirrors();
   }
 
   // Keep legacy/derived keys consistent with the canonical RTDB sensors.
@@ -509,12 +486,23 @@
     if (typeof v === 'number' && dec != null) return v.toFixed(+dec);
     return v;
   }
+  // Bindings whose root comes from live sensors (/sensor) or the device (/control).
+  // Each stays on its "--" placeholder until the matching RTDB node has actually bound,
+  // so nothing on screen is ever a seed/default — only real Realtime Database values.
+  var SENSOR_ROOT = { s: 1, air: 1, safety: 1, culture: 1, harvest: 1, impact: 1, reminders: 1, auto: 1, alerts: 1 };
+  var DEVICE_ROOT = { device: 1, applied: 1 };
+  function sensorPath(p) { return !!SENSOR_ROOT[String(p).split('.')[0]]; }
+  function devicePath(p) { return !!DEVICE_ROOT[String(p).split('.')[0]]; }
+  function gated(p) { return (sensorPath(p) && !liveBound) || (devicePath(p) && !deviceBound); }
   function applyBindings(snap) {
     document.querySelectorAll('[data-bind]').forEach(function (el) {
-      var v = resolve(snap, el.getAttribute('data-bind'));
+      var path = el.getAttribute('data-bind');
+      if (gated(path)) return;   // keep placeholder until the real RTDB node binds
+      var v = resolve(snap, path);
       if (v != null && typeof v !== 'object') el.textContent = fmt(el, v);
     });
     document.querySelectorAll('[data-sensor]').forEach(function (el) {
+      if (!liveBound) return;                        // keep "--" until real RTDB data
       var v = snap.s[el.getAttribute('data-sensor')];
       if (v != null) {
         var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
@@ -523,15 +511,21 @@
       }
     });
     document.querySelectorAll('[data-bind-w]').forEach(function (el) {
-      var v = resolve(snap, el.getAttribute('data-bind-w'));
+      var p = el.getAttribute('data-bind-w');
+      if (gated(p)) return;
+      var v = resolve(snap, p);
       if (v != null) el.style.width = clamp(+v, 0, 100) + '%';
     });
     document.querySelectorAll('[data-bind-gp]').forEach(function (el) {
-      var v = resolve(snap, el.getAttribute('data-bind-gp'));
+      var p = el.getAttribute('data-bind-gp');
+      if (gated(p)) return;
+      var v = resolve(snap, p);
       if (v != null) el.style.setProperty('--gp', clamp(+v, 0, 100) + '%');
     });
     document.querySelectorAll('[data-bind-aura]').forEach(function (el) {
-      var v = resolve(snap, el.getAttribute('data-bind-aura'));
+      var p = el.getAttribute('data-bind-aura');
+      if (gated(p)) return;
+      var v = resolve(snap, p);
       el.classList.remove('aura-green', 'aura-amber', 'aura-coral', 'aura-blue', 'aura-violet');
       if (v) el.classList.add('aura-' + v);
     });
@@ -619,6 +613,12 @@
     var host = typeof sel === 'string' ? document.querySelector(sel) : sel;
     if (!host) return;
     function paint(snap) {
+      if (!liveBound) {   // no fabricated alerts — wait for real RTDB data
+        host.innerHTML = '<div class="alert"><i class="ph-fill ph-wifi-slash"></i>' +
+          '<div class="alert-content"><h4>' + L('Waiting for sensor data', 'Menunggu data sensor', 'センサーデータ待ち') + '</h4>' +
+          '<small>' + L('Connect the device to see live alerts.', 'Hubungkan perangkat untuk melihat peringatan langsung.', 'デバイスを接続するとライブ通知が表示されます。') + '</small></div></div>';
+        return;
+      }
       host.innerHTML = snap.alerts.map(function (a) {
         var cls = a.level === 'critical' ? 'critical' : a.level === 'warning' ? 'warning' : a.level === 'success' ? 'success' : '';
         var tag = a.predictive ? ' <span class="pred-tag"><i class="ph-fill ph-trend-up"></i>' + L('Prediction', 'Prediksi', '予測') + '</span>' : '';
@@ -650,6 +650,7 @@
     get device() { return deviceView(); },
     setDevice: setDevice,
     get deviceBound() { return deviceBound; },
+    get live() { return liveBound; },
     renderAlerts: renderAlerts,
     simulate: simulate,
     refresh: emit,
@@ -673,7 +674,9 @@
     tryBindLive();
     bindDevice();
     emit();
-    setInterval(function () { if (!liveBound) randomWalk(); emit(); }, 4000);
+    // Refresh time-based derivations (impact accrual, auto night-mode). Sensor values
+    // themselves only ever change when RTDB pushes — never simulated.
+    setInterval(emit, 4000);
     // Re-render all generated text when the language changes
     document.addEventListener('alcura:lang', function () { emit(); });
   }

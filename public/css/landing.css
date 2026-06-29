@@ -1381,3 +1381,46 @@ body{font-family:var(--font-helios)}
 @media(max-width:980px){.ph-float{display:none}}
 @media(prefers-reduced-motion:reduce){.ph-float{animation:none}}
 
+/* ============================================================
+   LIQUID-GLASS USER UI — vibrant, compact, landing-style polish
+   (every data hook, chart and the AI chat are untouched — visuals only)
+   ============================================================ */
+/* Vibrant gradient icon chips — colour follows each card's --aura */
+.app-container .metric .ic,
+.app-container .qa .ic,
+.app-container .metric-card .metric-icon,
+.app-container .harvest .leaf-ic,
+.app-container .setting-row .setting-icon{
+  background:linear-gradient(145deg, rgba(var(--aura),.95), rgba(var(--aura),.5))!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  color:#fff!important;
+  box-shadow:0 5px 12px -6px rgba(var(--aura),.5), inset 0 1px 0 rgba(255,255,255,.32)!important;
+}
+/* Section headings get a small gradient accent bar (landing rhythm) */
+.app-container .section-title,
+.app-container .sec-title h3{position:relative;padding-left:.72rem}
+.app-container .section-title::before,
+.app-container .sec-title h3::before{
+  content:"";position:absolute;left:0;top:.18em;bottom:.18em;width:3px;border-radius:3px;
+  background:linear-gradient(180deg,var(--leaf-400),var(--forest-600));
+}
+/* Cards lift like the landing's glass panels */
+@media (hover:hover){
+  .app-container .card{transition:transform .26s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+  .app-container .card:hover{transform:translateY(-3px)}
+  .app-container .qa:hover,.app-container .metric:hover{transform:translateY(-3px)}
+}
+/* Compact metric grid on phones: 2×2 tiles instead of a horizontal scroll */
+@media (max-width:767px){
+  .app-container .metric-scroll{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;overflow:visible}
+  .app-container .metric-scroll .metric{min-width:0}
+}
+/* Quick-action tiles: glassy, compact, colour wash on hover */
+.app-container .qa{padding:.85rem .7rem}
+.app-container .qa .ic{width:40px;height:40px}
+@media (hover:hover){.app-container .qa:hover{background:linear-gradient(160deg,rgba(var(--aura-green),.16),var(--g-fill))}}
+/* Pills / chips read as vivid glass accents */
+.app-container .pill{background:rgba(var(--aura-green),.16);border:1px solid rgba(var(--aura-green),.32);color:var(--leaf-500)}
+:root[data-theme="dark"] .app-container .pill{color:var(--mint-300)}
+.app-container .count-chip{background:rgba(var(--aura-green),.16);border:1px solid rgba(var(--aura-green),.3)}
+

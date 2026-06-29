@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=12">
-<link rel="stylesheet" href="css/landing.css?v=12">
+<link rel="stylesheet" href="css/styles.css?v=14">
+<link rel="stylesheet" href="css/landing.css?v=14">
 </head>
 <body>
 <div class="liquid-bg">
@@ -60,12 +60,12 @@
 
 <script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/app.js?v=12"></script>
+<script src="js/app.js?v=14"></script>
 <script src="js/auth-ui.js"></script>
 <script>
 (function(){function sync(){var d=document.documentElement.getAttribute('data-theme');document.querySelectorAll('[data-theme-icon]').forEach(function(i){i.className=(d==='dark'?'ph ph-sun':'ph ph-moon');});}var o=window.toggleTheme;window.toggleTheme=function(){if(o)o();sync();};sync();})();
 
-setTimeout(() => { if (typeof alcuraAuth !== 'undefined' && alcuraAuth.isAuthenticated()) { window.location.href = 'app.html'; } }, 500);
+setTimeout(() => { if (typeof alcuraAuth !== 'undefined' && alcuraAuth.isAuthenticated()) { window.location.href = (localStorage.getItem('alcuraPersona')?'app.html':'personalize.html'); } }, 500);
 
 function handleEmailLogin() {
   if (!authReady('emailLoginBtn')) return;
@@ -80,7 +80,7 @@ function handleEmailLogin() {
       if (document.getElementById('rememberMe').checked) localStorage.setItem('rememberEmail', email);
       else localStorage.removeItem('rememberEmail');
       showAuthMsg('Berhasil masuk, mengalihkan…', 'success');
-      window.location.href = 'app.html';
+      window.location.href = (localStorage.getItem('alcuraPersona')?'app.html':'personalize.html');
     })
     .catch((error) => { showAuthMsg(friendlyAuthError(error), 'error'); resetBtn(btn); });
 }
@@ -89,7 +89,7 @@ function handleGoogleLogin() {
   const btn = document.getElementById('googleLoginBtn');
   setBtnLoading(btn, 'Menghubungkan Google…'); clearAuthMsg();
   alcuraAuth.signInWithGoogle()
-    .then((user) => { localStorage.setItem('userEmail', user.email); showAuthMsg('Berhasil masuk, mengalihkan…', 'success'); window.location.href = 'app.html'; })
+    .then((user) => { localStorage.setItem('userEmail', user.email); showAuthMsg('Berhasil masuk, mengalihkan…', 'success'); window.location.href = (localStorage.getItem('alcuraPersona')?'app.html':'personalize.html'); })
     .catch((error) => { showAuthMsg(friendlyAuthError(error), 'error'); resetBtn(btn); });
 }
 window.addEventListener('DOMContentLoaded', () => {

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="img/logo.png" type="image/png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Personalisasi — ALCURA</title>
+<script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+<script>/* Guard: must be signed in to personalize */(function(){try{if(!localStorage.getItem('alcuraUser')&&!localStorage.getItem('userEmail')){location.replace('login.html');}}catch(e){}})();</script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=14">
+<link rel="stylesheet" href="css/landing.css?v=14">
+<style>
+  body{font-family:var(--font-helios)}
+  .pz-wrap{position:relative;z-index:1;max-width:540px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:20px 16px 28px;gap:16px}
+  /* header above the panel */
+  .pz-top{display:flex;align-items:center;justify-content:space-between;gap:.8rem}
+  .pz-brand{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-helios);font-weight:800;letter-spacing:-.02em;color:var(--ink);font-size:1.1rem}
+  .pz-top-r{display:flex;align-items:center;gap:.6rem}
+  .pz-skip{font-size:.8rem;font-weight:600;color:var(--ink-mute);background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);padding:.42rem .85rem;border-radius:100px;cursor:pointer;transition:.2s}
+  .pz-skip:hover{color:var(--ink)}
+  .lang-toggle{--lang-toggle-segment:2rem}
+  /* the glass panel that holds the wizard */
+  .pz-panel{background:var(--g-fill);border:1px solid var(--g-stroke);box-shadow:var(--g-shadow);border-radius:var(--r-xl,28px);
+    backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+    padding:1.5rem 1.4rem 1.4rem;position:relative;overflow:hidden}
+  .pz-panel::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(46,158,94,.16),transparent 60%)}
+  .pz-panel>*{position:relative;z-index:1}
+  /* progress */
+  .pz-prog{display:flex;gap:6px;margin-bottom:1.3rem}
+  .pz-prog i{flex:1;height:5px;border-radius:4px;background:var(--g-stroke-soft);overflow:hidden;position:relative;transition:.3s}
+  .pz-prog i.done{background:linear-gradient(90deg,var(--leaf-400),var(--forest-600))}
+  .pz-prog i.active::after{content:"";position:absolute;inset:0;width:55%;background:linear-gradient(90deg,var(--leaf-400),var(--forest-600));border-radius:4px}
+  /* steps */
+  .pz-step{display:none}
+  .pz-step.on{display:flex;flex-direction:column;gap:.9rem;animation:pzIn .42s cubic-bezier(.2,.8,.2,1)}
+  @keyframes pzIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .pz-eyebrow{display:inline-flex;align-items:center;gap:.42rem;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--leaf-500)}
+  :root[data-theme="dark"] .pz-eyebrow{color:var(--mint-300)}
+  .pz-h{font-family:var(--font-helios);font-weight:800;font-size:clamp(1.45rem,4.8vw,1.8rem);letter-spacing:-.02em;line-height:1.14;color:var(--ink)}
+  .pz-h em{font-style:normal;background:linear-gradient(120deg,var(--leaf-400),var(--forest-600));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 22px rgba(46,158,94,.4)}
+  .pz-sub{color:var(--ink-soft);font-size:.92rem;line-height:1.5;margin-top:-.5rem}
+  /* fields */
+  .pz-field label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.42rem}
+  .pz-field input{width:100%;padding:.82rem .95rem;font-size:.98rem;border-radius:14px;background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);color:var(--ink);backdrop-filter:blur(10px);font-family:var(--font-helios)}
+  .pz-field input:focus{outline:none;border-color:var(--leaf-400);box-shadow:0 0 0 3px rgba(46,158,94,.18)}
+  .pz-2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  /* option cards / chips */
+  .pz-opts{display:grid;gap:.6rem}
+  .pz-opts.cols{grid-template-columns:1fr 1fr}
+  .pz-opt{display:flex;align-items:center;gap:.8rem;text-align:left;padding:.85rem .9rem;border-radius:15px;cursor:pointer;
+    background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);transition:transform .18s,border-color .18s,box-shadow .18s,background .18s;font-family:var(--font-helios)}
+  .pz-opt:hover{transform:translateY(-2px);background:var(--g-fill)}
+  .pz-opt .pz-ic{width:42px;height:42px;flex-shrink:0;border-radius:13px;display:grid;place-items:center;font-size:1.35rem;color:#fff;
+    background:linear-gradient(145deg,var(--leaf-400),var(--forest-700));box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  .pz-opt.c-blue .pz-ic{background:linear-gradient(145deg,#5aa7f0,var(--blue))}
+  .pz-opt.c-amber .pz-ic{background:linear-gradient(145deg,var(--amber),#d98828)}
+  .pz-opt.c-violet .pz-ic{background:linear-gradient(145deg,var(--violet),#6d4ed0)}
+  .pz-opt.c-teal .pz-ic{background:linear-gradient(145deg,#13b1b0,#1f7a48)}
+  .pz-opt .pz-txt{min-width:0;flex:1}
+  .pz-opt b{display:block;font-weight:700;font-size:.92rem;color:var(--ink);line-height:1.2}
+  .pz-opt small{color:var(--ink-mute);font-size:.76rem}
+  .pz-opt .pz-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--g-stroke);display:grid;place-items:center;color:transparent;flex-shrink:0;transition:.18s;font-size:.7rem}
+  .pz-opt.sel{border-color:var(--leaf-400);background:linear-gradient(150deg,rgba(46,158,94,.14),var(--g-fill));box-shadow:0 0 0 2px rgba(46,158,94,.3)}
+  .pz-opt.sel .pz-check{background:var(--leaf-500);border-color:var(--leaf-500);color:#fff}
+  /* nav */
+  .pz-nav{display:flex;gap:.7rem;margin-top:1.3rem}
+  .pz-nav .btn{flex:1;justify-content:center}
+  .pz-err{color:#e2604f;font-size:.8rem;font-weight:600;min-height:1.1em}
+  /* summary */
+  .pz-sum{display:flex;flex-direction:column;gap:.5rem}
+  .pz-sum .row{display:flex;justify-content:space-between;gap:1rem;padding:.65rem .85rem;border-radius:12px;background:var(--g-fill-2);border:1px solid var(--g-stroke-soft)}
+  .pz-sum .row span{color:var(--ink-mute);font-size:.8rem}
+  .pz-sum .row b{color:var(--ink);font-weight:700;font-size:.84rem;text-align:right}
+  .pz-confetti{font-size:2.6rem;text-align:center;margin:.1rem 0 .2rem}
+  .pz-foot{text-align:center;color:var(--ink-mute);font-size:.74rem}
+</style>
+</head>
+<body>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="culture-cells" aria-hidden="true"></div>
+</div>
+
+<div class="pz-wrap">
+  <div class="pz-top">
+    <span class="pz-brand"><span class="mark mark-algae"></span> ALCURA</span>
+    <div class="pz-top-r">
+      <div class="lang-toggle" id="pzLang">
+        <span class="lang-knob"></span>
+        <button data-lang="id" type="button">ID</button>
+        <button data-lang="en" type="button">EN</button>
+        <button data-lang="ja" type="button">JA</button>
+      </div>
+      <button class="pz-skip" id="skipBtn" type="button" data-i18n="skip">Lewati</button>
+    </div>
+  </div>
+
+  <div class="pz-panel">
+    <div class="pz-prog" id="prog"></div>
+
+    <!-- STEP 1 — Identity -->
+    <section class="pz-step on" data-step="0">
+      <span class="pz-eyebrow"><i class="ph-fill ph-user-circle"></i> <span data-i18n="s1.eyebrow">Kenalan dulu</span></span>
+      <h1 class="pz-h" data-i18n="s1.h">Selamat datang di <em>ALCURA</em></h1>
+      <p class="pz-sub" data-i18n="s1.sub">Ceritakan sedikit tentang diri Anda agar kami bisa menyesuaikan pengalaman Anda.</p>
+      <div class="pz-field">
+        <label for="pzName" data-i18n="f.name">Nama lengkap</label>
+        <input id="pzName" type="text" maxlength="48" data-i18n-ph="f.name.ph" placeholder="Nama Anda" autocomplete="name">
+      </div>
+      <div class="pz-2">
+        <div class="pz-field">
+          <label for="pzDob" data-i18n="f.dob">Tanggal lahir</label>
+          <input id="pzDob" type="date">
+        </div>
+        <div class="pz-field">
+          <label for="pzCity" data-i18n="f.city">Kota</label>
+          <input id="pzCity" type="text" maxlength="40" data-i18n-ph="f.city.ph" placeholder="mis. Jakarta">
+        </div>
+      </div>
+      <div class="pz-err" id="err0"></div>
+    </section>
+
+    <!-- STEP 2 — Role -->
+    <section class="pz-step" data-step="1">
+      <span class="pz-eyebrow"><i class="ph-fill ph-identification-badge"></i> <span data-i18n="s2.eyebrow">Peran Anda</span></span>
+      <h1 class="pz-h" data-i18n="s2.h">Anda seorang…</h1>
+      <p class="pz-sub" data-i18n="s2.sub">Kami akan menyesuaikan tampilan & rekomendasi sesuai peran Anda.</p>
+      <div class="pz-opts" id="roleOpts">
+        <button class="pz-opt" data-val="student" type="button"><span class="pz-ic c-blue"><i class="ph-fill ph-student"></i></span><span class="pz-txt"><b data-i18n="role.student">Pelajar / Mahasiswa</b><small data-i18n="role.student.d">Belajar & eksperimen mikroalga</small></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="entrepreneur" type="button"><span class="pz-ic c-amber"><i class="ph-fill ph-rocket-launch"></i></span><span class="pz-txt"><b data-i18n="role.entrepreneur">Wirausaha</b><small data-i18n="role.entrepreneur.d">Produk, dampak & efisiensi bisnis</small></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="researcher" type="button"><span class="pz-ic c-violet"><i class="ph-fill ph-flask"></i></span><span class="pz-txt"><b data-i18n="role.researcher">Peneliti</b><small data-i18n="role.researcher.d">Data presisi & ekspor riset</small></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="educator" type="button"><span class="pz-ic c-teal"><i class="ph-fill ph-chalkboard-teacher"></i></span><span class="pz-txt"><b data-i18n="role.educator">Pendidik</b><small data-i18n="role.educator.d">Mengajar & demonstrasi kelas</small></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="enthusiast" type="button"><span class="pz-ic"><i class="ph-fill ph-house-line"></i></span><span class="pz-txt"><b data-i18n="role.enthusiast">Hobiis / Rumah</b><small data-i18n="role.enthusiast.d">Udara bersih untuk ruang Anda</small></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+      </div>
+      <div class="pz-err" id="err1"></div>
+    </section>
+
+    <!-- STEP 3 — Uses (multi) -->
+    <section class="pz-step" data-step="2">
+      <span class="pz-eyebrow"><i class="ph-fill ph-target"></i> <span data-i18n="s3.eyebrow">Tujuan Anda</span></span>
+      <h1 class="pz-h" data-i18n="s3.h">Untuk apa Anda memakai ALCURA?</h1>
+      <p class="pz-sub" data-i18n="s3.sub">Pilih satu atau beberapa — kami akan menonjolkan fitur yang relevan.</p>
+      <div class="pz-opts cols" id="useOpts">
+        <button class="pz-opt" data-val="air" type="button"><span class="pz-ic c-teal"><i class="ph-fill ph-wind"></i></span><span class="pz-txt"><b data-i18n="use.air">Udara bersih</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="cultivation" type="button"><span class="pz-ic"><i class="ph-fill ph-circles-three"></i></span><span class="pz-txt"><b data-i18n="use.cultivation">Budidaya Spirulina</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="research" type="button"><span class="pz-ic c-violet"><i class="ph-fill ph-chart-line-up"></i></span><span class="pz-txt"><b data-i18n="use.research">Riset & data</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="education" type="button"><span class="pz-ic c-blue"><i class="ph-fill ph-graduation-cap"></i></span><span class="pz-txt"><b data-i18n="use.education">Edukasi</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="sustainability" type="button"><span class="pz-ic"><i class="ph-fill ph-leaf"></i></span><span class="pz-txt"><b data-i18n="use.sustainability">Keberlanjutan</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="wellness" type="button"><span class="pz-ic c-amber"><i class="ph-fill ph-heartbeat"></i></span><span class="pz-txt"><b data-i18n="use.wellness">Kesehatan</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+      </div>
+      <div class="pz-err" id="err2"></div>
+    </section>
+
+    <!-- STEP 4 — Environment -->
+    <section class="pz-step" data-step="3">
+      <span class="pz-eyebrow"><i class="ph-fill ph-map-pin"></i> <span data-i18n="s4.eyebrow">Lokasi ALCURA</span></span>
+      <h1 class="pz-h" data-i18n="s4.h">Di mana ALCURA akan ditempatkan?</h1>
+      <p class="pz-sub" data-i18n="s4.sub">Ini membantu kalibrasi target udara & jadwal.</p>
+      <div class="pz-opts cols" id="envOpts">
+        <button class="pz-opt" data-val="home" type="button"><span class="pz-ic"><i class="ph-fill ph-house"></i></span><span class="pz-txt"><b data-i18n="env.home">Rumah</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="office" type="button"><span class="pz-ic c-blue"><i class="ph-fill ph-buildings"></i></span><span class="pz-txt"><b data-i18n="env.office">Kantor</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="lab" type="button"><span class="pz-ic c-violet"><i class="ph-fill ph-test-tube"></i></span><span class="pz-txt"><b data-i18n="env.lab">Laboratorium</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="classroom" type="button"><span class="pz-ic c-teal"><i class="ph-fill ph-chalkboard"></i></span><span class="pz-txt"><b data-i18n="env.classroom">Kelas</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="cafe" type="button"><span class="pz-ic c-amber"><i class="ph-fill ph-coffee"></i></span><span class="pz-txt"><b data-i18n="env.cafe">Kafe / Bisnis</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+        <button class="pz-opt" data-val="other" type="button"><span class="pz-ic"><i class="ph-fill ph-dots-three"></i></span><span class="pz-txt"><b data-i18n="env.other">Lainnya</b></span><span class="pz-check"><i class="ph-bold ph-check"></i></span></button>
+      </div>
+      <div class="pz-err" id="err3"></div>
+    </section>
+
+    <!-- STEP 5 — Done -->
+    <section class="pz-step" data-step="4">
+      <div class="pz-confetti">🌿✨</div>
+      <span class="pz-eyebrow" style="justify-content:center"><i class="ph-fill ph-confetti"></i> <span data-i18n="s5.eyebrow">Siap</span></span>
+      <h1 class="pz-h" style="text-align:center" id="sumTitle">Semua siap!</h1>
+      <p class="pz-sub" style="text-align:center" data-i18n="s5.sub">Beginilah ALCURA akan kami sesuaikan untuk Anda.</p>
+      <div class="pz-sum" id="summary"></div>
+    </section>
+
+    <div class="pz-nav">
+      <button class="btn btn-ghost" id="backBtn" type="button" style="display:none"><i class="ph ph-arrow-left"></i> <span data-i18n="nav.back">Kembali</span></button>
+      <button class="btn btn-primary" id="nextBtn" type="button"><span data-i18n="nav.next">Lanjut</span> <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <p class="pz-foot" data-i18n="foot">Anda bisa mengubahnya kapan saja di Profil.</p>
+</div>
+
+<script src="js/firebase-config.js" onerror="void 0"></script>
+<script src="js/auth.js" onerror="void 0"></script>
+<script>
+(function(){
+  /* ---------------- i18n ---------------- */
+  var I18N = {
+    id:{
+      'skip':'Lewati',
+      's1.eyebrow':'Kenalan dulu','s1.h':'Selamat datang di <em>ALCURA</em>','s1.sub':'Ceritakan sedikit tentang diri Anda agar kami bisa menyesuaikan pengalaman Anda.',
+      'f.name':'Nama lengkap','f.name.ph':'Nama Anda','f.dob':'Tanggal lahir','f.city':'Kota','f.city.ph':'mis. Jakarta',
+      's2.eyebrow':'Peran Anda','s2.h':'Anda seorang…','s2.sub':'Kami akan menyesuaikan tampilan & rekomendasi sesuai peran Anda.',
+      'role.student':'Pelajar / Mahasiswa','role.student.d':'Belajar & eksperimen mikroalga',
+      'role.entrepreneur':'Wirausaha','role.entrepreneur.d':'Produk, dampak & efisiensi bisnis',
+      'role.researcher':'Peneliti','role.researcher.d':'Data presisi & ekspor riset',
+      'role.educator':'Pendidik','role.educator.d':'Mengajar & demonstrasi kelas',
+      'role.enthusiast':'Hobiis / Rumah','role.enthusiast.d':'Udara bersih untuk ruang Anda',
+      's3.eyebrow':'Tujuan Anda','s3.h':'Untuk apa Anda memakai ALCURA?','s3.sub':'Pilih satu atau beberapa — kami akan menonjolkan fitur yang relevan.',
+      'use.air':'Udara bersih','use.cultivation':'Budidaya Spirulina','use.research':'Riset & data','use.education':'Edukasi','use.sustainability':'Keberlanjutan','use.wellness':'Kesehatan',
+      's4.eyebrow':'Lokasi ALCURA','s4.h':'Di mana ALCURA akan ditempatkan?','s4.sub':'Ini membantu kalibrasi target udara & jadwal.',
+      'env.home':'Rumah','env.office':'Kantor','env.lab':'Laboratorium','env.classroom':'Kelas','env.cafe':'Kafe / Bisnis','env.other':'Lainnya',
+      's5.eyebrow':'Siap','s5.sub':'Beginilah ALCURA akan kami sesuaikan untuk Anda.',
+      'sum.name':'Nama','sum.role':'Peran','sum.uses':'Tujuan','sum.env':'Lokasi',
+      'sum.title':'Semua siap, {name}!','nav.back':'Kembali','nav.next':'Lanjut','nav.start':'Mulai ALCURA',
+      'err.name':'Mohon isi nama Anda.','err.dob':'Mohon isi tanggal lahir.','err.role':'Pilih salah satu peran.','err.use':'Pilih minimal satu tujuan.','err.env':'Pilih lokasi ALCURA.',
+      'skip.confirm':'Lewati personalisasi? Anda bisa mengaturnya nanti di Profil.','foot':'Anda bisa mengubahnya kapan saja di Profil.'
+    },
+    en:{
+      'skip':'Skip',
+      's1.eyebrow':'Let’s meet','s1.h':'Welcome to <em>ALCURA</em>','s1.sub':'Tell us a little about yourself so we can tailor your experience.',
+      'f.name':'Full name','f.name.ph':'Your name','f.dob':'Date of birth','f.city':'City','f.city.ph':'e.g. Jakarta',
+      's2.eyebrow':'Your role','s2.h':'You are a…','s2.sub':'We’ll tailor the layout & recommendations to your role.',
+      'role.student':'Student','role.student.d':'Learn & experiment with microalgae',
+      'role.entrepreneur':'Entrepreneur','role.entrepreneur.d':'Product, impact & business efficiency',
+      'role.researcher':'Researcher','role.researcher.d':'Precise data & research export',
+      'role.educator':'Educator','role.educator.d':'Teaching & classroom demos',
+      'role.enthusiast':'Hobbyist / Home','role.enthusiast.d':'Clean air for your space',
+      's3.eyebrow':'Your goals','s3.h':'What will you use ALCURA for?','s3.sub':'Pick one or more — we’ll highlight the relevant features.',
+      'use.air':'Clean air','use.cultivation':'Grow Spirulina','use.research':'Research & data','use.education':'Education','use.sustainability':'Sustainability','use.wellness':'Wellness',
+      's4.eyebrow':'ALCURA location','s4.h':'Where will ALCURA live?','s4.sub':'This helps calibrate air targets & schedules.',
+      'env.home':'Home','env.office':'Office','env.lab':'Laboratory','env.classroom':'Classroom','env.cafe':'Café / Business','env.other':'Other',
+      's5.eyebrow':'Ready','s5.sub':'Here’s how we’ll tailor ALCURA for you.',
+      'sum.name':'Name','sum.role':'Role','sum.uses':'Goals','sum.env':'Location',
+      'sum.title':'All set, {name}!','nav.back':'Back','nav.next':'Next','nav.start':'Start ALCURA',
+      'err.name':'Please enter your name.','err.dob':'Please enter your date of birth.','err.role':'Pick a role.','err.use':'Pick at least one goal.','err.env':'Pick a location.',
+      'skip.confirm':'Skip personalization? You can set it later in Profile.','foot':'You can change this anytime in Profile.'
+    },
+    ja:{
+      'skip':'スキップ',
+      's1.eyebrow':'はじめまして','s1.h':'<em>ALCURA</em>へようこそ','s1.sub':'体験を最適化するために、あなたのことを少し教えてください。',
+      'f.name':'氏名','f.name.ph':'お名前','f.dob':'生年月日','f.city':'都市','f.city.ph':'例：ジャカルタ',
+      's2.eyebrow':'あなたの役割','s2.h':'あなたは…','s2.sub':'役割に合わせて表示とおすすめを調整します。',
+      'role.student':'学生','role.student.d':'微細藻類を学び実験する',
+      'role.entrepreneur':'起業家','role.entrepreneur.d':'製品・効果・事業効率',
+      'role.researcher':'研究者','role.researcher.d':'精密データと研究用エクスポート',
+      'role.educator':'教育者','role.educator.d':'授業・クラスでのデモ',
+      'role.enthusiast':'愛好家 / 家庭','role.enthusiast.d':'あなたの空間にきれいな空気を',
+      's3.eyebrow':'あなたの目的','s3.h':'ALCURAを何に使いますか？','s3.sub':'1つ以上選んでください。関連機能を強調します。',
+      'use.air':'きれいな空気','use.cultivation':'スピルリナ培養','use.research':'研究・データ','use.education':'教育','use.sustainability':'持続可能性','use.wellness':'健康',
+      's4.eyebrow':'ALCURAの設置場所','s4.h':'ALCURAをどこに置きますか？','s4.sub':'空気目標とスケジュールの調整に役立ちます。',
+      'env.home':'自宅','env.office':'オフィス','env.lab':'研究室','env.classroom':'教室','env.cafe':'カフェ / 店舗','env.other':'その他',
+      's5.eyebrow':'準備完了','s5.sub':'あなたに合わせてALCURAを調整します。',
+      'sum.name':'名前','sum.role':'役割','sum.uses':'目的','sum.env':'場所',
+      'sum.title':'準備完了、{name}さん！','nav.back':'戻る','nav.next':'次へ','nav.start':'ALCURAを始める',
+      'err.name':'お名前を入力してください。','err.dob':'生年月日を入力してください。','err.role':'役割を選んでください。','err.use':'目的を1つ以上選んでください。','err.env':'場所を選んでください。',
+      'skip.confirm':'パーソナライズをスキップしますか？後でプロフィールから設定できます。','foot':'プロフィールからいつでも変更できます。'
+    }
+  };
+  var lang = localStorage.getItem('lang'); if(['id','en','ja'].indexOf(lang)<0) lang='id';
+  function T(k){ return (I18N[lang]&&I18N[lang][k]) || I18N.id[k] || k; }
+
+  function applyI18n(){
+    document.documentElement.setAttribute('lang', lang);
+    document.querySelectorAll('[data-i18n]').forEach(function(el){ var v=T(el.getAttribute('data-i18n')); if(v!=null) el.innerHTML=v; });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ var v=T(el.getAttribute('data-i18n-ph')); if(v!=null) el.setAttribute('placeholder',v); });
+    nextBtn.querySelector('span').textContent = (step===STEPS-1) ? T('nav.start') : T('nav.next');
+    var tog=document.getElementById('pzLang');
+    tog.classList.remove('id','en','ja'); tog.classList.add(lang);
+    tog.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-lang')===lang); });
+    if(step===STEPS-1) renderSummary();
+  }
+
+  /* ---------------- wizard ---------------- */
+  var STEPS = 5, step = 0;
+  var data = { name:'', dob:'', city:'', role:'', uses:[], env:'' };
+  try{ var u=JSON.parse(localStorage.getItem('alcuraUser')||'{}'); if(u.displayName) data.name=u.displayName; else if(u.email) data.name=u.email.split('@')[0]; }catch(e){}
+
+  var steps = document.querySelectorAll('.pz-step');
+  var backBtn = document.getElementById('backBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var prog = document.getElementById('prog');
+  for(var i=0;i<STEPS;i++){ prog.appendChild(document.createElement('i')); }
+
+  function paintProg(){ [].forEach.call(prog.children,function(el,i){ el.className=i<step?'done':(i===step?'active':''); }); }
+  function show(){
+    [].forEach.call(steps,function(s,i){ s.classList.toggle('on', i===step); });
+    backBtn.style.display = step===0 ? 'none' : '';
+    nextBtn.querySelector('span').textContent = step===STEPS-1 ? T('nav.start') : T('nav.next');
+    paintProg();
+    if(step===STEPS-1) renderSummary();
+    window.scrollTo(0,0);
+  }
+
+  function singleSelect(id,key){ var g=document.getElementById(id); g.addEventListener('click',function(e){ var b=e.target.closest('.pz-opt'); if(!b) return; [].forEach.call(g.children,function(o){o.classList.remove('sel');}); b.classList.add('sel'); data[key]=b.getAttribute('data-val'); clearErr(); }); }
+  singleSelect('roleOpts','role'); singleSelect('envOpts','env');
+  document.getElementById('useOpts').addEventListener('click',function(e){ var b=e.target.closest('.pz-opt'); if(!b) return; var v=b.getAttribute('data-val'); var i=data.uses.indexOf(v); if(i>=0){data.uses.splice(i,1);b.classList.remove('sel');} else {data.uses.push(v);b.classList.add('sel');} clearErr(); });
+
+  function clearErr(){ var e=document.getElementById('err'+step); if(e) e.textContent=''; }
+  function setErr(m){ var e=document.getElementById('err'+step); if(e) e.textContent=m; }
+  function validate(){
+    if(step===0){
+      data.name=document.getElementById('pzName').value.trim();
+      data.dob=document.getElementById('pzDob').value;
+      data.city=document.getElementById('pzCity').value.trim();
+      if(!data.name){ setErr(T('err.name')); return false; }
+      if(!data.dob){ setErr(T('err.dob')); return false; }
+      return true;
+    }
+    if(step===1 && !data.role){ setErr(T('err.role')); return false; }
+    if(step===2 && !data.uses.length){ setErr(T('err.use')); return false; }
+    if(step===3 && !data.env){ setErr(T('err.env')); return false; }
+    return true;
+  }
+
+  function renderSummary(){
+    var first=(data.name||'').split(' ')[0]||'';
+    document.getElementById('sumTitle').innerHTML = T('sum.title').replace('{name}','<em>'+esc(first||'—')+'</em>');
+    var uses=data.uses.map(function(u){return T('use.'+u);}).join(', ');
+    document.getElementById('summary').innerHTML =
+      row(T('sum.name'), data.name||'—') + row(T('sum.role'), data.role?T('role.'+data.role):'—') +
+      row(T('sum.uses'), uses||'—') + row(T('sum.env'), data.env?T('env.'+data.env):'—');
+  }
+  function row(k,v){ return '<div class="row"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>'; }
+  function esc(s){ return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+
+  function finish(skip){
+    var persona = skip ? { done:true, skipped:true, lang:lang } : {
+      done:true, lang:lang, name:data.name, dob:data.dob, city:data.city,
+      role:data.role, uses:data.uses, env:data.env, primaryUse:data.uses[0]||'air'
+    };
+    try{ localStorage.setItem('alcuraPersona', JSON.stringify(persona)); }catch(e){}
+    if(!skip && data.name){ try{ var u=JSON.parse(localStorage.getItem('alcuraUser')||'{}'); u.displayName=data.name; localStorage.setItem('alcuraUser',JSON.stringify(u)); if(window.alcuraAuth&&alcuraAuth.currentUser){alcuraAuth.currentUser.updateProfile({displayName:data.name}).catch(function(){});} }catch(e){} }
+    location.replace('app.html');
+  }
+
+  nextBtn.addEventListener('click',function(){ if(!validate()) return; if(step<STEPS-1){ step++; show(); } else { finish(false); } });
+  backBtn.addEventListener('click',function(){ if(step>0){ step--; show(); } });
+  document.getElementById('skipBtn').addEventListener('click',function(){ if(confirm(T('skip.confirm'))) finish(true); });
+  document.getElementById('pzLang').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; lang=b.getAttribute('data-lang'); localStorage.setItem('lang',lang); applyI18n(); });
+
+  document.getElementById('pzName').value = data.name || '';
+  applyI18n();
+  show();
+})();
+</script>
+</body>
+</html>

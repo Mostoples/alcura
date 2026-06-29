@@ -1489,3 +1489,23 @@ body{font-family:var(--font-helios)}
 /* keep the small unit text neutral (don't tint the "ppm/°C") */
 .app-container .metric b small,.app-container .metric-value .metric-unit{color:var(--ink-mute);text-shadow:none}
 
+/* ============================================================
+   Personalized dashboard (set by js/persona.js from alcuraPersona)
+   ============================================================ */
+.persona-chip{display:inline-flex;align-items:center;gap:.35rem;margin-top:.4rem;font-size:.72rem;font-weight:700;
+  color:var(--leaf-500);background:rgba(46,158,94,.14);border:1px solid rgba(46,158,94,.34);padding:.24rem .62rem;border-radius:100px}
+:root[data-theme="dark"] .persona-chip{color:var(--mint-300);background:rgba(86,185,124,.16)}
+.persona-card{background:linear-gradient(150deg,rgba(46,158,94,.18),var(--g-fill))!important}
+:root[data-theme="dark"] .persona-card{background:linear-gradient(150deg,rgba(52,196,118,.2),var(--g-fill))!important}
+.pw-eyebrow{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--leaf-500)}
+:root[data-theme="dark"] .pw-eyebrow{color:var(--mint-300)}
+.pw-h{font-family:var(--font-helios);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;margin:.25rem 0 .15rem;color:var(--ink)}
+.pw-line{color:var(--ink-soft);font-size:.88rem;line-height:1.45}
+.pw-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
+.pf-tag{display:inline-flex;align-items:center;gap:.35rem;font-size:.74rem;font-weight:600;color:var(--ink-soft);
+  background:var(--g-fill-2);border:1px solid var(--g-stroke-soft);padding:.34rem .72rem;border-radius:100px}
+.qa-focus{box-shadow:0 0 0 2px rgba(46,158,94,.5),var(--g-shadow)!important;position:relative;overflow:visible}
+.qa-focus::after{content:attr(data-foryou);position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-size:.56rem;font-weight:800;letter-spacing:.02em;color:#fff;background:linear-gradient(135deg,var(--leaf-400),var(--forest-600));
+  padding:.12rem .5rem;border-radius:100px;box-shadow:0 3px 8px -3px rgba(46,158,94,.6)}
+

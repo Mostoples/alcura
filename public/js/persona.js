@@ -73,10 +73,15 @@
       var sec = document.createElement('section');
       sec.className = 'dash-block persona-welcome span-2';
       sec.innerHTML =
-        '<div class="card glass persona-card no-pattern">' +
-          '<span class="pw-eyebrow"><i class="ph-fill ph-sparkle"></i> ' + esc(t.eyebrow) + '</span>' +
-          '<h3 class="pw-h">' + title + '</h3>' +
-          '<p class="pw-line">' + esc(line) + envTxt + '</p>' +
+        '<div class="card no-pattern persona-card">' +
+          '<div class="pw-head">' +
+            '<div class="pw-ic"><i class="ph-fill ' + (ROLE_ICON[p.role] || 'ph-sparkle') + '"></i></div>' +
+            '<div class="pw-body">' +
+              '<span class="pw-eyebrow"><i class="ph-fill ph-sparkle"></i> ' + esc(t.eyebrow) + '</span>' +
+              '<h3 class="pw-h">' + title + '</h3>' +
+              '<p class="pw-line">' + esc(line) + envTxt + '</p>' +
+            '</div>' +
+          '</div>' +
           (tags ? '<div class="pw-tags">' + tags + '</div>' : '') +
         '</div>';
       scroll.insertBefore(sec, scroll.firstChild);

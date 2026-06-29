@@ -47,6 +47,13 @@
         i18n('Download App', 'Unduh Aplikasi', 'アプリをダウンロード') + '</span></a>';
     document.body.appendChild(menu);
 
+    // Backdrop that blurs the page behind the menu. It sits BELOW the bottom-nav
+    // (z-index) so the navbar stays sharp while everything else is blurred.
+    var backdrop = document.createElement('div');
+    backdrop.className = 'more-backdrop';
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', function () { close(); });
+
     // Wire the install item; hide it if the app is already installed
     var installItem = menu.querySelector('.more-install');
     function syncInstall() {
@@ -62,12 +69,16 @@
     });
 
     function position() {
-      var r = moreItem.getBoundingClientRect();
-      menu.style.right = Math.max(12, window.innerWidth - r.right) + 'px';
-      menu.style.bottom = (window.innerHeight - r.top + 12) + 'px';
+      // Slightly narrower than the bottom-nav, kept centered above it.
+      var nr = nav.getBoundingClientRect();
+      var inset = 20; // total px narrower than the navbar (10px each side)
+      menu.style.left = (nr.left + inset / 2) + 'px';
+      menu.style.right = 'auto';
+      menu.style.width = (nr.width - inset) + 'px';
+      menu.style.bottom = (window.innerHeight - nr.top + 10) + 'px';
     }
-    function open() { position(); menu.classList.add('open'); moreItem.classList.add('more-open'); }
-    function close() { menu.classList.remove('open'); moreItem.classList.remove('more-open'); }
+    function open() { position(); menu.classList.add('open'); backdrop.classList.add('open'); moreItem.classList.add('more-open'); }
+    function close() { menu.classList.remove('open'); backdrop.classList.remove('open'); moreItem.classList.remove('more-open'); }
     function toggle() { menu.classList.contains('open') ? close() : open(); }
 
     moreItem.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggle(); });

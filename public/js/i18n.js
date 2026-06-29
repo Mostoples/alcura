@@ -320,32 +320,31 @@
     observe();
   }
 
-  // ---- Segmented ID / EN / JA language toggle (matches the dashboard) ----
+  // ---- Single-button language cycle toggle ----
   var btn;
   function syncBtn() {
     if (!btn) return;
-    btn.classList.remove('id', 'en', 'ja');
-    btn.classList.add(lang);
-    btn.querySelectorAll('button').forEach(function (b) {
-      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
-    });
+    var lbl = btn.querySelector('.lang-label');
+    if (lbl) lbl.textContent = LABEL[lang];
   }
   function makeButton() {
     var toggle = document.querySelector('.theme-toggle');
     if (!toggle) return;
-    btn = document.createElement('div');
-    btn.className = 'lang-toggle';
+    if (!document.getElementById('_lbcss')) {
+      var s = document.createElement('style');
+      s.id = '_lbcss';
+      s.textContent = '.lang-btn{display:inline-flex;align-items:center;gap:.32rem;padding:.34rem .72rem .34rem .52rem;border-radius:100px;border:1.5px solid rgba(0,0,0,.1);background:rgba(255,255,255,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#555;font-size:.73rem;font-weight:700;letter-spacing:.07em;cursor:pointer;line-height:1;transition:all .22s cubic-bezier(.25,.46,.45,.94);font-family:inherit;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.6)}.lang-btn:hover{border-color:rgba(46,158,94,.4);background:rgba(255,255,255,.92);color:#222;box-shadow:0 2px 10px rgba(46,158,94,.15),0 1px 3px rgba(0,0,0,.08);transform:translateY(-1px)}.lang-btn:active{transform:translateY(0);transition-duration:.08s}.lang-btn i{font-size:1.02rem;color:#2e9e5e}[data-theme=dark] .lang-btn{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);box-shadow:0 1px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.06)}[data-theme=dark] .lang-btn:hover{border-color:rgba(74,222,128,.35);background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);box-shadow:0 2px 12px rgba(74,222,128,.12),0 1px 4px rgba(0,0,0,.2);transform:translateY(-1px)}[data-theme=dark] .lang-btn i{color:#4ade80}';
+      document.head.appendChild(s);
+    }
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lang-btn';
     btn.id = 'langToggle';
     btn.setAttribute('data-no-i18n', '');
-    btn.innerHTML =
-      '<span class="lang-knob"></span>' +
-      '<button type="button" data-lang="id">ID</button>' +
-      '<button type="button" data-lang="en">EN</button>' +
-      '<button type="button" data-lang="ja">JA</button>';
-    btn.querySelectorAll('button').forEach(function (b) {
-      b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
-    });
-    toggle.parentNode.insertBefore(btn, toggle); // sits to the LEFT of the theme toggle
+    btn.title = 'Switch language';
+    btn.innerHTML = '<i class="ph ph-translate"></i><span class="lang-label">' + LABEL[lang] + '</span>';
+    btn.addEventListener('click', function () { ALCURA_I18N.cycle(); });
+    toggle.parentNode.insertBefore(btn, toggle);
   }
 
   function setLang(l) {

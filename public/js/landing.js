@@ -413,10 +413,11 @@ function applyLang(lang){
   document.documentElement.setAttribute('lang',lang);
   localStorage.setItem('lang',lang);
   if(window.__wlRender)window.__wlRender();
-  const tog=document.getElementById('langToggle');
-  if(tog){tog.classList.remove('id','en','ja');tog.classList.add(lang);tog.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));}
+  const lbl=document.getElementById('langLabel');
+  if(lbl) lbl.textContent=lang.toUpperCase();
 }
 function setLang(lang){applyLang(lang);}
+function cycleLang(){var LANGS=['id','en','ja'];var cur=document.documentElement.getAttribute('lang')||localStorage.getItem('lang')||'id';setLang(LANGS[(LANGS.indexOf(cur)+1)%LANGS.length]);}
 
 /* Render a simple research-style SVG trendline (same look as the app's
    ALCURA_HISTORY trend; uses the .trend CSS classes from styles.css). */

@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <link rel="shortcut icon" href="img/logo.png" type="image/png">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Personalisasi — ALCURA</title>
 <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 <script>/* Guard: must be signed in to personalize */(function(){try{if(!localStorage.getItem('alcuraUser')&&!localStorage.getItem('userEmail')){location.replace('login.html');}}catch(e){}})();</script>
@@ -11,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=16">
-<link rel="stylesheet" href="css/landing.css?v=16">
+<link rel="stylesheet" href="css/styles.css?v=26">
+<link rel="stylesheet" href="css/landing.css?v=26">
 <style>
   body{font-family:var(--font-helios)}
   .pz-wrap{position:relative;z-index:1;max-width:540px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:20px 16px 28px;gap:16px}
@@ -78,6 +79,7 @@
   .pz-sum .row b{color:var(--ink);font-weight:700;font-size:.84rem;text-align:right}
   .pz-confetti{font-size:2.6rem;text-align:center;margin:.1rem 0 .2rem}
   .pz-foot{text-align:center;color:var(--ink-mute);font-size:.74rem}
+  .lang-btn{display:inline-flex;align-items:center;gap:.32rem;padding:.34rem .72rem .34rem .52rem;border-radius:100px;border:1.5px solid rgba(0,0,0,.1);background:rgba(255,255,255,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#555;font-size:.73rem;font-weight:700;letter-spacing:.07em;cursor:pointer;line-height:1;transition:all .22s cubic-bezier(.25,.46,.45,.94);font-family:inherit;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.07),inset 0 1px 0 rgba(255,255,255,.6)}.lang-btn:hover{border-color:rgba(46,158,94,.4);background:rgba(255,255,255,.92);color:#222;box-shadow:0 2px 10px rgba(46,158,94,.15);transform:translateY(-1px)}.lang-btn:active{transform:translateY(0)}.lang-btn i{font-size:1.02rem;color:#2e9e5e}[data-theme=dark] .lang-btn{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:rgba(255,255,255,.55)}[data-theme=dark] .lang-btn:hover{border-color:rgba(74,222,128,.35);background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);transform:translateY(-1px)}[data-theme=dark] .lang-btn i{color:#4ade80}
 </style>
 </head>
 <body>
@@ -92,12 +94,7 @@
   <div class="pz-top">
     <span class="pz-brand"><span class="mark mark-algae"></span> ALCURA</span>
     <div class="pz-top-r">
-      <div class="lang-toggle" id="pzLang">
-        <span class="lang-knob"></span>
-        <button data-lang="id" type="button">ID</button>
-        <button data-lang="en" type="button">EN</button>
-        <button data-lang="ja" type="button">JA</button>
-      </div>
+      <button type="button" class="lang-btn" id="pzLang" data-no-i18n title="Switch language"><i class="ph ph-translate"></i><span id="pzLangLabel">ID</span></button>
       <button class="pz-skip" id="skipBtn" type="button" data-i18n="skip">Lewati</button>
     </div>
   </div>
@@ -192,10 +189,29 @@
   <p class="pz-foot" data-i18n="foot">Anda bisa mengubahnya kapan saja di Profil.</p>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js" onerror="void 0"></script>
 <script src="js/auth.js" onerror="void 0"></script>
 <script>
 (function(){
+  // Show once: localStorage check (sync, instant redirect)
+  try {
+    var _p = JSON.parse(localStorage.getItem('alcuraPersona') || 'null');
+    if (_p && _p.done) { location.replace('app.html'); return; }
+  } catch(e) {}
+  // Firestore check (async — catches cases where localStorage was cleared)
+  try {
+    if (typeof firebase !== 'undefined') {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (!user) return;
+        firebase.firestore().collection('users').doc(user.uid).get().then(function(doc) {
+          if (doc.exists && doc.data() && doc.data().personalizeDone) location.replace('app.html');
+        }).catch(function(){});
+      });
+    }
+  } catch(e) {}
   /* ---------------- i18n ---------------- */
   var I18N = {
     id:{
@@ -267,9 +283,8 @@
     document.querySelectorAll('[data-i18n]').forEach(function(el){ var v=T(el.getAttribute('data-i18n')); if(v!=null) el.innerHTML=v; });
     document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ var v=T(el.getAttribute('data-i18n-ph')); if(v!=null) el.setAttribute('placeholder',v); });
     nextBtn.querySelector('span').textContent = (step===STEPS-1) ? T('nav.start') : T('nav.next');
-    var tog=document.getElementById('pzLang');
-    tog.classList.remove('id','en','ja'); tog.classList.add(lang);
-    tog.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-lang')===lang); });
+    var lbl=document.getElementById('pzLangLabel');
+    if(lbl) lbl.textContent=lang.toUpperCase();
     if(step===STEPS-1) renderSummary();
   }
 
@@ -332,6 +347,17 @@
       role:data.role, uses:data.uses, env:data.env, primaryUse:data.uses[0]||'air'
     };
     try{ localStorage.setItem('alcuraPersona', JSON.stringify(persona)); }catch(e){}
+    // Save to Firestore users/{uid}
+    try {
+      if (typeof firebase !== 'undefined') {
+        var user = firebase.auth().currentUser;
+        if (user) {
+          var fsDoc = { uid: user.uid, personalizeDone: true, personalizeAt: firebase.firestore.FieldValue.serverTimestamp() };
+          if (!skip) fsDoc.persona = { name:data.name, dob:data.dob, city:data.city, role:data.role, uses:data.uses, env:data.env, lang:lang };
+          firebase.firestore().collection('users').doc(user.uid).set(fsDoc, { merge: true }).catch(function(){});
+        }
+      }
+    } catch(e) {}
     if(!skip && data.name){ try{ var u=JSON.parse(localStorage.getItem('alcuraUser')||'{}'); u.displayName=data.name; localStorage.setItem('alcuraUser',JSON.stringify(u)); if(window.alcuraAuth&&alcuraAuth.currentUser){alcuraAuth.currentUser.updateProfile({displayName:data.name}).catch(function(){});} }catch(e){} }
     location.replace('app.html');
   }
@@ -339,7 +365,7 @@
   nextBtn.addEventListener('click',function(){ if(!validate()) return; if(step<STEPS-1){ step++; show(); } else { finish(false); } });
   backBtn.addEventListener('click',function(){ if(step>0){ step--; show(); } });
   document.getElementById('skipBtn').addEventListener('click',function(){ if(confirm(T('skip.confirm'))) finish(true); });
-  document.getElementById('pzLang').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; lang=b.getAttribute('data-lang'); localStorage.setItem('lang',lang); applyI18n(); });
+  document.getElementById('pzLang').addEventListener('click',function(){ var LANGS=['id','en','ja']; lang=LANGS[(LANGS.indexOf(lang)+1)%LANGS.length]; localStorage.setItem('lang',lang); applyI18n(); });
 
   document.getElementById('pzName').value = data.name || '';
   applyI18n();

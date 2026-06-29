@@ -167,7 +167,8 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
   position:absolute;top:10px;right:10px;width:8px;height:8px;
   background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent);
 }
-.avatar{width:44px;height:44px;border-radius:14px;object-fit:cover;box-shadow:var(--shadow-raised-sm)}
+.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:var(--shadow-raised-sm);border:2px solid var(--bg);background:var(--bg);flex-shrink:0;display:block}
+.top-bar-actions a{display:inline-flex;align-items:center}
 
 .btn-pill,
 .btn{
@@ -562,12 +563,19 @@ i.ph,i[class^="ph-"],i[class*=" ph-"]{display:inline-block;line-height:1}
 /* =========================================================
    THEME TOGGLE (legacy knob switch) — neumorphic restyle
    ========================================================= */
-.theme-toggle{--theme-toggle-size:34px;--theme-toggle-gap:.5rem;--theme-toggle-pad:.4rem;--theme-toggle-shift:calc(var(--theme-toggle-size) + var(--theme-toggle-gap));display:inline-flex;align-items:center;gap:var(--theme-toggle-gap);background:var(--bg);box-shadow:var(--shadow-inset);border-radius:var(--radius-pill);padding:var(--theme-toggle-pad);cursor:pointer;position:relative}
-.theme-toggle .tt{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:1.1rem;color:var(--text-dim);z-index:1}
-.theme-toggle .knob{position:absolute;top:50%;left:var(--theme-toggle-pad);width:var(--theme-toggle-size);height:var(--theme-toggle-size);border-radius:50%;background:var(--bg);box-shadow:var(--shadow-raised-sm);transition:.3s cubic-bezier(.2,.8,.2,1);transform:translateY(-50%)}
-:root[data-theme="dark"] .theme-toggle .knob{transform:translate(var(--theme-toggle-shift), -50%)}
-:root[data-theme="light"] .theme-toggle .tt.sun{color:var(--accent)}
-:root[data-theme="dark"] .theme-toggle .tt.moon{color:var(--accent)}
+/* Single-button theme toggle: one square button, one icon that swaps with the
+   active theme (light → moon = tap to go dark, dark → sun = tap to go light). */
+.theme-toggle{width:44px;height:44px;display:grid;place-items:center;background:var(--bg);box-shadow:var(--shadow-raised-sm);border-radius:14px;padding:0;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .2s, transform .15s, color .2s}
+.theme-toggle:hover{color:var(--accent)}
+.theme-toggle:active{box-shadow:var(--shadow-inset);transform:scale(.95)}
+.theme-toggle .knob{display:none}
+.theme-toggle .tt{grid-area:1/1;width:auto;height:auto;display:grid;place-items:center;font-size:1.25rem;color:var(--text);transition:opacity .3s cubic-bezier(.2,.8,.2,1), transform .35s cubic-bezier(.2,.8,.2,1)}
+/* show moon in light mode, sun in dark mode — the hidden one rotates/fades out */
+:root[data-theme="light"] .theme-toggle .tt.sun{opacity:0;transform:rotate(-90deg) scale(.4);pointer-events:none}
+:root[data-theme="dark"]  .theme-toggle .tt.moon{opacity:0;transform:rotate(90deg) scale(.4);pointer-events:none}
+:root[data-theme="light"] .theme-toggle .tt.moon{color:var(--text)}
+:root[data-theme="dark"]  .theme-toggle .tt.sun{color:var(--accent)}
+.theme-toggle:hover .tt{color:var(--accent)}
 
 /* Icon-only theme controls used by app and auth pages. */
 .btn-icon.theme-toggle{
@@ -864,6 +872,14 @@ footer .brand{justify-content:center;margin-bottom:1rem}
   .nav-links-cta{display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem;padding-top:.7rem;border-top:1px solid var(--line)}
 }
 @media (max-width:640px){
+  /* keep the dashboard top-bar actions on one tidy row */
+  .top-bar-actions{gap:8px;flex-shrink:0}
+  .top-bar-actions .btn-icon,
+  .top-bar-actions .theme-toggle{width:40px;height:40px}
+  .top-bar-actions .avatar{width:40px;height:40px}
+  .top-bar .hi h2,.app-header .hi h2{font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .top-bar .hi,.app-header .hi{min-width:0}
+
   .hero{padding-top:1rem}
   .hero-actions{flex-direction:column;align-items:stretch;width:100%;max-width:330px;margin:0 auto}
   .hero-actions .btn{width:100%}
@@ -1095,23 +1111,41 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 }
 
 /* ---- "More" bottom-nav popup menu ---- */
+/* Blur backdrop — sits below the bottom-nav (z-index 50) so the navbar stays
+   sharp while the rest of the page is blurred behind the menu. */
+.more-backdrop{
+  position:fixed; inset:0; z-index:48;
+  background:rgba(10,20,14,.18);
+  backdrop-filter:blur(7px) saturate(120%); -webkit-backdrop-filter:blur(7px) saturate(120%);
+  opacity:0; pointer-events:none; transition:opacity .22s ease;
+}
+.more-backdrop.open{ opacity:1; pointer-events:auto; }
+
 .more-menu{
-  position:fixed; z-index:65; min-width:184px; right:16px; bottom:92px;
-  display:flex; flex-direction:column; gap:2px;
-  background:var(--bg); border-radius:18px; padding:8px;
+  position:fixed; z-index:65; bottom:92px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:4px;
+  background:var(--bg); border-radius:22px; padding:8px;
   box-shadow:var(--shadow-raised), 0 0 0 1px rgba(var(--aura-green),.14), 0 16px 40px -12px rgba(var(--aura-green),.35);
-  opacity:0; transform:translateY(10px) scale(.96); transform-origin:bottom right;
+  opacity:0; transform:translateY(10px) scale(.96); transform-origin:bottom center;
   pointer-events:none; transition:opacity .18s ease, transform .22s cubic-bezier(.34,1.56,.64,1);
 }
 .more-menu.open{ opacity:1; transform:none; pointer-events:auto; }
 .more-menu a{
-  display:flex; align-items:center; gap:.7rem; padding:.72rem .9rem; border-radius:12px;
-  color:var(--text); text-decoration:none; font-size:.88rem; font-weight:600; white-space:nowrap;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.3rem;
+  width:auto; padding:.6rem .35rem; border-radius:14px; text-align:center;
+  color:var(--text); text-decoration:none; font-size:.73rem; font-weight:600; line-height:1.15;
+  transition:background .15s, color .15s, transform .12s;
 }
+.more-menu a span{ display:block; width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 @media (hover:hover){ .more-menu a:hover{ background:rgba(var(--aura-green),.10); color:var(--accent); } }
-.more-menu a:active{ background:rgba(var(--aura-green),.16); }
-.more-menu a i{ font-size:1.25rem; color:var(--accent); width:22px; text-align:center; }
-.more-menu a.more-install{ margin-top:4px; padding-top:.78rem; border-top:1px solid rgba(var(--aura-green),.16); }
+.more-menu a:active{ background:rgba(var(--aura-green),.16); transform:scale(.95); }
+.more-menu a i{ font-size:1.5rem; color:var(--accent); width:auto; text-align:center; }
+.more-menu a.more-install{
+  grid-column:1 / -1; flex-direction:row; gap:.6rem; width:auto;
+  margin-top:4px; padding-top:.8rem; border-top:1px solid rgba(var(--aura-green),.16); font-size:.84rem;
+}
+.more-menu a.more-install i{ font-size:1.25rem; }
+.more-menu a.more-install span{ width:auto; }
 .pred-tag{ display:inline-flex; align-items:center; gap:3px; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.3px; padding:.08rem .38rem; border-radius:7px; background:rgba(var(--aura-violet),.16); color:rgb(var(--aura-violet)); vertical-align:middle; margin-left:.35rem; }
 .pred-tag i{ font-size:.72rem; }
 .bottom-nav .nav-item.more-open{ color:var(--accent); }

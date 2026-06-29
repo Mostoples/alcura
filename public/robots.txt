@@ -1,8 +1,12 @@
 User-agent: *
 Allow: /
 Disallow: /debug.html
+Disallow: /app.html
 Disallow: /pages/onboarding.html
 Disallow: /pages/profile.html
 Disallow: /pages/dashboard.html
+Disallow: /pages/controls.html
+Disallow: /pages/settings.html
+Disallow: /pages/alerts.html
 
 Sitemap: https://alcura-id.web.app/sitemap.xml

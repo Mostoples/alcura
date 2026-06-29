@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="shortcut icon" href="../img/logo.png" type="image/png">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ALCURA — Onboarding</title>
   <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
@@ -10,9 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/styles.css?v=16">
-  <link rel="stylesheet" href="../css/mobile.css?v=16">
-  <link rel="stylesheet" href="../css/landing.css?v=16">
+  <link rel="stylesheet" href="../css/styles.css?v=26">
+  <link rel="stylesheet" href="../css/mobile.css?v=26">
+  <link rel="stylesheet" href="../css/landing.css?v=26">
 </head>
 <body data-no-auth>
 <div class="liquid-bg">
@@ -63,21 +64,46 @@
 </div>
 
 <script>
-let currentSlide = 0;
+// Show once: jika sudah pernah lewati onboarding, skip langsung
+if (localStorage.getItem('alcuraOnboardingDone')) {
+  try { location.replace(localStorage.getItem('alcuraUser') ? '../app.html' : '../login.html'); } catch(e) {}
+}
+
+var currentSlide = 0;
 function nextSlide() {
   if (currentSlide < 2) { currentSlide++; goSlide(currentSlide); }
-  else { window.location.href = '../login.html'; }
+  else { finishOnboarding(); }
 }
 function goSlide(idx) {
   currentSlide = idx;
-  document.getElementById('carousel').style.transform = `translateX(-${idx * 100}%)`;
-  document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === idx));
+  document.getElementById('carousel').style.transform = 'translateX(-' + (idx * 100) + '%)';
+  document.querySelectorAll('.dot').forEach(function(dot, i) { dot.classList.toggle('active', i === idx); });
   document.getElementById('slideBtn').textContent = idx === 2 ? 'Mulai' : 'Selanjutnya';
 }
+function finishOnboarding() {
+  localStorage.setItem('alcuraOnboardingDone', '1');
+  try {
+    if (typeof firebase !== 'undefined') {
+      var user = firebase.auth().currentUser;
+      if (user) {
+        firebase.firestore().collection('users').doc(user.uid).set({
+          uid: user.uid,
+          onboardingDone: true,
+          onboardingAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(function(){});
+      }
+    }
+  } catch(e) {}
+  location.replace('../login.html');
+}
 </script>
-<script src="../js/app-shell.js?v=16"></script>
-<script src="../js/more-menu.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/app-shell.js?v=26"></script>
+<script src="../js/more-menu.js?v=26"></script>
 <script src="../js/pwa.js"></script>
-<script src="../js/i18n.js?v=16"></script>
+<script src="../js/i18n.js?v=26"></script>
 </body>
 </html>

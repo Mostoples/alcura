@@ -122,6 +122,7 @@ const I18N={
     'faq.q4':'Apakah perlu mengganti filter?','faq.a4':'Tidak. Berbeda dengan air purifier konvensional, ALCURA memurnikan udara secara biologis sehingga tidak membutuhkan filter habis pakai.',
     'faq.q5':'Bagaimana cara memantau alat?','faq.a5':'Melalui aplikasi ALCURA yang menampilkan DO, pH, suhu, CO₂, dan kesehatan kultur secara real-time, di mana pun Anda berada.',
 
+    'sus.tag':'Suara Anda','sus.title':'Bantu kami <em>menyempurnakan</em> ALCURA','sus.lead':'Pengalaman Anda sangat berharga. Isi kuesioner singkat dan bantu bentuk masa depan udara hidup.','sus.cta':'Isi Kuesioner','sus.c1':'± 2 menit','sus.c2':'Anonim','sus.c3':'Berdampak nyata','sus.note':'Terbuka di Google Forms · tanpa login',
     'auth.tag':'Mulai','auth.title':'Siap menghidupkan <em>udara</em> Anda?','auth.desc':'Buat akun atau masuk untuk mulai memantau ALCURA. Prosesnya cepat dan gratis.',
     'auth.fs1.t':'Daftar','auth.fs1.s':'Buat akun dengan email atau Google.',
     'auth.fs2.t':'Pair Alat','auth.fs2.s':'Hubungkan ALCURA Anda via QR atau Bluetooth.',
@@ -249,6 +250,7 @@ const I18N={
     'faq.q4':'Do I need to replace filters?','faq.a4':'No. Unlike conventional air purifiers, ALCURA purifies air biologically, so it needs no disposable filters.',
     'faq.q5':'How do I monitor the device?','faq.a5':'Through the ALCURA app, which shows DO, pH, temperature, CO₂, and culture health in real time, wherever you are.',
 
+    'sus.tag':'Your voice','sus.title':'Help us <em>perfect</em> ALCURA','sus.lead':'Your experience matters. Take a short questionnaire and help shape the future of living air.','sus.cta':'Take the Questionnaire','sus.c1':'± 2 minutes','sus.c2':'Anonymous','sus.c3':'Real impact','sus.note':'Opens in Google Forms · no login',
     'auth.tag':'Get Started','auth.title':'Ready to bring your <em>air</em> to life?','auth.desc':'Create an account or sign in to start monitoring ALCURA. It is quick and free.',
     'auth.fs1.t':'Sign up','auth.fs1.s':'Create an account with email or Google.',
     'auth.fs2.t':'Pair Device','auth.fs2.s':'Connect your ALCURA via QR or Bluetooth.',
@@ -376,6 +378,7 @@ const I18N={
     'faq.q4':'フィルターの交換は必要ですか？','faq.a4':'いいえ。従来の空気清浄機と異なり、ALCURAは生物学的に空気を浄化するため、使い捨てフィルターは不要です。',
     'faq.q5':'デバイスはどのように監視しますか？','faq.a5':'ALCURAアプリを通じて、DO・pH・温度・CO₂・培養状態をどこにいてもリアルタイムで確認できます。',
 
+    'sus.tag':'あなたの声','sus.title':'ALCURAを<em>もっと良く</em>するために','sus.lead':'あなたの体験が大切です。短いアンケートに答えて、生きた空気の未来づくりにご協力ください。','sus.cta':'アンケートに答える','sus.c1':'約2分','sus.c2':'匿名','sus.c3':'確かな影響','sus.note':'Google Formsで開きます · ログイン不要',
     'auth.tag':'始める','auth.title':'あなたの<em>空気</em>に命を吹き込む準備はできましたか？','auth.desc':'アカウントを作成またはログインしてALCURAの監視を始めましょう。簡単で無料です。',
     'auth.fs1.t':'登録','auth.fs1.s':'メールまたはGoogleでアカウントを作成。',
     'auth.fs2.t':'デバイスを接続','auth.fs2.s':'QRまたはBluetoothでALCURAを接続。',

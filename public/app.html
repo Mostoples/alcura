@@ -75,11 +75,31 @@
 
     <section class="dash-block dash-metrik span-2">
       <div class="sec-title"><h3>Metrik Cepat</h3><a href="pages/air-quality.html">Detail udara <i class="ph ph-arrow-right"></i></a></div>
-      <div class="metric-scroll">
-        <div class="metric co2"><div class="ic"><i class="ph ph-cloud"></i></div><b><span data-bind="air.co2">480</span><small> ppm</small></b><span>CO₂</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
-        <div class="metric do"><div class="ic"><i class="ph ph-test-tube"></i></div><b><span data-bind="culture.tds">864</span></b><span>TDS ppm</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
-        <div class="metric temp"><div class="ic"><i class="ph ph-thermometer"></i></div><b><span data-bind="culture.temp" data-dec="1">27</span><small>°C</small></b><span>Suhu Kultur</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
-        <div class="metric ph"><div class="ic"><i class="ph ph-flask"></i></div><b data-bind="culture.ph" data-dec="1">9.4</b><span>pH</span><div class="ok"><i class="ph-fill ph-check-circle"></i> Optimal</div></div>
+      <div class="grid-2">
+        <div class="card metric-card aura-blue" data-pattern="cloud">
+          <div class="metric-head"><div class="metric-icon"><i class="ph ph-cloud"></i></div><span class="metric-trend up">Optimal</span></div>
+          <p class="metric-label">CO₂ — Karbon Dioksida</p>
+          <div class="metric-value"><span data-bind="air.co2">480</span><span class="metric-unit">ppm</span></div>
+          <div class="sensor-pins">Konsentrasi CO₂ indoor</div>
+        </div>
+        <div class="card metric-card aura-green" data-pattern="flask">
+          <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up">Optimal</span></div>
+          <p class="metric-label">TDS — Nutrisi</p>
+          <div class="metric-value"><span data-bind="culture.tds">864</span><span class="metric-unit">ppm</span></div>
+          <div class="sensor-pins">Total padatan terlarut</div>
+        </div>
+        <div class="card metric-card aura-amber" data-pattern="sun">
+          <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer"></i></div><span class="metric-trend up">Optimal</span></div>
+          <p class="metric-label">Suhu Kultur</p>
+          <div class="metric-value"><span data-bind="culture.temp" data-dec="1">27</span><span class="metric-unit">°C</span></div>
+          <div class="sensor-pins">Suhu medium kultur</div>
+        </div>
+        <div class="card metric-card aura-violet" data-pattern="drop">
+          <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Optimal</span></div>
+          <p class="metric-label">pH Kultur</p>
+          <div class="metric-value"><span data-bind="culture.ph" data-dec="1">9.4</span><span class="metric-unit">pH</span></div>
+          <div class="sensor-pins">Tingkat keasaman</div>
+        </div>
       </div>
 
     </section>
@@ -145,6 +165,14 @@
           <div class="ic"><i class="ph-fill ph-basket"></i></div>
           <span>Panen</span><small>Catatan panen</small>
         </a>
+        <a class="qa" href="pages/guide.html">
+          <div class="ic"><i class="ph-fill ph-book-open-text"></i></div>
+          <span>Panduan</span><small>Tutorial &amp; bantuan</small>
+        </a>
+        <a class="qa" href="#" onclick="if(window.ALCURA_TOUR){ALCURA_TOUR.start();}return false;">
+          <div class="ic"><i class="ph-fill ph-presentation"></i></div>
+          <span>Mulai Tur</span><small>Ulangi tutorial</small>
+        </a>
       </div>
     </section>
   </div>
@@ -180,6 +208,7 @@
 <script src="js/more-menu.js"></script>
 <script src="js/pwa.js"></script>
 <script src="js/i18n.js?v=11"></script>
+<script src="js/onboarding.js?v=1"></script>
 <script>
 // Reflect active critical/warning alerts on the bell badge + draw the live spark
 ALCURA.on(function (d) {

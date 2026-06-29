@@ -1193,3 +1193,29 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 .xai-mini .line{display:flex;gap:.6rem;align-items:flex-start;font-size:.82rem;color:var(--text);line-height:1.45}
 .xai-mini .line i{color:var(--accent);font-size:1.05rem;margin-top:.1rem;flex-shrink:0}
 .xai-mini .line.warn i{color:#e8a13c}
+
+
+/* ===== Onboarding tour (coach-marks / spotlight) ===== */
+.ob-catch{position:fixed;inset:0;z-index:9000;background:transparent;cursor:default}
+.ob-spot{position:fixed;z-index:9001;border-radius:16px;pointer-events:none;
+  box-shadow:0 0 0 9999px rgba(8,16,12,.74), 0 0 0 3px rgba(var(--aura-green),.95), 0 0 22px 4px rgba(var(--aura-green),.45);
+  transition:top .35s cubic-bezier(.2,.8,.2,1),left .35s cubic-bezier(.2,.8,.2,1),width .35s cubic-bezier(.2,.8,.2,1),height .35s cubic-bezier(.2,.8,.2,1)}
+.ob-spot.noring{box-shadow:0 0 0 9999px rgba(8,16,12,.74)}
+.ob-card{position:fixed;z-index:9002;max-width:330px;width:calc(100% - 2rem);background:var(--bg);
+  border-radius:var(--radius-lg);padding:1.05rem 1.15rem;
+  box-shadow:var(--shadow-raised), 0 0 0 1px rgba(var(--aura-green),.22), 0 18px 50px -10px rgba(0,0,0,.55);
+  transition:top .35s cubic-bezier(.2,.8,.2,1),left .35s cubic-bezier(.2,.8,.2,1)}
+.ob-card h4{font-size:1rem;font-weight:800;margin-bottom:.45rem;display:flex;align-items:center;gap:.5rem;color:var(--text);letter-spacing:-.01em}
+.ob-card h4 i{color:var(--accent);font-size:1.2rem}
+.ob-card p{font-size:.85rem;line-height:1.55;color:var(--text-muted)}
+.ob-foot{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;gap:.6rem}
+.ob-dots{display:flex;gap:.28rem;align-items:center}
+.ob-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);display:block;transition:.3s}
+.ob-dots i.on{background:var(--accent);width:18px;border-radius:3px}
+.ob-btns{display:flex;gap:.45rem;align-items:center}
+.ob-back{font-size:.8rem;font-weight:600;color:var(--text-muted);background:var(--bg-soft);border:0;border-radius:999px;padding:.5rem .8rem;cursor:pointer}
+.ob-next{font-size:.82rem;font-weight:700;color:var(--accent-ink);background:var(--accent);border:0;border-radius:999px;padding:.52rem .95rem;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;box-shadow:var(--shadow-accent)}
+.ob-next:hover{filter:brightness(1.05)}
+.ob-skip{display:block;width:100%;text-align:center;margin-top:.7rem;font-size:.76rem;color:var(--text-dim);background:none;border:0;cursor:pointer}
+.ob-skip:hover{color:var(--text-muted)}
+@media(prefers-reduced-motion:reduce){.ob-spot,.ob-card{transition:none}}

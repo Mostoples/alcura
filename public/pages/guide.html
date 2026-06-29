@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Panduan — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=11">
+  <link rel="stylesheet" href="../css/mobile.css?v=11">
+  <link rel="stylesheet" href="../css/landing.css?v=11">
+</head>
+<body>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="culture-cells" aria-hidden="true"></div>
+</div>
+<div class="app-container">
+  <header class="top-bar">
+    <div class="page-title-block"><h2>Panduan</h2><p>Tutorial &amp; bantuan ALCURA</p></div>
+    <div class="top-bar-actions">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema" role="button" tabindex="0"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
+    </div>
+  </header>
+
+  <div class="app-scroll">
+
+    <!-- Intro + replay interactive tour -->
+    <div class="card aura-green no-pattern" data-pattern="leaf">
+      <div class="label"><i class="ph-fill ph-book-open-text"></i> Selamat datang</div>
+      <h3 style="margin:.3rem 0 .5rem">Cara menggunakan ALCURA</h3>
+      <p style="font-size:.86rem;color:var(--text-muted);line-height:1.6">Panduan ini menjelaskan setiap bagian dashboard dan semua halaman yang bisa Anda buka. Baru pertama kali? Jalankan tur interaktif singkat langsung di dashboard.</p>
+      <a class="btn btn-primary btn-block" href="../app.html?tour=1" style="margin-top:1rem"><i class="ph ph-presentation"></i> Mulai Tur Interaktif</a>
+    </div>
+
+    <!-- Dashboard sections -->
+    <h3 class="section-title">Dashboard (Beranda)</h3>
+    <div class="card aura-green no-pattern">
+      <details class="xai-acc" open><summary><span><i class="ph-fill ph-gauge" style="color:var(--accent);margin-right:.5rem"></i>Skor Kesehatan</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Lingkaran skor di atas menggabungkan kesehatan kultur, kualitas udara, dan oksigen yang diproduksi hari ini menjadi satu angka ringkas (0–100).</div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-sparkle" style="color:var(--accent);margin-right:.5rem"></i>Briefing Harian AI</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">AI merangkum kondisi 24 jam terakhir dengan bahasa sederhana, lengkap angka penting dan satu saran. Ketuk ikon segarkan untuk membuat ulang.</div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-tree-structure" style="color:var(--accent);margin-right:.5rem"></i>Penjelasan AI (XAI)</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Menjelaskan <b>mengapa</b> AI mengambil keputusan: faktor pembatas pertumbuhan (cahaya, suhu, aerasi, CO₂) dan alasan tiap peringatan. Ketuk "Detail" untuk rincian lengkap.</div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-circles-three" style="color:var(--accent);margin-right:.5rem"></i>Photobioreactor Live</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Visual kultur Spirulina real-time beserta OD680, DO, LED PAR, dan aerasi. "Detail" membuka halaman Kesehatan Kultur.</div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-squares-four" style="color:var(--accent);margin-right:.5rem"></i>Metrik Cepat</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Pembacaan langsung CO₂, nutrisi (TDS), suhu kultur, dan pH. Label status berubah (Optimal/Waspada) saat nilai keluar dari rentang ideal.</div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-basket" style="color:var(--accent);margin-right:.5rem"></i>Panen Berikutnya &amp; Dampak</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Perkiraan hari menuju panen + estimasi hasil, dan ringkasan dampak harian: CO₂ terserap, O₂ diproduksi, energi HVAC dihemat.</div></details>
+    </div>
+
+    <!-- Pages -->
+    <h3 class="section-title">Halaman yang Bisa Diakses</h3>
+    <div class="card aura-blue no-pattern">
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-wind" style="color:var(--accent);margin-right:.5rem"></i>Air — Kualitas Udara</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Sensor gas &amp; UV lengkap (CO₂, O₂, CO, CH₄, H₂, UV, suhu, kelembapan) dengan status keamanan real-time. <a href="air-quality.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-circles-three" style="color:var(--accent);margin-right:.5rem"></i>Culture — Kesehatan Kultur</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Detail kultur Spirulina: densitas, pH, TDS, suhu, warna, dan rekomendasi perawatan. <a href="culture-health.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-bell" style="color:var(--accent);margin-right:.5rem"></i>Alerts — Peringatan</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Semua peringatan &amp; notifikasi sistem, termasuk prediksi dini dari tren sensor. <a href="alerts.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-sliders-horizontal" style="color:var(--accent);margin-right:.5rem"></i>Kontrol</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Atur lampu LED, kipas, pompa aerasi, dan injeksi CO₂ secara manual atau biarkan AI mengelola otomatis. <a href="controls.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-sparkle" style="color:var(--accent);margin-right:.5rem"></i>Tanya AI</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Asisten cerdas yang menjawab pertanyaan tentang sistem Anda berdasarkan data sensor langsung. <a href="ai-chat.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-tree-structure" style="color:var(--accent);margin-right:.5rem"></i>Penjelasan AI</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Faktor penentu prediksi panen, alasan tiap peringatan, dan arti setiap angka. <a href="ai-explain.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-flask" style="color:var(--accent);margin-right:.5rem"></i>Simulasi</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Coba skenario "bagaimana jika" (LED, aerasi, CO₂, suhu) untuk memperkirakan hari panen, hasil, dan energi. <a href="simulator.html">Buka →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-leaf" style="color:var(--accent);margin-right:.5rem"></i>Dampak &amp; Panen</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Laporan dampak lingkungan (CO₂, O₂, energi, setara pohon) dan catatan riwayat panen. <a href="impact.html">Dampak →</a> · <a href="harvest.html">Panen →</a></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-gear" style="color:var(--accent);margin-right:.5rem"></i>Pengaturan (More)</span><i class="ph ph-caret-down"></i></summary>
+        <div class="body">Profil, perangkat, ambang batas sensor, bahasa, tema, dan logout. <a href="settings.html">Buka →</a></div></details>
+    </div>
+
+    <!-- Metric meanings -->
+    <h3 class="section-title">Memahami Angka</h3>
+    <div class="card aura-violet no-pattern">
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-cloud" style="color:var(--accent);margin-right:.5rem"></i>CO₂ (ppm)</span><i class="ph ph-caret-down"></i></summary><div class="body">Konsentrasi CO₂ dalam ruangan. Tinggi memicu kantuk; mikroalga menyerapnya. <span class="rng">Ideal &lt; 1000 ppm</span></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-circles-three" style="color:var(--accent);margin-right:.5rem"></i>OD680 / Densitas</span><i class="ph ph-caret-down"></i></summary><div class="body">Seberapa pekat kultur Spirulina — penentu kesiapan panen. <span class="rng">Target 1.60 OD</span></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-test-tube" style="color:var(--accent);margin-right:.5rem"></i>pH &amp; TDS</span><i class="ph ph-caret-down"></i></summary><div class="body">pH = keasaman kultur; TDS = nutrisi terlarut. Di luar rentang ideal, kultur stres atau perlu diberi nutrisi. <span class="rng">pH 9–11 · TDS &gt; 800 ppm</span></div></details>
+      <details class="xai-acc"><summary><span><i class="ph-fill ph-thermometer" style="color:var(--accent);margin-right:.5rem"></i>Suhu kultur</span><i class="ph ph-caret-down"></i></summary><div class="body">Pertumbuhan optimal di sekitar 29°C; terlalu panas memperlambat/merusak kultur. <span class="rng">≈ 29°C</span></div></details>
+    </div>
+
+    <div class="card aura-mint no-pattern" style="text-align:center">
+      <small style="color:var(--text-muted);font-size:.78rem">Butuh bantuan lain? Buka <a href="ai-chat.html">Tanya AI</a> — asisten menjawab berdasarkan data Anda.</small>
+    </div>
+  </div>
+
+  <div class="spacer-bottom"></div>
+  <nav class="bottom-nav">
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-circles-three"></i></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
+  </nav>
+</div>
+
+<script src="../js/app-shell.js?v=11"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
+<script src="../js/i18n.js?v=11"></script>
+<script src="../js/firebase-config.js"></script>
+<script>requireAuthPage();</script>
+</body>
+</html>

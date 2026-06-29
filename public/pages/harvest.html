@@ -97,7 +97,7 @@
 <script src="../js/sensors-engine.js"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
-<script src="../js/history.js"></script>
+<script src="../js/history.js?v=9"></script>
 <script src="../js/harvest-log.js"></script>
 <script>
 requireAuthPage();
@@ -106,10 +106,11 @@ function fmtDate(t) { try { return new Date(t).toLocaleDateString((window.ALCURA
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
 function renderHint() {
+  var live = window.ALCURA && ALCURA.live;   // sensor-derived — keep "—" until real RTDB data
   var s = ALCURA.snapshot();
-  document.getElementById('hvPred').textContent = s.harvest.yieldG;
-  document.getElementById('hvOd').textContent = s.culture.od;
-  document.getElementById('hvReady').textContent = s.harvest.readiness;
+  document.getElementById('hvPred').textContent = live ? s.harvest.yieldG : '—';
+  document.getElementById('hvOd').textContent = live ? s.culture.od : '—';
+  document.getElementById('hvReady').textContent = live ? s.harvest.readiness : '—';
 }
 
 function renderAll() {

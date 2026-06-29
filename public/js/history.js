@@ -4,9 +4,9 @@
    localStorage so the app can draw REAL trend charts (replacing
    the old static/mock bars) and feed forecasts to the AI.
 
-   On first run it backfills a believable 24h (diurnal) curve so
-   charts are populated immediately, then keeps appending live
-   points sampled from the engine (1 point / minute, capped).
+   Records ONLY real points sampled from the engine once live RTDB data
+   has bound (1 point / minute, capped). No synthetic/backfilled history —
+   charts fill in over time as real readings arrive.
 
    API (window.ALCURA_HISTORY):
      .series(field, sinceMs?)      -> [{t, v}]
@@ -19,7 +19,7 @@
    ============================================================ */
 (function () {
   'use strict';
-  var KEY = 'alcuraHistV1';
+  var KEY = 'alcuraHistV2';   // v2: real-data-only (discards old synthetic/backfilled history)
   var SAMPLE_MS = 60 * 1000;       // append at most 1 live point / minute
   var MAX_POINTS = 1600;           // ~26h at 1/min, plenty for 24h charts
   var FIELDS = ['co2', 'air', 'gas', 'ph', 'tds', 'temp', 'od', 'level', 'o2Today', 'co2Today', 'led', 'safety'];
@@ -48,37 +48,6 @@
   }
   function r1(v) { return Math.round(+v || 0); }
   function r2(v) { return Math.round((+v || 0) * 100) / 100; }
-
-  /* ---- Backfill 24h of plausible diurnal history on first run ---- */
-  function backfill(d) {
-    var now = Date.now(), step = 15 * 60 * 1000, n = 96; // 24h @ 15min
-    var pts = [];
-    for (var i = n; i >= 1; i--) {
-      var t = now - i * step;
-      var hour = new Date(t).getHours() + new Date(t).getMinutes() / 60;
-      // diurnal shape: CO2 peaks pre-dawn, dips midday (photosynthesis); temp warmer midday
-      var dayPhase = Math.cos((hour - 5) / 24 * 2 * Math.PI);     // +1 ~5am, -1 ~5pm
-      var noise = function (a) { return (Math.sin(i * 1.7) + Math.sin(i * 0.6)) * 0.5 * a; };
-      var co2 = clamp(d.air.co2 + dayPhase * 70 + noise(40), 400, 1400);
-      var air = clamp(d.air.score - dayPhase * 8 + noise(4), 30, 100);
-      pts.push({
-        t: t,
-        co2: r1(co2), air: r1(air), gas: r1(clamp(d.air.gas + noise(30), 60, d.air.gas * 1.6 + 80)),
-        ph: r2(clamp(d.culture.ph + Math.sin(i * 0.4) * 0.12, d.culture.ph - 0.6, d.culture.ph + 0.6)),
-        tds: r1(clamp(d.culture.tds - i * 0.4 + noise(15), Math.max(0, d.culture.tds - 120), d.culture.tds + 120)),
-        temp: r2(clamp(d.culture.temp - dayPhase * 1.2 + noise(0.4), d.culture.temp - 3, d.culture.temp + 3)),
-        od: r2(clamp(d.culture.od - i * 0.0045, 0.4, d.culture.od)),
-        level: r1(clamp(d.s.level + i * 0.06 + noise(1), 0, 100)),
-        o2Today: r2(clamp(d.impact.o2Today * (1 - i / n), 0, d.impact.o2Today)),
-        co2Today: r1(clamp(d.impact.co2Today * (1 - i / n), 0, d.impact.co2Today)),
-        led: r1(clamp((hour >= 22 || hour < 6) ? 25 : d.applied.ledIntensity, 0, 100)),
-        safety: r1(clamp(d.safety.value + noise(25), 0, d.safety.value * 1.5 + 50))
-      });
-    }
-    store.points = pts;
-    save();
-  }
-  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
 
   /* ---- Public reads ---- */
   function series(field, sinceMs) {
@@ -166,9 +135,9 @@
   // Public alias for clarity at new call sites.
   function renderTrend(target, field, opts) { renderSpark(target, field, opts); }
 
-  /* ---- Boot: backfill once, then sample live ---- */
+  /* ---- Boot: sample real RTDB data only (no synthetic backfill) ---- */
   function tick(d) {
-    if (!store.points.length) { backfill(d); lastT = store.points[store.points.length - 1].t; return; }
+    if (!(window.ALCURA && ALCURA.live)) return;   // record only real RTDB-derived points
     var now = Date.now();
     if (now - lastT >= SAMPLE_MS) { store.points.push(pointFrom(d, now)); lastT = now; save(); }
   }
@@ -177,8 +146,6 @@
 
   function boot() {
     if (typeof ALCURA === 'undefined') { return setTimeout(boot, 300); }
-    var d0 = ALCURA.snapshot();
-    if (!store.points.length) backfill(d0);
     lastT = store.points.length ? store.points[store.points.length - 1].t : 0;
     ALCURA.on(tick);
   }

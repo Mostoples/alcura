@@ -154,6 +154,7 @@ var sendBtn = document.getElementById('sendBtn');
 /* ===== Live sensor context (so the AI knows the real readings) ===== */
 function liveContext() {
   if (typeof ALCURA === 'undefined') return '';
+  if (!ALCURA.live) return 'CATATAN: Belum ada data sensor real-time dari Realtime Database (perangkat mungkin offline). Jangan mengarang angka apa pun; beri tahu pengguna bahwa data sensor belum tersedia.';
   var d = ALCURA.snapshot();
   return [
     'DATA SENSOR REAL-TIME SAAT INI (gunakan untuk menjawab pertanyaan tentang kondisi terkini):',

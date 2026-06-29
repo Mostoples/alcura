@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="../img/logo.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AI Explainable — ALCURA</title>
+  <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=10">
+  <link rel="stylesheet" href="../css/mobile.css?v=10">
+  <link rel="stylesheet" href="../css/landing.css?v=10">
+</head>
+<body>
+<div class="liquid-bg">
+  <div class="flow flow-a" aria-hidden="true"></div>
+  <div class="flow flow-b" aria-hidden="true"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="culture-cells" aria-hidden="true"></div>
+</div>
+<div class="app-container">
+  <header class="top-bar">
+    <div class="page-title-block"><h2>AI Explainable</h2><p>Mengapa AI mengambil keputusan ini</p></div>
+    <div class="top-bar-actions">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Ganti tema" role="button" tabindex="0"><div class="knob"></div><span class="tt sun"><i class="ph-fill ph-sun"></i></span><span class="tt moon"><i class="ph-fill ph-moon"></i></span></div>
+    </div>
+  </header>
+
+  <div class="app-scroll">
+
+    <!-- 1. FORECAST EXPLANATION -->
+    <h3 class="section-title">Prediksi Panen — Faktor Penentu</h3>
+    <div class="card aura-green no-pattern">
+      <p class="xai-lead" id="xaiForecastLead">Menganalisis…</p>
+      <div id="xaiFactors"></div>
+      <div id="xaiLimiting"></div>
+    </div>
+
+    <!-- 2. ANOMALY / ALERT REASONS -->
+    <h3 class="section-title">Alasan Peringatan &amp; Anomali</h3>
+    <div class="card aura-amber no-pattern">
+      <div id="xaiReasons"></div>
+    </div>
+
+    <!-- 3. UI / METRIC EXPLAINER -->
+    <h3 class="section-title">Memahami Angka di Aplikasi</h3>
+    <div class="card aura-blue no-pattern" id="xaiGlossary"></div>
+
+    <div class="card aura-mint no-pattern" style="text-align:center">
+      <small style="color:var(--text-muted);font-size:.75rem">Semua penjelasan dihitung langsung dari data sensor & aturan kontrol ALCURA — bukan kotak hitam.</small>
+    </div>
+  </div>
+
+  <div class="spacer-bottom"></div>
+  <nav class="bottom-nav">
+    <a href="../app.html" class="nav-item"><i class="ph ph-house" data-icon="ph-house"></i><span>Home</span></a>
+    <a href="air-quality.html" class="nav-item"><i class="ph ph-wind" data-icon="ph-wind"></i><span>Air</span></a>
+    <a href="culture-health.html" class="nav-item fab" aria-label="Culture"><i class="ph-fill ph-circles-three"></i></a>
+    <a href="alerts.html" class="nav-item"><i class="ph ph-bell" data-icon="ph-bell"></i><span>Alerts</span></a>
+    <a href="settings.html" class="nav-item"><i class="ph ph-gear" data-icon="ph-gear"></i><span>More</span></a>
+  </nav>
+</div>
+
+<script src="../js/app-shell.js?v=10"></script>
+<script src="../js/more-menu.js"></script>
+<script src="../js/pwa.js"></script>
+<script src="../js/i18n.js?v=10"></script>
+<script src="../js/firebase-config.js"></script>
+<script src="../js/sensors-engine.js"></script>
+<script src="../js/notifications.js"></script>
+<script src="../js/scheduler.js"></script>
+<script src="../js/history.js"></script>
+<script>
+requireAuthPage();
+(function () {
+  function T(en, id) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id'; return l === 'id' ? id : en; }
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+
+  // ---- 1. Forecast factor breakdown (from the real growth model) ----
+  function renderForecast() {
+    var sim = ALCURA.simulate();           // factors light/aeration/co2/temp + days/readiness
+    var f = sim.factors;
+    // normalise each factor to "how favorable" (0–100%) against its own ceiling
+    var defs = [
+      { key: 'light', label: T('Light (LED)', 'Cahaya (LED)'), max: 1.0, why: T('Drives photosynthesis; plateaus near 78% intensity.', 'Menggerakkan fotosintesis; mendatar di sekitar intensitas 78%.') },
+      { key: 'temp',  label: T('Temperature', 'Suhu'),         max: 1.0, why: T('Growth peaks around 29°C.', 'Pertumbuhan optimal di sekitar 29°C.') },
+      { key: 'aeration', label: T('Aeration', 'Aerasi'),       max: 1.1, why: T('Mixing & CO₂ transfer to the culture.', 'Pengadukan & transfer CO₂ ke kultur.') },
+      { key: 'co2',   label: T('CO₂ injection', 'Injeksi CO₂'), max: 1.12, why: T('Extra carbon source when enabled.', 'Sumber karbon tambahan saat diaktifkan.') }
+    ];
+    defs.forEach(function (d) { d.score = Math.round(Math.min(100, (f[d.key] / d.max) * 100)); });
+    var limiting = defs.slice().sort(function (a, b) { return a.score - b.score; })[0];
+
+    document.getElementById('xaiForecastLead').innerHTML =
+      T('Harvest in ', 'Panen dalam ') + '<b>~' + sim.days + ' ' + T('days', 'hari') + '</b>, ' +
+      T('readiness ', 'kesiapan ') + '<b>' + sim.readiness + '%</b>. ' +
+      T('Density now OD ', 'Densitas saat ini OD ') + '<b>' + sim.odNow + '</b> ' +
+      T('toward target ', 'menuju target ') + sim.target + ', ' +
+      T('growing ', 'tumbuh ') + '<b>' + sim.growthPerDay + ' OD/' + T('day', 'hari') + '</b>. ' +
+      T('Each bar shows how favorable a factor is for growth right now:', 'Tiap bar menunjukkan seberapa mendukung sebuah faktor untuk pertumbuhan saat ini:');
+
+    document.getElementById('xaiFactors').innerHTML = defs.map(function (d) {
+      var cls = d.score >= 75 ? '' : d.score >= 50 ? 'warn' : 'bad';
+      return '<div class="xai-factor"><div class="lab"><b>' + esc(d.label) + '</b><span class="pct">' + d.score + '%</span></div>' +
+        '<div class="xai-bar ' + cls + '"><i style="width:' + d.score + '%"></i></div>' +
+        '<div class="why">' + esc(d.why) + '</div></div>';
+    }).join('');
+
+    document.getElementById('xaiLimiting').innerHTML =
+      '<div class="xai-tagline ' + (limiting.score < 75 ? 'warn' : '') + '"><i class="ph-fill ph-target"></i> ' +
+      T('Main limiting factor: ', 'Faktor pembatas utama: ') + esc(limiting.label) + ' (' + limiting.score + '%)</div>';
+  }
+
+  // ---- 2. Alert / anomaly reasons ----
+  function renderReasons(d) {
+    var alerts = (d.alerts || []).filter(function (a) { return a.level === 'critical' || a.level === 'warning'; });
+    var box = document.getElementById('xaiReasons');
+    if (!alerts.length) {
+      box.innerHTML = '<div class="xai-reason"><span class="ic"><i class="ph-fill ph-check-circle"></i></span>' +
+        '<div><b>' + T('No anomalies', 'Tidak ada anomali') + '</b>' +
+        '<span>' + T('All signals are within safe ranges — nothing triggered a rule.', 'Semua sinyal dalam rentang aman — tidak ada aturan yang aktif.') + '</span></div></div>';
+      return;
+    }
+    box.innerHTML = alerts.map(function (a) {
+      var sig = a.predictive ? T('Predicted from 3h trend', 'Diprediksi dari tren 3 jam')
+                             : T('Threshold rule fired', 'Aturan ambang aktif');
+      return '<div class="xai-reason ' + a.level + '"><span class="ic"><i class="ph-fill ' + (a.icon || 'ph-warning') + '"></i></span>' +
+        '<div><b>' + esc(a.title) + '</b><span>' + esc(a.sub || '') + '</span>' +
+        '<span class="sig">' + sig + '</span></div></div>';
+    }).join('');
+  }
+
+  // ---- 3. Metric glossary (ranges pulled from live thresholds) ----
+  function renderGlossary() {
+    var th = ALCURA.thresholds || {};
+    var items = [
+      { t: T('Air score / CO₂', 'Skor udara / CO₂'), ico: 'ph-cloud',
+        d: T('Indoor CO₂ in ppm. High CO₂ causes drowsiness; the algae absorb it.', 'CO₂ dalam ruangan (ppm). CO₂ tinggi memicu kantuk; mikroalga menyerapnya.'),
+        r: '< ' + (th.co2Warn || 1000) + ' ppm' },
+      { t: 'OD680', ico: 'ph-circles-three',
+        d: T('Optical density = how dense the Spirulina culture is. Drives harvest readiness.', 'Optical density = seberapa pekat kultur Spirulina. Penentu kesiapan panen.'),
+        r: T('target ', 'target ') + '1.60 OD' },
+      { t: 'pH', ico: 'ph-test-tube',
+        d: T('Acidity of the culture. Outside the ideal band stresses the algae.', 'Keasaman kultur. Di luar rentang ideal membuat alga stres.'),
+        r: (th.phMin || 9) + '–' + (th.phMax || 11) },
+      { t: 'TDS', ico: 'ph-flask',
+        d: T('Dissolved nutrients (ppm). Too low means it is time to feed the culture.', 'Nutrisi terlarut (ppm). Terlalu rendah artinya kultur perlu diberi nutrisi.'),
+        r: '> ' + (th.tdsLow || 800) + ' ppm' },
+      { t: T('Culture temp', 'Suhu kultur'), ico: 'ph-thermometer',
+        d: T('Growth peaks near 29°C; too hot slows or harms the culture.', 'Pertumbuhan optimal di sekitar 29°C; terlalu panas memperlambat/merusak kultur.'),
+        r: '≈ 29°C' },
+      { t: T('Harvest readiness', 'Kesiapan panen'), ico: 'ph-basket',
+        d: T('How close current density is to the harvest target (OD now ÷ target).', 'Seberapa dekat densitas saat ini ke target panen (OD sekarang ÷ target).'),
+        r: '= OD ÷ 1.60' }
+    ];
+    document.getElementById('xaiGlossary').innerHTML = items.map(function (it) {
+      return '<details class="xai-acc"><summary><span><i class="ph-fill ' + it.ico + '" style="color:var(--accent);margin-right:.5rem"></i>' + esc(it.t) + '</span><i class="ph ph-caret-down"></i></summary>' +
+        '<div class="body">' + esc(it.d) + '<br><span class="rng">' + T('Ideal: ', 'Ideal: ') + esc(it.r) + '</span></div></details>';
+    }).join('');
+  }
+
+  renderGlossary();
+  ALCURA.on(function (d) { renderForecast(); renderReasons(d); });
+  document.addEventListener('alcura:lang', function () { renderGlossary(); renderForecast(); renderReasons(ALCURA.snapshot()); });
+})();
+</script>
+</body>
+</html>

@@ -56,6 +56,13 @@
       </div>
     </section>
 
+    <section class="dash-block dash-xai span-2">
+      <div class="sec-title"><h3>Penjelasan AI</h3><a href="pages/ai-explain.html">Detail <i class="ph ph-arrow-right"></i></a></div>
+      <div class="card aura-green no-pattern" data-pattern="leaf">
+        <div class="xai-mini" id="xaiMini"><div class="line"><i class="ph-fill ph-target"></i><span>…</span></div></div>
+      </div>
+    </section>
+
     <section class="dash-block dash-pbr">
       <div class="sec-title"><h3>Photobioreactor Live</h3><a href="pages/culture-health.html">Detail <i class="ph ph-arrow-right"></i></a></div>
       <div class="card aura-green no-pattern pbr-card">
@@ -121,6 +128,10 @@
         <a class="qa" href="pages/ai-chat.html">
           <div class="ic"><i class="ph-fill ph-sparkle"></i></div>
           <span>Tanya AI</span><small>Asisten cerdas</small>
+        </a>
+        <a class="qa" href="pages/ai-explain.html">
+          <div class="ic"><i class="ph-fill ph-tree-structure"></i></div>
+          <span>Penjelasan AI</span><small>Mengapa & faktor</small>
         </a>
         <a class="qa" href="pages/simulator.html">
           <div class="ic"><i class="ph-fill ph-flask"></i></div>
@@ -199,6 +210,27 @@ ALCURA.on(function (d) {
 
     var imp = document.getElementById('qaImpact');
     if (imp) imp.textContent = Tq('CO₂ ', 'CO₂ ', 'CO₂ ') + d.impact.co2Today + ' g ' + Tq('today', 'hari ini', '今日');
+  });
+})();
+
+/* ===== Explainable AI — compact dashboard summary (why + limiting factor) ===== */
+(function () {
+  function T(en, id, ja) { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'id'; return l === 'id' ? id : (l === 'ja' ? ja : en); }
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  ALCURA.on(function (d) {
+    var el = document.getElementById('xaiMini'); if (!el || !ALCURA.simulate) return;
+    var sim = ALCURA.simulate(), f = sim.factors;
+    var defs = [['light',1,T('Light','Cahaya','光')],['temp',1,T('Temperature','Suhu','温度')],['aeration',1.1,T('Aeration','Aerasi','エア')],['co2',1.12,T('CO₂','CO₂','CO₂')]];
+    defs.forEach(function (x) { x.push(Math.round(Math.min(100, f[x[0]] / x[1] * 100))); });
+    var lim = defs.slice().sort(function (a, b) { return a[3] - b[3]; })[0];
+    var alerts = (d.alerts || []).filter(function (a) { return a.level === 'critical' || a.level === 'warning'; });
+    var html = '<div class="line"><i class="ph-fill ph-target"></i><span>' +
+      T('Harvest in ', 'Panen ~', '収穫 ~') + '<b>' + sim.days + ' ' + T('days', 'hari', '日') + '</b> · ' +
+      T('main limiting factor: ', 'faktor pembatas utama: ', '主な制限要因: ') + '<b>' + lim[2] + '</b> (' + lim[3] + '%)</span></div>';
+    html += alerts.length
+      ? '<div class="line warn"><i class="ph-fill ph-warning"></i><span>' + esc(alerts[0].title) + ' — ' + esc(alerts[0].sub || '') + '</span></div>'
+      : '<div class="line"><i class="ph-fill ph-check-circle"></i><span>' + T('No anomalies — all signals safe.', 'Tidak ada anomali — semua sinyal aman.', '異常なし — すべて安全です。') + '</span></div>';
+    el.innerHTML = html;
   });
 })();
 

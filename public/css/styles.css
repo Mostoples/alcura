@@ -1158,3 +1158,38 @@ footer .brand{justify-content:center;margin-bottom:1rem}
 .tri-bar i{display:block;height:100%;border-radius:inherit;background:rgb(var(--aura-green));transition:width .6s ease,background .4s}
 .tri-row.is-warn .tri-bar i{background:rgb(var(--aura-amber))}
 .tri-row.is-danger .tri-bar i{background:rgb(var(--aura-coral))}
+
+/* ===== Explainable AI (XAI) ===== */
+.xai-lead{font-size:.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:.6rem}
+.xai-lead b{color:var(--text)}
+.xai-factor{margin:.85rem 0}
+.xai-factor .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;margin-bottom:.35rem;color:var(--text)}
+.xai-factor .lab b{font-weight:700}
+.xai-factor .lab .pct{font-family:var(--font-mono);font-weight:700;color:var(--accent)}
+.xai-bar{height:10px;border-radius:999px;background:var(--bg-soft);overflow:hidden;box-shadow:var(--shadow-inset)}
+.xai-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),rgba(var(--aura-leaf),1));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.xai-bar.warn i{background:linear-gradient(90deg,#e8a13c,#d98828)}
+.xai-bar.bad i{background:linear-gradient(90deg,#df5757,#c94444)}
+.xai-factor .why{font-size:.72rem;color:var(--text-dim);margin-top:.3rem}
+.xai-tagline{display:inline-flex;align-items:center;gap:.4rem;font-size:.74rem;font-weight:700;color:var(--accent);background:rgba(var(--aura-green),.14);padding:.3rem .7rem;border-radius:999px;margin-top:.4rem}
+.xai-tagline.warn{color:#e8a13c;background:rgba(var(--aura-amber),.16)}
+.xai-reason{display:flex;gap:.7rem;align-items:flex-start;padding:.75rem 0;border-bottom:1px solid var(--line)}
+.xai-reason:last-child{border-bottom:0}
+.xai-reason .ic{width:34px;height:34px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;background:var(--bg);box-shadow:var(--shadow-raised-sm);color:var(--accent);font-size:1.05rem}
+.xai-reason.warning .ic{color:#e8a13c}
+.xai-reason.critical .ic{color:#df5757}
+.xai-reason b{font-size:.86rem;display:block;color:var(--text)}
+.xai-reason span{font-size:.76rem;color:var(--text-muted);line-height:1.5}
+.xai-reason .sig{display:inline-block;margin-top:.35rem;font-family:var(--font-mono);font-size:.68rem;color:var(--text);background:var(--bg-soft);padding:.18rem .5rem;border-radius:7px}
+.xai-acc{border-bottom:1px solid var(--line)}
+.xai-acc summary{cursor:pointer;padding:.85rem 0;font-weight:600;font-size:.9rem;color:var(--text);display:flex;justify-content:space-between;align-items:center;list-style:none;gap:.6rem}
+.xai-acc summary::-webkit-details-marker{display:none}
+.xai-acc summary .ph{transition:transform .3s ease;color:var(--accent)}
+.xai-acc[open] summary .ph{transform:rotate(180deg)}
+.xai-acc .body{padding:0 0 .95rem;font-size:.82rem;color:var(--text-muted);line-height:1.65}
+.xai-acc .rng{display:inline-block;margin-top:.45rem;font-family:var(--font-mono);font-size:.72rem;color:var(--accent);background:rgba(var(--aura-green),.12);padding:.22rem .55rem;border-radius:8px}
+/* compact dashboard XAI card */
+.xai-mini{display:flex;flex-direction:column;gap:.55rem}
+.xai-mini .line{display:flex;gap:.6rem;align-items:flex-start;font-size:.82rem;color:var(--text);line-height:1.45}
+.xai-mini .line i{color:var(--accent);font-size:1.05rem;margin-top:.1rem;flex-shrink:0}
+.xai-mini .line.warn i{color:#e8a13c}

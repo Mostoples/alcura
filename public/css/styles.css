@@ -38,11 +38,11 @@
   --font:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono:    'Space Grotesk', monospace;
 
-  /* Neumorphic shadow recipes */
-  --shadow-raised:    -3px -3px 8px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
-  --shadow-raised-sm: -2px -2px 5px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
-  --shadow-inset:     inset -2px -2px 5px var(--shadow-light), inset 3px 3px 7px var(--shadow-dark);
-  --shadow-accent:    var(--accent-glow), -4px -4px 10px var(--shadow-light), 5px 5px 12px var(--shadow-dark);
+  /* Thin, single-direction shadows (liquid-glass — no neumorphic dual edge) */
+  --shadow-raised:    0 6px 16px -8px var(--shadow-dark);
+  --shadow-raised-sm: 0 3px 9px -5px var(--shadow-dark);
+  --shadow-inset:     inset 0 1px 2px var(--shadow-dark);
+  --shadow-accent:    var(--accent-glow), 0 6px 16px -8px var(--shadow-dark);
 
   /* Aura color tokens (RGB triplets — used via rgba(var(--aura), x)) */
   --aura-green:  52, 196, 118;
@@ -930,33 +930,31 @@ footer .brand{justify-content:center;margin-bottom:1rem}
   /* Auth + onboarding stay as a centered, comfortably sized card */
   .auth-shell{ max-width:460px; }
 
-  /* Subpages: tile content into TWO columns so it fills the width instead of
-     one ultra-wide column (cards stop looking empty/stretched). Section
-     headers, the hero, multi-card grids and the alert feed span full width. */
+  /* Subpages: pack content into masonry-like columns (CSS multicol) so it
+     fills the width WITHOUT the ragged height gaps a grid leaves. Section
+     headers, the hero and multi-card grids span the full width as dividers. */
   .app-container:not(.chat-page):not(.dash-shell) .app-scroll:not(.dash){
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:14px 18px;
-    align-items:start;
-    grid-auto-flow:row dense;
+    column-count:2;
+    column-gap:18px;
   }
-  .app-scroll:not(.dash) > .section-title{ grid-column:1 / -1; margin:8px 0 -2px; }
+  .app-scroll:not(.dash) > *{ break-inside:avoid; margin-bottom:14px; }
+  .app-scroll:not(.dash) > .section-title{ column-span:all; margin:8px 0 8px; }
   .app-scroll:not(.dash) > .grid-2,
   .app-scroll:not(.dash) > .hero-card,
   .app-scroll:not(.dash) > .tabs,
   .app-scroll:not(.dash) > #alertFeed,
   .app-scroll:not(.dash) > .profile-hero,
-  .app-scroll:not(.dash) > .pf-actions{ grid-column:1 / -1; }
+  .app-scroll:not(.dash) > .pf-actions{ column-span:all; }
   /* Alerts feed tiles into its own responsive columns */
   .app-scroll:not(.dash) #alertFeed{
     display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start;
   }
 }
 
-/* On very wide screens go to three columns for the densest fit */
+/* On very wide screens add a third column for the densest fit */
 @media (min-width:1500px){
   .app-container:not(.chat-page):not(.dash-shell) .app-scroll:not(.dash){
-    grid-template-columns:repeat(3,minmax(0,1fr));
+    column-count:3;
   }
 }
 

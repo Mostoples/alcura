@@ -1182,15 +1182,12 @@ body{font-family:var(--font-helios)}
 }
 .app-container .alert > i{background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft);box-shadow:none!important}
 
-/* Reduce ALL glow on the user pages for an elegant, flat-glass look */
+/* Trim decorative (non-text) glows; accent TEXT keeps its glow (see below) */
 .app-container .ring-fill{filter:none}
-.app-container .hero-num{text-shadow:none}
 .app-container .progress-fill,.app-container .progress i{box-shadow:none}
 .app-container .tab.active::after{box-shadow:none}
 .app-container .metric-icon{box-shadow:var(--g-shadow)!important}
-.app-container .big-number .value{text-shadow:none}
 .app-container .pbr-head .live .blink{box-shadow:none!important;animation:none}
-.app-container .gauge-wrap .gauge .val b{text-shadow:none}
 /* center FAB: keep depth, drop the green halo glow */
 .app-container .bottom-nav .nav-item.fab,.app-container .bottom-nav .bn-fab{
   box-shadow:0 8px 16px -6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)!important;
@@ -1423,4 +1420,72 @@ body{font-family:var(--font-helios)}
 .app-container .pill{background:rgba(var(--aura-green),.16);border:1px solid rgba(var(--aura-green),.32);color:var(--leaf-500)}
 :root[data-theme="dark"] .app-container .pill{color:var(--mint-300)}
 .app-container .count-chip{background:rgba(var(--aura-green),.16);border:1px solid rgba(var(--aura-green),.3)}
+
+/* ============================================================
+   Kill the last neumorphic surfaces — glassify + thin shadows
+   ============================================================ */
+.app-container .big-number,
+.app-container .slider-group,
+.app-container .spectrum-item,
+.app-container .auto-banner{
+  background:var(--g-fill)!important;
+  border:1px solid var(--g-stroke)!important;
+  box-shadow:var(--g-shadow)!important;
+  backdrop-filter:blur(var(--g-blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--g-blur)) saturate(160%);
+}
+.app-container .tag{background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft)!important;box-shadow:none!important;color:var(--ink-soft)}
+.app-container input[type=range]{background:var(--g-fill-2)!important;box-shadow:inset 0 0 0 1px var(--g-stroke-soft)!important;height:6px}
+.app-container input[type=range]::-webkit-slider-thumb{box-shadow:0 2px 6px rgba(0,0,0,.25)!important;background:var(--leaf-500)!important}
+.app-container .list-row-icon{background:var(--g-fill-2)!important;border:1px solid var(--g-stroke-soft);box-shadow:none!important}
+.app-container .gauge{box-shadow:var(--g-shadow)!important}
+
+/* ============================================================
+   Quick Metrics — fill the card width: icon · value/label · status
+   (no more blank right side)
+   ============================================================ */
+.app-container .metric{
+  display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;
+  align-items:center;column-gap:.65rem;row-gap:.05rem;padding:.85rem .9rem;
+}
+.app-container .metric .ic{grid-row:1 / span 2;margin:0!important;align-self:center}
+.app-container .metric b{grid-column:2;grid-row:1;align-self:end}
+.app-container .metric > span{grid-column:2;grid-row:2;align-self:start;margin-top:0}
+.app-container .metric .ok{grid-column:1 / -1;grid-row:3;margin-top:.45rem;justify-content:flex-start}
+@media (min-width:480px){
+  .app-container .metric{grid-template-columns:auto 1fr auto;grid-template-rows:auto auto}
+  .app-container .metric .ok{grid-column:3;grid-row:1 / span 2;margin-top:0;justify-content:flex-end;align-self:center}
+}
+
+/* ============================================================
+   One typeface (Helios) everywhere + glowing accent highlights
+   ============================================================ */
+.app-container,
+.app-container input,.app-container select,.app-container textarea,.app-container button{
+  font-family:var(--font-helios);
+}
+/* accent numbers/emphasis glow like the landing's highlight text */
+.app-container .hero-num,
+.app-container .big-number .value,
+.app-container .metric b,
+.app-container .gauge .val b,
+.app-container .impact h3 b,
+.app-container .impact .ig .x b,
+.app-container .pbr-foot .f b,
+.app-container .metric-value{
+  color:var(--leaf-500);
+  text-shadow:0 0 16px rgba(46,158,94,.4);
+}
+:root[data-theme="dark"] .app-container .hero-num,
+:root[data-theme="dark"] .app-container .big-number .value,
+:root[data-theme="dark"] .app-container .metric b,
+:root[data-theme="dark"] .app-container .gauge .val b,
+:root[data-theme="dark"] .app-container .impact h3 b,
+:root[data-theme="dark"] .app-container .impact .ig .x b,
+:root[data-theme="dark"] .app-container .pbr-foot .f b,
+:root[data-theme="dark"] .app-container .metric-value{
+  color:var(--mint-300);
+  text-shadow:0 0 18px rgba(52,196,118,.55);
+}
+/* keep the small unit text neutral (don't tint the "ppm/°C") */
+.app-container .metric b small,.app-container .metric-value .metric-unit{color:var(--ink-mute);text-shadow:none}
 

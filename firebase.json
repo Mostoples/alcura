@@ -1,4 +1,8 @@
 {
+  "database": {
+    "rules": "database.rules.json",
+    "instance": "alcura-id-default-rtdb"
+  },
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"

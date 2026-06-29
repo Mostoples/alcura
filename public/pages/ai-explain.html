@@ -71,10 +71,10 @@
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=14"></script>
 <script src="../js/firebase-config.js"></script>
-<script src="../js/sensors-engine.js"></script>
+<script src="../js/sensors-engine.js?v=15"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
-<script src="../js/history.js"></script>
+<script src="../js/history.js?v=15"></script>
 <script>
 requireAuthPage();
 (function () {
@@ -83,6 +83,12 @@ requireAuthPage();
 
   // ---- 1. Forecast factor breakdown (from the real growth model) ----
   function renderForecast() {
+    if (!ALCURA.live) {                     // no real RTDB data yet — don't show fabricated projections
+      document.getElementById('xaiForecastLead').textContent = T('Waiting for sensor data…', 'Menunggu data sensor…');
+      document.getElementById('xaiFactors').innerHTML = '';
+      document.getElementById('xaiLimiting').innerHTML = '';
+      return;
+    }
     var sim = ALCURA.simulate();           // factors light/aeration/co2/temp + days/readiness
     var f = sim.factors;
     // normalise each factor to "how favorable" (0–100%) against its own ceiling
@@ -117,8 +123,14 @@ requireAuthPage();
 
   // ---- 2. Alert / anomaly reasons ----
   function renderReasons(d) {
-    var alerts = (d.alerts || []).filter(function (a) { return a.level === 'critical' || a.level === 'warning'; });
     var box = document.getElementById('xaiReasons');
+    if (!ALCURA.live) {                     // no real RTDB data yet
+      box.innerHTML = '<div class="xai-reason"><span class="ic"><i class="ph-fill ph-wifi-slash"></i></span>' +
+        '<div><b>' + T('Waiting for sensor data', 'Menunggu data sensor') + '</b>' +
+        '<span>' + T('Connect the device to see live reasons.', 'Hubungkan perangkat untuk melihat alasan langsung.') + '</span></div></div>';
+      return;
+    }
+    var alerts = (d.alerts || []).filter(function (a) { return a.level === 'critical' || a.level === 'warning'; });
     if (!alerts.length) {
       box.innerHTML = '<div class="xai-reason"><span class="ic"><i class="ph-fill ph-check-circle"></i></span>' +
         '<div><b>' + T('No anomalies', 'Tidak ada anomali') + '</b>' +

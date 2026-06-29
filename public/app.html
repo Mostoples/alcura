@@ -80,25 +80,25 @@
         <div class="card metric-card aura-blue" data-pattern="cloud">
           <div class="metric-head"><div class="metric-icon"><i class="ph ph-cloud"></i></div><span class="metric-trend up">Optimal</span></div>
           <p class="metric-label">CO₂ — Karbon Dioksida</p>
-          <div class="metric-value"><span data-bind="air.co2">480</span><span class="metric-unit">ppm</span></div>
+          <div class="metric-value"><span data-bind="air.co2">--</span><span class="metric-unit">ppm</span></div>
           <div class="sensor-pins">Konsentrasi CO₂ indoor</div>
         </div>
         <div class="card metric-card aura-green" data-pattern="flask">
           <div class="metric-head"><div class="metric-icon"><i class="ph ph-test-tube"></i></div><span class="metric-trend up">Optimal</span></div>
           <p class="metric-label">TDS — Nutrisi</p>
-          <div class="metric-value"><span data-bind="culture.tds">864</span><span class="metric-unit">ppm</span></div>
+          <div class="metric-value"><span data-bind="culture.tds">--</span><span class="metric-unit">ppm</span></div>
           <div class="sensor-pins">Total padatan terlarut</div>
         </div>
         <div class="card metric-card aura-amber" data-pattern="sun">
           <div class="metric-head"><div class="metric-icon"><i class="ph ph-thermometer"></i></div><span class="metric-trend up">Optimal</span></div>
           <p class="metric-label">Suhu Kultur</p>
-          <div class="metric-value"><span data-bind="culture.temp" data-dec="1">27</span><span class="metric-unit">°C</span></div>
+          <div class="metric-value"><span data-bind="culture.temp" data-dec="1">--</span><span class="metric-unit">°C</span></div>
           <div class="sensor-pins">Suhu medium kultur</div>
         </div>
         <div class="card metric-card aura-violet" data-pattern="drop">
           <div class="metric-head"><div class="metric-icon"><i class="ph ph-flask"></i></div><span class="metric-trend up">Optimal</span></div>
           <p class="metric-label">pH Kultur</p>
-          <div class="metric-value"><span data-bind="culture.ph" data-dec="1">9.4</span><span class="metric-unit">pH</span></div>
+          <div class="metric-value"><span data-bind="culture.ph" data-dec="1">--</span><span class="metric-unit">pH</span></div>
           <div class="sensor-pins">Tingkat keasaman</div>
         </div>
       </div>
@@ -199,10 +199,10 @@
 <script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/app.js?v=14"></script>
-<script src="js/sensors-engine.js"></script>
+<script src="js/sensors-engine.js?v=15"></script>
 <script src="js/notifications.js"></script>
 <script src="js/scheduler.js"></script>
-<script src="js/history.js?v=9"></script>
+<script src="js/history.js?v=15"></script>
 <script src="js/report.js"></script>
 <script src="js/ai-secret.js" onerror="void 0"></script>
 <script src="js/ai-core.js"></script>
@@ -251,6 +251,7 @@ ALCURA.on(function (d) {
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   ALCURA.on(function (d) {
     var el = document.getElementById('xaiMini'); if (!el || !ALCURA.simulate) return;
+    if (!ALCURA.live) { el.innerHTML = '<div class="line"><i class="ph-fill ph-wifi-slash"></i><span>' + T('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…') + '</span></div>'; return; }
     var sim = ALCURA.simulate(), f = sim.factors;
     var defs = [['light',1,T('Light','Cahaya','光')],['temp',1,T('Temperature','Suhu','温度')],['aeration',1.1,T('Aeration','Aerasi','エア')],['co2',1.12,T('CO₂','CO₂','CO₂')]];
     defs.forEach(function (x) { x.push(Math.round(Math.min(100, f[x[0]] / x[1] * 100))); });

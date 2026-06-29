@@ -36,19 +36,22 @@
 (function () {
   'use strict';
 
-  // Current readings — seeded only so derived math never divides by undefined before
-  // the first RTDB push. These values are NEVER shown: every binder waits for `liveBound`.
+  // Current readings — start as NaN ("unknown"). Nothing fake is ever shown: each value
+  // is filled the instant the Realtime Database pushes it, and the binder paints only
+  // finite numbers (NaN keeps the "--" placeholder). No seeds, no simulation — the UI
+  // always reflects exactly what RTDB holds, field by field, with no waiting.
+  var NA = NaN;
   var S = {
     // gas (sensor/gas)
-    co: 1239, ch4: 457, co2: 638, h2: 388, o2: 818,
+    co: NA, ch4: NA, co2: NA, h2: NA, o2: NA,
     // legacy gas mirrors (CO/CH₄/H₂ feed the gas-leak ranking)
-    mq2_1: 1239, mq2_2: 457, mq2_3: 388, mg811: 638, eco2: 638, tvoc: 0,
+    mq2_1: NA, mq2_2: NA, mq2_3: NA, mg811: NA, eco2: NA, tvoc: NA,
     // air (sensor/air)
-    uv: 0, dht_t: 25.1, dht_h: 95, aht_t: 25.1, aht_h: 95,
+    uv: NA, dht_t: NA, dht_h: NA, aht_t: NA, aht_h: NA,
     // water (sensor/water)
-    ph: 7.06, tds: 340, mlx: 27, level: 0, turbidity: 0.5, dist: 12, green: 208,
+    ph: NA, tds: NA, mlx: NA, level: NA, turbidity: NA, dist: NA, green: NA,
     // device
-    uptime: 0
+    uptime: NA
   };
 
   // Firmware-computed status strings, keyed by sensor (authoritative when present).
@@ -149,8 +152,9 @@
     var sGas = score2(combustible, 400, 4000);        // CH₄ / H₂ build-up
     var sRh = clamp(100 - Math.abs(rh - 55) * 2.5, 0, 100);
     var score = Math.round(sCo2 * 0.25 + sCo * 0.35 + sGas * 0.20 + sRh * 0.20);
-    var label = airLabel(score);
-    var aura = score >= 70 ? 'green' : score >= 50 ? 'amber' : 'coral';
+    var finite = isFinite(score);                      // false until real RTDB data
+    var label = finite ? airLabel(score) : null;
+    var aura = finite ? (score >= 70 ? 'green' : score >= 50 ? 'amber' : 'coral') : null;
     return {
       score: score, label: label, aura: aura,
       co2: Math.round(co2), co: Math.round(co), ch4: Math.round(S.ch4), h2: Math.round(S.h2),
@@ -187,7 +191,8 @@
         : L('No gas leak detected. Environment is safe.',
             'Tidak ada kebocoran gas terdeteksi. Lingkungan aman.',
             'ガス漏れは検知されていません。環境は安全です。');
-    var aura = level === 'danger' ? 'coral' : level === 'warn' ? 'amber' : 'green';
+    var hasGas = isFinite(S.co) || isFinite(S.ch4) || isFinite(S.h2);   // any real gas reading?
+    var aura = !hasGas ? null : level === 'danger' ? 'coral' : level === 'warn' ? 'amber' : 'green';
     return { level: level, aura: aura, loc: loc, value: v, message: message, sensors: arr };
   }
 
@@ -222,10 +227,11 @@
     var od = +clamp(0.8 + turb * 0.45, 0.5, 2.2).toFixed(2);
     var chl = Math.round(clamp(58 + turb * 12, 40, 99));
 
+    var hasC = isFinite(ph) || isFinite(tds) || isFinite(temp) || isFinite(turb);   // any real reading?
     var status = ([phStat, tdsStat, tStat, turbStat].indexOf('bad') >= 0) ? 'critical'
       : ([phStat, tdsStat, tStat, turbStat].indexOf('warn') >= 0) ? 'attention' : 'optimal';
-    if (!rec.length) rec.push(L('All water parameters are within ideal range. Keep current settings.', 'Semua parameter air dalam rentang ideal. Pertahankan pengaturan saat ini.', 'すべての水質パラメータが理想範囲内です。現在の設定を維持してください。'));
-    var aura = status === 'critical' ? 'coral' : status === 'attention' ? 'amber' : 'green';
+    if (hasC && !rec.length) rec.push(L('All water parameters are within ideal range. Keep current settings.', 'Semua parameter air dalam rentang ideal. Pertahankan pengaturan saat ini.', 'すべての水質パラメータが理想範囲内です。現在の設定を維持してください。'));
+    var aura = !hasC ? null : status === 'critical' ? 'coral' : status === 'attention' ? 'amber' : 'green';
     return {
       status: status, aura: aura, ph: +ph.toFixed(2), phStat: phStat, tds: Math.round(tds), tdsStat: tdsStat,
       temp: +temp.toFixed(1), tStat: tStat, turbidity: +turb.toFixed(2), turbStat: turbStat,
@@ -486,46 +492,38 @@
     if (typeof v === 'number' && dec != null) return v.toFixed(+dec);
     return v;
   }
-  // Bindings whose root comes from live sensors (/sensor) or the device (/control).
-  // Each stays on its "--" placeholder until the matching RTDB node has actually bound,
-  // so nothing on screen is ever a seed/default — only real Realtime Database values.
-  var SENSOR_ROOT = { s: 1, air: 1, safety: 1, culture: 1, harvest: 1, impact: 1, reminders: 1, auto: 1, alerts: 1 };
-  var DEVICE_ROOT = { device: 1, applied: 1 };
-  function sensorPath(p) { return !!SENSOR_ROOT[String(p).split('.')[0]]; }
-  function devicePath(p) { return !!DEVICE_ROOT[String(p).split('.')[0]]; }
-  function gated(p) { return (sensorPath(p) && !liveBound) || (devicePath(p) && !deviceBound); }
+  // A value is "real" (and thus paintable) only when it's a finite number or a
+  // non-empty string/bool. null / undefined / NaN keep the element's "--" placeholder.
+  // This makes every binding reflect exactly what RTDB holds, field by field, the instant
+  // it arrives — no global wait-gate, no seeds, no fabricated numbers.
+  function realVal(v) {
+    if (v == null) return false;
+    if (typeof v === 'number') return isFinite(v);
+    if (typeof v === 'object') return false;
+    return true; // string / boolean
+  }
   function applyBindings(snap) {
     document.querySelectorAll('[data-bind]').forEach(function (el) {
-      var path = el.getAttribute('data-bind');
-      if (gated(path)) return;   // keep placeholder until the real RTDB node binds
-      var v = resolve(snap, path);
-      if (v != null && typeof v !== 'object') el.textContent = fmt(el, v);
+      var v = resolve(snap, el.getAttribute('data-bind'));
+      if (realVal(v)) el.textContent = fmt(el, v);
     });
     document.querySelectorAll('[data-sensor]').forEach(function (el) {
-      if (!liveBound) return;                        // keep "--" until real RTDB data
       var v = snap.s[el.getAttribute('data-sensor')];
-      if (v != null) {
-        var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
-        el.textContent = dec ? v.toFixed(dec) : Math.round(v).toString();
-        updateStatusBadge(el, v);
-      }
+      if (v == null || !isFinite(v)) return;         // unknown → keep "--"
+      var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
+      el.textContent = dec ? v.toFixed(dec) : Math.round(v).toString();
+      updateStatusBadge(el, v);
     });
     document.querySelectorAll('[data-bind-w]').forEach(function (el) {
-      var p = el.getAttribute('data-bind-w');
-      if (gated(p)) return;
-      var v = resolve(snap, p);
-      if (v != null) el.style.width = clamp(+v, 0, 100) + '%';
+      var v = resolve(snap, el.getAttribute('data-bind-w'));
+      if (realVal(v)) el.style.width = clamp(+v, 0, 100) + '%';
     });
     document.querySelectorAll('[data-bind-gp]').forEach(function (el) {
-      var p = el.getAttribute('data-bind-gp');
-      if (gated(p)) return;
-      var v = resolve(snap, p);
-      if (v != null) el.style.setProperty('--gp', clamp(+v, 0, 100) + '%');
+      var v = resolve(snap, el.getAttribute('data-bind-gp'));
+      if (realVal(v)) el.style.setProperty('--gp', clamp(+v, 0, 100) + '%');
     });
     document.querySelectorAll('[data-bind-aura]').forEach(function (el) {
-      var p = el.getAttribute('data-bind-aura');
-      if (gated(p)) return;
-      var v = resolve(snap, p);
+      var v = resolve(snap, el.getAttribute('data-bind-aura'));
       el.classList.remove('aura-green', 'aura-amber', 'aura-coral', 'aura-blue', 'aura-violet');
       if (v) el.classList.add('aura-' + v);
     });

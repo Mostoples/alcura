@@ -204,23 +204,23 @@
     var TH = thresholds, rec = [];
 
     var phStat = STATUS.ph ? fwCult(STATUS.ph)
-      : (ph >= TH.phMin && ph <= TH.phMax) ? 'ok' : (ph < TH.phMin - 0.5 || ph > TH.phMax + 0.5) ? 'bad' : 'warn';
+      : !isFinite(ph) ? 'ok' : (ph >= TH.phMin && ph <= TH.phMax) ? 'ok' : (ph < TH.phMin - 0.5 || ph > TH.phMax + 0.5) ? 'bad' : 'warn';
     if (phStat !== 'ok') rec.push(ph < TH.phMin
       ? L('pH low (acidic) — add a base/buffer to raise it.', 'pH rendah (asam) — tambah basa/buffer untuk menaikkannya.', 'pHが低い（酸性）— 塩基/緩衝剤で上げてください。')
       : L('pH high (alkaline) — add a mild acid/buffer to lower it.', 'pH tinggi (basa) — tambah asam/buffer ringan untuk menurunkannya.', 'pHが高い（アルカリ性）— 弱酸/緩衝剤で下げてください。'));
 
     var tdsStat = STATUS.tds ? fwCult(STATUS.tds)
-      : (tds <= TH.tdsLow + 200 && tds >= TH.tdsLow * 0.4) ? 'ok' : (tds > TH.tdsLow + 500) ? 'bad' : 'warn';
+      : !isFinite(tds) ? 'ok' : (tds <= TH.tdsLow + 200 && tds >= TH.tdsLow * 0.4) ? 'ok' : (tds > TH.tdsLow + 500) ? 'bad' : 'warn';
     if (tdsStat !== 'ok') rec.push(tds > TH.tdsLow + 200
       ? L('TDS high — dilute with clean water or check for buildup.', 'TDS tinggi — encerkan dengan air bersih atau cek penumpukan.', 'TDSが高い — きれいな水で薄めるか堆積を確認してください。')
       : L('TDS low — top up minerals/nutrients.', 'TDS rendah — tambahkan mineral/nutrisi.', 'TDSが低い — ミネラル/栄養を補充してください。'));
 
-    var tStat = (temp >= TH.tempMin && temp <= TH.tempMax) ? 'ok' : (temp > TH.tempMax + 4 || temp < TH.tempMin - 7) ? 'bad' : 'warn';
+    var tStat = !isFinite(temp) ? 'ok' : (temp >= TH.tempMin && temp <= TH.tempMax) ? 'ok' : (temp > TH.tempMax + 4 || temp < TH.tempMin - 7) ? 'bad' : 'warn';
     if (tStat !== 'ok') rec.push(temp > TH.tempMax
       ? L('Water temperature high — reduce heating/lighting.', 'Suhu air tinggi — kurangi pemanasan/pencahayaan.', '水温が高い — 加熱/照明を下げてください。')
       : L('Water temperature low — increase heating/lighting.', 'Suhu air rendah — tingkatkan pemanasan/pencahayaan.', '水温が低い — 加熱/照明を上げてください。'));
 
-    var turbStat = STATUS.turbidity ? fwCult(STATUS.turbidity) : (turb < 5 ? 'ok' : turb < 25 ? 'warn' : 'bad');
+    var turbStat = STATUS.turbidity ? fwCult(STATUS.turbidity) : (!isFinite(turb) ? 'ok' : turb < 5 ? 'ok' : turb < 25 ? 'warn' : 'bad');
     if (turbStat === 'bad') rec.push(L('Water is turbid — filter or perform a partial water change.', 'Air keruh — saring atau lakukan pergantian air sebagian.', '水が濁っています — ろ過または部分換水をしてください。'));
 
     // Density proxy from turbidity (no optical-density sensor on this device).
@@ -438,19 +438,22 @@
 
   function bindDevice() {
     try {
-      if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length || typeof firebase.database !== 'function') return;
-      firebase.database().ref('control').on('value', function (snap) {
-        var d = snap.val();
-        if (!d) return;
-        if (d.fan) device.fan = Object.assign({}, device.fan, d.fan);
-        if (d.lamp) device.lamp = Object.assign({}, device.lamp, d.lamp);
-        if (d.pump) device.pump = Object.assign({}, device.pump, d.pump);
-        if (d.uptime != null) device.uptime = +d.uptime;
-        if (d.lamp && d.lamp.brightness != null) control.ledIntensity = +d.lamp.brightness;
-        deviceBound = true;
-        emit();
-      }, function () { /* keep last-known device state */ });
+      if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length && typeof firebase.database === 'function') {
+        firebase.database().ref('control').on('value', function (snap) {
+          var d = snap.val();
+          if (!d) return;
+          if (d.fan) device.fan = Object.assign({}, device.fan, d.fan);
+          if (d.lamp) device.lamp = Object.assign({}, device.lamp, d.lamp);
+          if (d.pump) device.pump = Object.assign({}, device.pump, d.pump);
+          if (d.uptime != null) device.uptime = +d.uptime;
+          if (d.lamp && d.lamp.brightness != null) control.ledIntensity = +d.lamp.brightness;
+          deviceBound = true;
+          emit();
+        }, function () { fetchControlREST(); });
+      }
     } catch (e) { /* ignore */ }
+    // Fallback: fetch /control.json if SDK hasn't delivered within 2 s.
+    setTimeout(function () { if (!deviceBound) fetchControlREST(); }, 2000);
   }
 
   // Write a single actuator. path is 'fan/fan1' | 'lamp/brightness' | 'lamp/l3' | 'pump/pump2'.
@@ -593,17 +596,60 @@
     };
   }
 
-  function tryBindLive() {
-    try {
-      if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length || typeof firebase.database !== 'function') return;
-      firebase.database().ref('sensor').on('value', function (snap) {
-        var d = snap.val();
+  // REST fallback: fetch /sensor.json directly (always works, no WebSocket needed).
+  var RTDB_REST = 'https://alcura-id-default-rtdb.asia-southeast1.firebasedatabase.app';
+  function fetchSensorREST() {
+    fetch(RTDB_REST + '/sensor.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
         if (!d) return;
         mapLive(d);
         liveBound = true;
         emit();
-      }, function () { /* stay on simulation */ });
-    } catch (e) { /* stay on simulation */ }
+      })
+      .catch(function () {});
+  }
+  function fetchControlREST() {
+    fetch(RTDB_REST + '/control.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d) return;
+        if (d.fan) device.fan = Object.assign({}, device.fan, d.fan);
+        if (d.lamp) device.lamp = Object.assign({}, device.lamp, d.lamp);
+        if (d.pump) device.pump = Object.assign({}, device.pump, d.pump);
+        if (d.uptime != null) device.uptime = +d.uptime;
+        if (d.lamp && d.lamp.brightness != null) control.ledIntensity = +d.lamp.brightness;
+        deviceBound = true;
+        emit();
+      })
+      .catch(function () {});
+  }
+
+  function tryBindLive() {
+    // Primary: Firebase SDK WebSocket listener (real-time push).
+    var sdkOk = false;
+    try {
+      if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length && typeof firebase.database === 'function') {
+        firebase.database().ref('sensor').on('value', function (snap) {
+          var d = snap.val();
+          if (!d) return;
+          mapLive(d);
+          liveBound = true;
+          sdkOk = true;
+          emit();
+        }, function () { fetchSensorREST(); });
+        sdkOk = true;
+      }
+    } catch (e) { /* fall through to REST */ }
+
+    // Fallback: if SDK listener hasn't delivered data within 2 s, use REST polling.
+    setTimeout(function () {
+      if (!liveBound) fetchSensorREST();
+    }, 2000);
+    // Keep polling every 15 s via REST regardless (covers reconnects & stale data).
+    setInterval(function () {
+      if (!sdkOk) fetchSensorREST();
+    }, 15000);
   }
 
   // ====================== ALERT FEED RENDERER ======================
@@ -611,12 +657,6 @@
     var host = typeof sel === 'string' ? document.querySelector(sel) : sel;
     if (!host) return;
     function paint(snap) {
-      if (!liveBound) {   // no fabricated alerts — wait for real RTDB data
-        host.innerHTML = '<div class="alert"><i class="ph-fill ph-wifi-slash"></i>' +
-          '<div class="alert-content"><h4>' + L('Waiting for sensor data', 'Menunggu data sensor', 'センサーデータ待ち') + '</h4>' +
-          '<small>' + L('Connect the device to see live alerts.', 'Hubungkan perangkat untuk melihat peringatan langsung.', 'デバイスを接続するとライブ通知が表示されます。') + '</small></div></div>';
-        return;
-      }
       host.innerHTML = snap.alerts.map(function (a) {
         var cls = a.level === 'critical' ? 'critical' : a.level === 'warning' ? 'warning' : a.level === 'success' ? 'success' : '';
         var tag = a.predictive ? ' <span class="pred-tag"><i class="ph-fill ph-trend-up"></i>' + L('Prediction', 'Prediksi', '予測') + '</span>' : '';

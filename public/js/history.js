@@ -137,7 +137,9 @@
 
   /* ---- Boot: sample real RTDB data only (no synthetic backfill) ---- */
   function tick(d) {
-    if (!(window.ALCURA && ALCURA.live)) return;   // record only real RTDB-derived points
+    if (!window.ALCURA) return;
+    var _snap = window.ALCURA.snapshot().s;
+    if (!isFinite(_snap.co2) && !isFinite(_snap.ph) && !isFinite(_snap.tds)) return;
     var now = Date.now();
     if (now - lastT >= SAMPLE_MS) { store.points.push(pointFrom(d, now)); lastT = now; save(); }
   }

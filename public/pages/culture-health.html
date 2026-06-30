@@ -172,10 +172,10 @@
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=26"></script>
 <script src="../js/firebase-config.js"></script>
-<script src="../js/sensors-engine.js?v=15"></script>
+<script src="../js/sensors-engine.js?v=17"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
-<script src="../js/history.js?v=15"></script>
+<script src="../js/history.js?v=16"></script>
 <script src="../js/dosing.js"></script>
 <script src="../js/ai-secret.js" onerror="void 0"></script>
 <script src="../js/ai-core.js"></script>
@@ -243,9 +243,7 @@ function paintGrowth() {
       show('<i class="ph ph-spinner"></i> ' + T('AI is reading the culture…', 'AI sedang membaca kultur…', 'AIが培養を読み取っています…'));
 
       var d = ALCURA.snapshot();
-      var ctx = ALCURA.live
-        ? 'Data sensor saat ini untuk dicocokkan: warna TCS3200 G-freq ' + d.s.green + ' (klorofil est. ' + d.culture.chl + '%), pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status + '.'
-        : 'Belum ada data sensor real-time (perangkat mungkin offline) — nilai hanya dari analisis foto, jangan mengarang angka sensor.';
+      var ctx = 'Data sensor saat ini untuk dicocokkan: warna TCS3200 G-freq ' + d.s.green + ' (klorofil est. ' + d.culture.chl + '%), pH ' + d.culture.ph + ', TDS ' + d.culture.tds + ' ppm, OD ' + d.culture.od + ', suhu ' + d.culture.temp + '°C, status ' + d.culture.status + '.';
       var sys = 'Kamu ahli budidaya mikroalga Spirulina. Analisis FOTO kultur dalam fotobioreaktor. Nilai secara singkat: (1) warna & kepekatan hijau (sehat = hijau pekat merata), (2) estimasi densitas/kesehatan, (3) tanda masalah (menguning/pemutihan/bleaching, gumpalan, busa, kontaminasi, pengendapan). Bandingkan dengan data sensor — sebutkan bila cocok atau ada ketidaksesuaian. Akhiri dengan 1 rekomendasi tindakan. Maksimal 5 kalimat, gunakan poin bila perlu. ' + (function () { var l = (window.ALCURA_I18N && ALCURA_I18N.lang) || 'en'; return l === 'id' ? 'Jawab dalam Bahasa Indonesia.' : l === 'ja' ? 'Reply in Japanese.' : 'Reply in English.'; })();
 
       ALCURA_AI.vision(ctx, { mime: mime, data: base64 }, sys)
@@ -258,7 +256,6 @@ function paintGrowth() {
 })();
 
 ALCURA.on(function (d) {
-  if (!ALCURA.live) return;   // only render real RTDB data — no seed/placeholder values
   paintGrowth();
   var c = d.culture;
   var label = c.status === 'optimal' ? T('Optimal', 'Optimal', '最適') : c.status === 'attention' ? T('Needs attention', 'Perlu Perhatian', '要注意') : T('Critical', 'Kritis', '危機');

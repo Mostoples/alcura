@@ -200,10 +200,10 @@
 <script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/app.js?v=26"></script>
-<script src="js/sensors-engine.js?v=15"></script>
+<script src="js/sensors-engine.js?v=17"></script>
 <script src="js/notifications.js"></script>
 <script src="js/scheduler.js"></script>
-<script src="js/history.js?v=15"></script>
+<script src="js/history.js?v=16"></script>
 <script src="js/report.js"></script>
 <script src="js/ai-secret.js" onerror="void 0"></script>
 <script src="js/ai-core.js"></script>
@@ -215,7 +215,6 @@
 <script>
 // Reflect active critical/warning alerts on the bell badge + draw the live spark
 ALCURA.on(function (d) {
-  if (!ALCURA.live) return;   // only react to real RTDB data
   var dot = document.querySelector('.notif .badge-dot');
   if (dot) {
     var active = d.alerts.some(function (a) { return a.level === 'critical' || a.level === 'warning'; });
@@ -234,15 +233,17 @@ ALCURA.on(function (d) {
       Tq('Fan', 'Kipas', 'ファン') + ' ' + dev.fansOn + '/2 · ' + Tq('Pump', 'Pompa', 'ポンプ') + ' ' + dev.pumpsOn + '/2';
 
     var sEl = document.getElementById('qaSafety');
-    if (sEl && ALCURA.live) {   // sensor-derived — only show with real RTDB data
+    if (sEl) {
       var s = d.safety;
-      sEl.textContent = s.level === 'danger' ? Tq('Danger', 'Bahaya', '危険') + ' · ' + s.value + ' ppm'
-        : s.level === 'warn' ? Tq('Caution', 'Waspada', '注意') + ' · ' + s.value + ' ppm'
-          : Tq('All safe', 'Aman', '安全');
+      sEl.textContent = s.aura
+        ? (s.level === 'danger' ? Tq('Danger', 'Bahaya', '危険') + ' · ' + s.value + ' ppm'
+          : s.level === 'warn' ? Tq('Caution', 'Waspada', '注意') + ' · ' + s.value + ' ppm'
+          : Tq('All safe', 'Aman', '安全'))
+        : '--';
     }
 
     var imp = document.getElementById('qaImpact');
-    if (imp && ALCURA.live) imp.textContent = Tq('CO₂ ', 'CO₂ ', 'CO₂ ') + d.impact.co2Today + ' g ' + Tq('today', 'hari ini', '今日');
+    if (imp) imp.textContent = isFinite(d.culture.od) ? (Tq('CO₂ ', 'CO₂ ', 'CO₂ ') + d.impact.co2Today + ' g ' + Tq('today', 'hari ini', '今日')) : '--';
   });
 })();
 
@@ -252,7 +253,7 @@ ALCURA.on(function (d) {
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   ALCURA.on(function (d) {
     var el = document.getElementById('xaiMini'); if (!el || !ALCURA.simulate) return;
-    if (!ALCURA.live) { el.innerHTML = '<div class="line"><i class="ph-fill ph-wifi-slash"></i><span>' + T('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…') + '</span></div>'; return; }
+    if (!isFinite(d.culture.od)) { el.innerHTML = ''; return; }
     var sim = ALCURA.simulate(), f = sim.factors;
     var defs = [['light',1,T('Light','Cahaya','光')],['temp',1,T('Temperature','Suhu','温度')],['aeration',1.1,T('Aeration','Aerasi','エア')],['co2',1.12,T('CO₂','CO₂','CO₂')]];
     defs.forEach(function (x) { x.push(Math.round(Math.min(100, f[x[0]] / x[1] * 100))); });
@@ -303,7 +304,6 @@ ALCURA.on(function (d) {
 
   function generate(force) {
     if (!window.ALCURA_AI || !ALCURA_AI.ready()) { setText(Tb('AI briefing unavailable (no key).', 'Briefing AI tidak tersedia (tanpa key).', 'AIブリーフィングは利用できません。')); return; }
-    if (!(window.ALCURA && ALCURA.live)) { setText(Tb('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…')); return; }
     setText('<i class="ph ph-spinner"></i> ' + Tb('Preparing your briefing…', 'Menyiapkan briefing Anda…', 'ブリーフィングを準備中…'));
     ALCURA_AI.text('Buat briefing harian sekarang.', systemPrompt())
       .then(function (txt) {
@@ -318,12 +318,15 @@ ALCURA.on(function (d) {
     try { cached = JSON.parse(localStorage.getItem(BKEY) || 'null'); } catch (e) {}
     if (cached && cached.date === todayStr() && cached.lang === lang() && cached.text) setText(fmt(cached.text));
     else {
-      // Wait for real RTDB data before generating (don't brief on placeholder values)
-      setText(Tb('Waiting for sensor data…', 'Menunggu data sensor…', 'センサーデータ待ち…'));
+      setText('<i class="ph ph-spinner"></i>');
       var done = false;
-      var tryGen = function () { if (!done && window.ALCURA && ALCURA.live) { done = true; generate(false); } };
+      var tryGen = function () {
+        if (done || !window.ALCURA) return;
+        var snap = ALCURA.snapshot();
+        if (isFinite(snap.air.co2) || isFinite(snap.culture.ph) || isFinite(snap.s.level)) { done = true; generate(false); }
+      };
       if (window.ALCURA) ALCURA.on(tryGen);
-      setTimeout(tryGen, 600);
+      setTimeout(function () { if (!done) { done = true; generate(false); } }, 3000);
     }
     var rb = document.getElementById('briefRefresh');
     if (rb) rb.addEventListener('click', function () { generate(true); });

@@ -95,10 +95,10 @@
 <script src="../js/more-menu.js?v=26"></script>
 <script src="../js/pwa.js"></script>
 <script src="../js/i18n.js?v=26"></script>
-<script src="../js/sensors-engine.js?v=15"></script>
+<script src="../js/sensors-engine.js?v=17"></script>
 <script src="../js/notifications.js"></script>
 <script src="../js/scheduler.js"></script>
-<script src="../js/history.js?v=15"></script>
+<script src="../js/history.js?v=16"></script>
 <script src="../js/harvest-log.js"></script>
 <script>
 requireAuthPage();
@@ -107,11 +107,10 @@ function fmtDate(t) { try { return new Date(t).toLocaleDateString((window.ALCURA
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
 function renderHint() {
-  var live = window.ALCURA && ALCURA.live;   // sensor-derived — keep "—" until real RTDB data
   var s = ALCURA.snapshot();
-  document.getElementById('hvPred').textContent = live ? s.harvest.yieldG : '—';
-  document.getElementById('hvOd').textContent = live ? s.culture.od : '—';
-  document.getElementById('hvReady').textContent = live ? s.harvest.readiness : '—';
+  document.getElementById('hvPred').textContent = isFinite(s.harvest.yieldG) ? s.harvest.yieldG : '—';
+  document.getElementById('hvOd').textContent = isFinite(s.culture.od) ? s.culture.od : '—';
+  document.getElementById('hvReady').textContent = isFinite(s.harvest.readiness) ? s.harvest.readiness : '—';
 }
 
 function renderAll() {

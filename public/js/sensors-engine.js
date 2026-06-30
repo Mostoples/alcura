@@ -583,7 +583,12 @@
     if (water.ph != null) S.ph = +water.ph;
     if (water.tds != null) S.tds = +water.tds;
     if (water.temp != null) S.mlx = +water.temp;
-    if (water.level != null) { S.level = +water.level; S.dist = clamp((100 - S.level) / 100 * 20 + 3, 2, 22); }
+    if (water.level != null) {
+      // Firmware sends ultrasonic distance in cm as `level`.
+      // The UI keeps `dist` as raw cm and derives `level` as fill percentage.
+      S.dist = +water.level;
+      S.level = clamp((30 - S.dist) / 30 * 100, 0, 100);
+    }
     if (water.turbidity != null) S.turbidity = +water.turbidity;
     if (d.uptime != null) S.uptime = +d.uptime;
     else if (gas.uptime != null) S.uptime = +gas.uptime;
